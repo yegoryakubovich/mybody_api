@@ -1,0 +1,10 @@
+[db]
+host = 127.0.0.1
+port = 3306
+user = root
+password = password
+name = db_name
+
+[tg]
+bot_username = bot_username
+bot_token = XXXXX
