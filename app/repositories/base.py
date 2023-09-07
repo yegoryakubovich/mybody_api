@@ -15,20 +15,12 @@
 #
 
 
-from fastapi import Request
-
-from app.utils.router import Router
-from app.utils.response import Response
+from app.db.models.base import BaseModel
+from app.repositories import ActionRepository
 
 
-router = Router(
-    prefix='/get',
-)
+class BaseRepository:
+    model: str
 
-
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+    async def create_action(self, model: BaseModel, action: str, parameters: dict = None):
+        await ActionRepository.create(model=self.model, model_id=model.id, action=action, parameters=parameters)

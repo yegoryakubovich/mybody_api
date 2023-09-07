@@ -15,20 +15,15 @@
 #
 
 
-from fastapi import Request
+from peewee import PrimaryKeyField, CharField, IntegerField
 
-from app.utils.router import Router
-from app.utils.response import Response
-
-
-router = Router(
-    prefix='/get',
-)
+from app.db.models.base import BaseModel
 
 
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+class Timezone(BaseModel):
+    id = PrimaryKeyField()
+    name = CharField(max_length=32)
+    deviation = IntegerField(default=0)
+
+    class Meta:
+        db_table = 'timezones'

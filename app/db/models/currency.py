@@ -15,20 +15,16 @@
 #
 
 
-from fastapi import Request
+from peewee import PrimaryKeyField, CharField, ForeignKeyField
 
-from app.utils.router import Router
-from app.utils.response import Response
-
-
-router = Router(
-    prefix='/get',
-)
+from app.db.models.text import Text
+from app.db.models.base import BaseModel
 
 
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+class Currency(BaseModel):
+    id = PrimaryKeyField()
+    name = CharField(max_length=16)
+    text = ForeignKeyField(model=Text)
+
+    class Meta:
+        db_table = 'currencies'

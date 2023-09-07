@@ -15,11 +15,12 @@
 #
 
 
+import logging
+
 from fastapi import FastAPI
-# noinspection PyPackageRequirements
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.db import models_create
+from app.db import create_models
 from app.utils.middleware import Middleware
 from app.routers import routers
 
@@ -44,6 +45,9 @@ for router in routers:
     app.include_router(router)
 
 
-def app_create():
-    models_create()
+def create_app():
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info(msg='Application starting...')
+
+    create_models()
     return app

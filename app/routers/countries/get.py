@@ -15,8 +15,7 @@
 #
 
 
-from fastapi import Request
-
+from app.repositories import CountryRepository
 from app.utils.router import Router
 from app.utils.response import Response
 
@@ -27,8 +26,17 @@ router = Router(
 
 
 @router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+async def route():
+    countries = []
+
+    countries_models = await CountryRepository.get_all()
+    for country in countries_models:
+        countries.append(
+            {
+                'name': country.name,
+                'icon': country.icon,
+                'text_key': country.text.key,
+            }
+        )
+
+    return Response(countries=countries)

@@ -15,11 +15,13 @@
 #
 
 
-from app.routers.favicon import router as router_favicon
-from app.routers.account import router as router_users
+from .favicon import router as router_favicon
+from .account import router as router_account
+from .countries import router as router_countries
 
 
-routers = (
+routers = [
     router_favicon,
-    router_users,
-)
+    router_account,
+    router_countries,
+]

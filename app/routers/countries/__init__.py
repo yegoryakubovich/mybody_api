@@ -15,20 +15,13 @@
 #
 
 
-from fastapi import Request
-
+from .get import router as router_get
 from app.utils.router import Router
-from app.utils.response import Response
 
 
 router = Router(
-    prefix='/get',
+    prefix='/countries',
+    routes_included=[
+        router_get,
+    ],
 )
-
-
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )

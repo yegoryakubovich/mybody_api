@@ -15,18 +15,18 @@
 #
 
 
-from fastapi import APIRouter
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
+
+from app.db.models import Account
+from app.db.models.base import BaseModel
 
 
-class BaseRouter(APIRouter):
-    def __init__(
-            self,
-            routes_included=None,
-            **kwargs,
-    ):
-        super().__init__(**kwargs)
-        if routes_included is None:
-            routes_included = []
+class Session(BaseModel):
+    id = PrimaryKeyField()
+    account = ForeignKeyField(model=Account, backref='parameters')
+    token = CharField(max_length=128)
+    token_salt = CharField(max_length=128)
+    is_deleted = BooleanField(default=False)
 
-        for r in routes_included:
-            self.include_router(r)
+    class Meta:
+        db_table = 'sessions'

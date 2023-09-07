@@ -15,11 +15,19 @@
 #
 
 
-from peewee import Model
+from datetime import datetime
+from peewee import PrimaryKeyField, CharField, BigIntegerField, DateTimeField
+from pytz import UTC
 
-from app.db import db
+from app.db.models.base import BaseModel
 
 
-class BaseModel(Model):
+class Action(BaseModel):
+    id = PrimaryKeyField()
+    datetime = DateTimeField(default=lambda _: datetime.now(tz=UTC))
+    model = CharField(max_length=64)
+    model_id = BigIntegerField()
+    action = CharField(max_length=256)
+
     class Meta:
-        database = db
+        db_table = 'actions'

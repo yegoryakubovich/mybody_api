@@ -15,16 +15,28 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.base_model import BaseModel
+from app.db.models.base import BaseModel
+from app.db.models.country import Country
+from app.db.models.currency import Currency
+from app.db.models.language import Language
+from app.db.models.timezone import Timezone
 
 
 class Account(BaseModel):
     id = PrimaryKeyField()
-    username = CharField(max_length=36)
-    password = CharField(max_length=36)
-    password_salt = CharField(max_length=36)
+    username = CharField(max_length=32)
+    password = CharField(max_length=128)
+    password_salt = CharField(max_length=128)
+    firstname = CharField(max_length=32)
+    lastname = CharField(max_length=32)
+    surname = CharField(max_length=32, null=True)
+    country = ForeignKeyField(model=Country)
+    language = ForeignKeyField(model=Language)
+    timezone = ForeignKeyField(model=Timezone)
+    currency = ForeignKeyField(model=Currency)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'account'
+        db_table = 'accounts'

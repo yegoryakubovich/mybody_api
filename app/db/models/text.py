@@ -15,20 +15,16 @@
 #
 
 
-from fastapi import Request
+from peewee import PrimaryKeyField, CharField, BooleanField
 
-from app.utils.router import Router
-from app.utils.response import Response
-
-
-router = Router(
-    prefix='/get',
-)
+from app.db.models.base import BaseModel
 
 
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+class Text(BaseModel):
+    id = PrimaryKeyField()
+    key = CharField(max_length=128)
+    value_default = CharField(max_length=1024)
+    is_big = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'texts'

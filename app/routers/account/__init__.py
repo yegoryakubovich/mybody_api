@@ -15,13 +15,15 @@
 #
 
 
-from ..account.get import router as router_create
-from ...utils.base_router import BaseRouter
+from .get import router as router_get
+from .create import router as router_create
+from app.utils.router import Router
 
 
-router = BaseRouter(
+router = Router(
     prefix='/account',
     routes_included=[
+        router_get,
         router_create,
     ],
 )

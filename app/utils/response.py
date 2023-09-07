@@ -15,21 +15,15 @@
 #
 
 
-from typing import Union
-
-
 class ResponseState:
     successful = 'successful'
     error = 'error'
 
 
 class Response:
-    def __new__(cls, state: str = ResponseState.successful, message: Union[str, None] = None, **kwargs) -> dict:
+    def __new__(cls, state: str = ResponseState.successful, **kwargs) -> dict:
         json = {
             'state': state,
             **kwargs,
         }
-        if message:
-            json['message']: message
-
         return json

@@ -15,7 +15,7 @@
 #
 
 
-from app import app_create
+from app import create_app
 
 
-app = app_create()
+app = create_app()

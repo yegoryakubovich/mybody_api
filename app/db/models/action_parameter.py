@@ -15,31 +15,17 @@
 #
 
 
+from peewee import PrimaryKeyField, CharField, ForeignKeyField
+
 from app.db.models.action import Action
-from app.db.models.action_parameter import ActionParameter
-from app.db.models.language import Language
-from app.db.models.text import Text
-from app.db.models.text_translate import TextTranslate
-from app.db.models.text_pack import TextPack
-from app.db.models.icons import Icon
-from app.db.models.country import Country
-from app.db.models.timezone import Timezone
-from app.db.models.currency import Currency
-from app.db.models.account import Account
-from app.db.models.session import Session
+from app.db.models.base import BaseModel
 
 
-models = (
-    Action,
-    ActionParameter,
-    Language,
-    Text,
-    TextTranslate,
-    TextPack,
-    Icon,
-    Country,
-    Timezone,
-    Currency,
-    Account,
-    Session,
-)
+class ActionParameter(BaseModel):
+    id = PrimaryKeyField()
+    action = ForeignKeyField(model=Action, backref='parameters')
+    key = CharField(max_length=256)
+    value = CharField(max_length=256)
+
+    class Meta:
+        db_table = 'actions_parameters'

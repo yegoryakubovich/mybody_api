@@ -15,17 +15,17 @@
 #
 
 
-from fastapi import APIRouter
-# noinspection PyPackageRequirements
 from starlette.responses import FileResponse
 
+from app.utils.router import Router
 
-router = APIRouter(
+
+router = Router(
     prefix='/favicon.ico',
 )
 ICON_PATH = 'assets/icons/icon.ico'
 
 
-@router.get(path='/', include_in_schema=False)
+@router.get(include_in_schema=False)
 async def route():
     return FileResponse(path=ICON_PATH)

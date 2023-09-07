@@ -21,5 +21,5 @@ from app.db.models import models
 
 
 @db_manager_sync
-def models_create():
+def create_models():
     db.create_tables(models=models)

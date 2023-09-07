@@ -15,31 +15,24 @@
 #
 
 
-from app.db.models.action import Action
-from app.db.models.action_parameter import ActionParameter
+from peewee import PrimaryKeyField, CharField, ForeignKeyField
+
 from app.db.models.language import Language
-from app.db.models.text import Text
-from app.db.models.text_translate import TextTranslate
-from app.db.models.text_pack import TextPack
-from app.db.models.icons import Icon
-from app.db.models.country import Country
-from app.db.models.timezone import Timezone
 from app.db.models.currency import Currency
-from app.db.models.account import Account
-from app.db.models.session import Session
+from app.db.models.timezone import Timezone
+from app.db.models.base import BaseModel
+from app.db.models.icons import Icon
+from app.db.models.text import Text
 
 
-models = (
-    Action,
-    ActionParameter,
-    Language,
-    Text,
-    TextTranslate,
-    TextPack,
-    Icon,
-    Country,
-    Timezone,
-    Currency,
-    Account,
-    Session,
-)
+class Country(BaseModel):
+    id = PrimaryKeyField()
+    name = CharField(max_length=32)
+    icon = ForeignKeyField(model=Icon, null=True)
+    language_default = ForeignKeyField(model=Language, null=True)
+    timezone_default = ForeignKeyField(model=Timezone, null=True)
+    currency_default = ForeignKeyField(model=Currency, null=True)
+    text = ForeignKeyField(model=Text)
+
+    class Meta:
+        db_table = 'countries'

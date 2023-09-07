@@ -15,20 +15,16 @@
 #
 
 
-from fastapi import Request
+from peewee import PrimaryKeyField, CharField, ForeignKeyField
 
-from app.utils.router import Router
-from app.utils.response import Response
-
-
-router = Router(
-    prefix='/get',
-)
+from app.db.models import Language
+from app.db.models.base import BaseModel
 
 
-@router.get()
-async def route(request: Request):
-    host = request.client.host
-    return Response(
-        host=host,
-    )
+class TextPack(BaseModel):
+    id = PrimaryKeyField()
+    language = ForeignKeyField(model=Language)
+    pack = CharField(max_length=32768)
+
+    class Meta:
+        db_table = 'texts_packs'
