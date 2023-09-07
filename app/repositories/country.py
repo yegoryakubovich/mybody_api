@@ -15,13 +15,9 @@
 #
 
 
-from app.db.models.country import Country
+from app.db.models import Country
 from app.repositories.base import BaseRepository
 
 
 class CountryRepository(BaseRepository):
-    model = 'country'
-
-    @staticmethod
-    async def get_all() -> list:
-        return Country.select().execute()
+    model = Country

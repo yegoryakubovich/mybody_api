@@ -27,7 +27,7 @@ from app.db.models.text import Text
 
 class Country(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=32)
+    name = CharField(max_length=16)
     icon = ForeignKeyField(model=Icon, null=True)
     language_default = ForeignKeyField(model=Language, null=True)
     timezone_default = ForeignKeyField(model=Timezone, null=True)

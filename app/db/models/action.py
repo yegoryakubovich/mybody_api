@@ -24,7 +24,7 @@ from app.db.models.base import BaseModel
 
 class Action(BaseModel):
     id = PrimaryKeyField()
-    datetime = DateTimeField(default=lambda _: datetime.now(tz=UTC))
+    datetime = DateTimeField(default=lambda: datetime.now(tz=UTC))
     model = CharField(max_length=64)
     model_id = BigIntegerField()
     action = CharField(max_length=256)

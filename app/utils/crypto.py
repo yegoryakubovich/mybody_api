@@ -15,18 +15,13 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
-
-from app.db.models import Account
-from app.db.models.base import BaseModel
+from hashlib import md5
+from secrets import token_hex
 
 
-class Session(BaseModel):
-    id = PrimaryKeyField()
-    account = ForeignKeyField(model=Account, backref='parameters')
-    token = CharField(max_length=32)
-    token_salt = CharField(max_length=32)
-    is_deleted = BooleanField(default=False)
+async def create_salt():
+    return token_hex(16)
 
-    class Meta:
-        db_table = 'sessions'
+
+async def create_md5_by_str_and_salt(string: str, salt: str):
+    return md5((string+salt).encode()).hexdigest()

@@ -24,4 +24,5 @@ router = Router(
     routes_included=[
         router_get,
     ],
+    tags=['Countries'],
 )

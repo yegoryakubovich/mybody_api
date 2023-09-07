@@ -15,18 +15,9 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
-
-from app.db.models import Account
-from app.db.models.base import BaseModel
+from app.db.models import Timezone
+from app.repositories.base import BaseRepository
 
 
-class Session(BaseModel):
-    id = PrimaryKeyField()
-    account = ForeignKeyField(model=Account, backref='parameters')
-    token = CharField(max_length=32)
-    token_salt = CharField(max_length=32)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'sessions'
+class TimezoneRepository(BaseRepository):
+    model = Timezone

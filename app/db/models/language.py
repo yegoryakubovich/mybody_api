@@ -22,7 +22,7 @@ from app.db.models.base import BaseModel
 
 class Language(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=64)
+    name = CharField(max_length=32)
 
     class Meta:
         db_table = 'languages'

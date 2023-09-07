@@ -20,7 +20,7 @@ from app.repositories.base import BaseRepository
 
 
 class TextRepository(BaseRepository):
-    model = 'text'
+    model = Text
 
     async def get_value_by_key(self, key: str) -> str:
         text = Text.get_or_none(Text.key == key)

@@ -18,10 +18,12 @@
 from app.utils.middleware import Middleware
 from app.utils.router import Router
 from app.utils.response import Response
+import app.utils.crypto
 
 
 __all__ = [
     'Middleware',
     'Router',
     'Response',
+    'crypto',
 ]

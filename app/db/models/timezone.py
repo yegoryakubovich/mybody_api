@@ -22,7 +22,7 @@ from app.db.models.base import BaseModel
 
 class Timezone(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=32)
+    name = CharField(max_length=16)
     deviation = IntegerField(default=0)
 
     class Meta:

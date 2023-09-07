@@ -25,7 +25,7 @@ class ActionParameter(BaseModel):
     id = PrimaryKeyField()
     action = ForeignKeyField(model=Action, backref='parameters')
     key = CharField(max_length=256)
-    value = CharField(max_length=256)
+    value = CharField(max_length=256, null=True)
 
     class Meta:
         db_table = 'actions_parameters'

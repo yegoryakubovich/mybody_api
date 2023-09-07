@@ -15,14 +15,13 @@
 #
 
 
-from app.db.models import Text, Language
-from app.db.models.text_pack import TextPack
+from app.db.models import Text, Language, TextPack
 from app.repositories.base import BaseRepository
 from app.repositories.text import TextRepository
 
 
 class TextPackRepository(BaseRepository):
-    model = 'text_pack'
+    model = TextPack
 
     async def create(self, language: Language) -> TextPack:
         pack = {}

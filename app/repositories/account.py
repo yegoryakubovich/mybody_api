@@ -16,21 +16,53 @@
 
 
 from app.repositories.base import BaseRepository
-from app.db.models import Account
+from app.db.models import Account, Country, Language, Timezone, Currency
+from app.utils import crypto
 
 
 class AccountRepository(BaseRepository):
-    model = 'account'
+    model = Account
 
-    async def create(self, username: str, password: str) -> Account:
-        account = Account.create(username=username, password=password, password_salt=password)
+    async def create(
+            self,
+            username: str,
+            password: str,
+            firstname: str,
+            lastname: str,
+            country: Country,
+            language: Language,
+            timezone: Timezone,
+            currency: Currency,
+            surname: str = None,
+    ) -> Account:
+        password_salt = await crypto.create_salt()
+        password = await crypto.create_md5_by_str_and_salt(string=password, salt=password_salt)
+
+        account = Account.create(
+            username=username,
+            password=password,
+            password_salt=password_salt,
+            firstname=firstname,
+            lastname=lastname,
+            surname=surname,
+            country=country,
+            language=language,
+            timezone=timezone,
+            currency=currency,
+        )
         await self.create_action(
             model=account,
             action='create',
             parameters={
+                'host': '0.0.0.0',
                 'username': username,
-                'password': password,
-                'ip': '127.0.0.1',
+                'firstname': firstname,
+                'lastname': lastname,
+                'surname': surname,
+                'country': country.name,
+                'language': language.name,
+                'timezone': timezone.name,
+                'currency': currency.name,
             },
         )
         return account
@@ -40,3 +72,10 @@ class AccountRepository(BaseRepository):
         if Account.get_or_none(Account.username == username):
             return True
         return False
+
+    @staticmethod
+    async def check_password(account: Account, password: str):
+        return True if account.password == await crypto.create_md5_by_str_and_salt(
+            string=password,
+            salt=account.password_salt,
+        ) else False

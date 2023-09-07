@@ -29,7 +29,7 @@ router = Router(
 async def route():
     countries = []
 
-    countries_models = await CountryRepository.get_all()
+    countries_models = await CountryRepository().get_all()
     for country in countries_models:
         countries.append(
             {

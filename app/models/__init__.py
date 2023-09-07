@@ -15,18 +15,9 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
-
-from app.db.models import Account
-from app.db.models.base import BaseModel
+from app.models.account import AccountModel
 
 
-class Session(BaseModel):
-    id = PrimaryKeyField()
-    account = ForeignKeyField(model=Account, backref='parameters')
-    token = CharField(max_length=32)
-    token_salt = CharField(max_length=32)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'sessions'
+__all__ = [
+    'AccountModel',
+]

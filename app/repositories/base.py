@@ -15,12 +15,33 @@
 #
 
 
+from peewee import DoesNotExist
+
 from app.db.models.base import BaseModel
 from app.repositories import ActionRepository
 
 
+class ModelDoesNotExist(Exception):
+    pass
+
+
 class BaseRepository:
-    model: str
+    model: BaseModel
+    model_name: str
 
     async def create_action(self, model: BaseModel, action: str, parameters: dict = None):
-        await ActionRepository.create(model=self.model, model_id=model.id, action=action, parameters=parameters)
+        await ActionRepository.create(
+            model=self.model.__name__.lower(),
+            model_id=model.id,
+            action=action,
+            parameters=parameters,
+        )
+
+    async def get_all(self) -> list[BaseModel]:
+        return self.model.select().execute()
+
+    async def get_by_name(self, name: str) -> BaseModel:
+        try:
+            return self.model.get(self.model.name == name)
+        except DoesNotExist:
+            raise ModelDoesNotExist(f'{self.model.__name__} "{name}" does not exist')

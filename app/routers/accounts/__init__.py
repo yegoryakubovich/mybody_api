@@ -15,18 +15,16 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
+from .get import router as router_get
+from .create import router as router_create
+from app.utils.router import Router
 
-from app.db.models import Account
-from app.db.models.base import BaseModel
 
-
-class Session(BaseModel):
-    id = PrimaryKeyField()
-    account = ForeignKeyField(model=Account, backref='parameters')
-    token = CharField(max_length=32)
-    token_salt = CharField(max_length=32)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'sessions'
+router = Router(
+    prefix='/accounts',
+    routes_included=[
+        router_get,
+        router_create,
+    ],
+    tags=['Accounts'],
+)

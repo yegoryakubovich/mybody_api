@@ -15,15 +15,12 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from app.utils.router import Router
+from app.repositories.base import BaseRepository
+from app.db.models import Session
 
 
-router = Router(
-    prefix='/account',
-    routes_included=[
-        router_get,
-        router_create,
-    ],
-)
+class SessionRepository(BaseRepository):
+    model = Session
+
+    async def create(self) -> Session:
+        pass

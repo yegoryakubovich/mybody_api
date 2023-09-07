@@ -17,17 +17,25 @@
 
 from app.repositories.action import ActionRepository
 from app.repositories.account import AccountRepository
+from app.repositories.session import SessionRepository
 from app.repositories.country import CountryRepository
+from app.repositories.language import LanguageRepository
+from app.repositories.timezone import TimezoneRepository
+from app.repositories.currency import CurrencyRepository
 from app.repositories.text import TextRepository
 from app.repositories.text_pack import TextPackRepository
+from app.repositories.base import ModelDoesNotExist
 
 
 __all__ = [
     'ActionRepository',
     'AccountRepository',
+    'SessionRepository',
     'CountryRepository',
+    'LanguageRepository',
+    'TimezoneRepository',
+    'CurrencyRepository',
     'TextRepository',
     'TextPackRepository',
+    'ModelDoesNotExist',
 ]
-
-

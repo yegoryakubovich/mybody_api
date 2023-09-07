@@ -16,7 +16,7 @@
 
 
 from .favicon import router as router_favicon
-from .account import router as router_account
+from .accounts import router as router_account
 from .countries import router as router_countries
 
 
