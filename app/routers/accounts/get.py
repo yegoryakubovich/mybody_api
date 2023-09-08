@@ -15,8 +15,7 @@
 #
 
 
-from fastapi import Request
-
+from app.utils import client
 from app.utils.router import Router
 from app.utils.response import Response
 
@@ -27,8 +26,7 @@ router = Router(
 
 
 @router.get()
-async def route(request: Request):
-    host = request.client.host
+async def route():
     return Response(
-        host=host,
+        host=client.device.__dict__,
     )

@@ -15,31 +15,5 @@
 #
 
 
-from .action import Action
-from .action_parameter import ActionParameter
-from .language import Language
-from .text import Text
-from .text_translate import TextTranslate
-from .text_pack import TextPack
-from .icons import Icon
-from .country import Country
-from .timezone import Timezone
-from .currency import Currency
-from .account import Account
-from .session import Session
-
-
-models = (
-    Action,
-    ActionParameter,
-    Language,
-    Text,
-    TextTranslate,
-    TextPack,
-    Icon,
-    Country,
-    Timezone,
-    Currency,
-    Account,
-    Session,
-)
+class ApiException(Exception):
+    pass

@@ -17,10 +17,11 @@
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.db import create_models
+from app.utils.client import init
 from app.utils.middleware import Middleware
 from app.routers import routers
 
@@ -37,6 +38,7 @@ app = FastAPI(
         'name': 'Apache 2.0',
         'url': 'https://www.apache.org/licenses/LICENSE-2.0.html',
     },
+    dependencies=[Depends(init)],
 )
 
 

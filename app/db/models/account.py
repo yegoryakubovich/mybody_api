@@ -27,8 +27,8 @@ from app.db.models.timezone import Timezone
 class Account(BaseModel):
     id = PrimaryKeyField()
     username = CharField(max_length=32)
-    password = CharField(max_length=32)
     password_salt = CharField(max_length=32)
+    password_hash = CharField(max_length=32)
     firstname = CharField(max_length=32)
     lastname = CharField(max_length=32)
     surname = CharField(max_length=32, null=True)

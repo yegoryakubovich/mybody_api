@@ -16,12 +16,14 @@
 
 
 from .favicon import router as router_favicon
-from .accounts import router as router_account
+from .accounts import router as router_accounts
+from .sessions import router as router_sessions
 from .countries import router as router_countries
 
 
 routers = [
     router_favicon,
-    router_account,
+    router_accounts,
+    router_sessions,
     router_countries,
 ]

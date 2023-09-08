@@ -15,9 +15,21 @@
 #
 
 
-from app.repositories.base import BaseRepository
+from peewee import DoesNotExist
+
+from app.db.models.base import BaseModel
+from app.repositories.base import BaseRepository, ModelDoesNotExist
 from app.db.models import Account, Country, Language, Timezone, Currency
-from app.utils import crypto
+from app.utils import ApiException
+from app.utils.crypto import create_salt, create_hash_by_string_and_salt
+
+
+class WrongPassword(ApiException):
+    pass
+
+
+class AccountUsernameExists(ApiException):
+    pass
 
 
 class AccountRepository(BaseRepository):
@@ -35,13 +47,16 @@ class AccountRepository(BaseRepository):
             currency: Currency,
             surname: str = None,
     ) -> Account:
-        password_salt = await crypto.create_salt()
-        password = await crypto.create_md5_by_str_and_salt(string=password, salt=password_salt)
+        if await self.is_exists(username=username):
+            raise AccountUsernameExists(f'Account with username "{username}" already exists')
+
+        password_salt = await create_salt()
+        password_hash = await create_hash_by_string_and_salt(string=password, salt=password_salt)
 
         account = Account.create(
             username=username,
-            password=password,
             password_salt=password_salt,
+            password_hash=password_hash,
             firstname=firstname,
             lastname=lastname,
             surname=surname,
@@ -54,7 +69,6 @@ class AccountRepository(BaseRepository):
             model=account,
             action='create',
             parameters={
-                'host': '0.0.0.0',
                 'username': username,
                 'firstname': firstname,
                 'lastname': lastname,
@@ -64,6 +78,7 @@ class AccountRepository(BaseRepository):
                 'timezone': timezone.name,
                 'currency': currency.name,
             },
+            with_client=True,
         )
         return account
 
@@ -75,7 +90,17 @@ class AccountRepository(BaseRepository):
 
     @staticmethod
     async def check_password(account: Account, password: str):
-        return True if account.password == await crypto.create_md5_by_str_and_salt(
+        if account.password_hash == await create_hash_by_string_and_salt(
             string=password,
             salt=account.password_salt,
-        ) else False
+        ):
+            return True
+        else:
+            raise WrongPassword('Wrong password')
+
+    @staticmethod
+    async def get_by_username(username: str) -> BaseModel:
+        try:
+            return Account.get(Account.username == username)
+        except DoesNotExist:
+            raise ModelDoesNotExist(f'Account with username "{username}" does not exist')

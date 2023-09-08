@@ -15,13 +15,16 @@
 #
 
 
+from json import dumps
+
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
 from app.repositories import ActionRepository
+from app.utils import client, ApiException
 
 
-class ModelDoesNotExist(Exception):
+class ModelDoesNotExist(ApiException):
     pass
 
 
@@ -29,7 +32,12 @@ class BaseRepository:
     model: BaseModel
     model_name: str
 
-    async def create_action(self, model: BaseModel, action: str, parameters: dict = None):
+    async def create_action(self, model: BaseModel, action: str, with_client: bool = False, parameters: dict = None):
+        if not parameters:
+            parameters = {}
+        if with_client:
+            parameters['client_host'] = client.host
+            parameters['client_device'] = dumps(client.device.__dict__)
         await ActionRepository.create(
             model=self.model.__name__.lower(),
             model_id=model.id,
@@ -45,3 +53,9 @@ class BaseRepository:
             return self.model.get(self.model.name == name)
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__} "{name}" does not exist')
+
+    async def get_by_id(self, model_id: int) -> BaseModel:
+        try:
+            return self.model.get(self.model.id == model_id)
+        except DoesNotExist:
+            raise ModelDoesNotExist(f'{self.model.__name__}.{model_id} does not exist')

@@ -15,31 +15,23 @@
 #
 
 
-from .action import Action
-from .action_parameter import ActionParameter
-from .language import Language
-from .text import Text
-from .text_translate import TextTranslate
-from .text_pack import TextPack
-from .icons import Icon
-from .country import Country
-from .timezone import Timezone
-from .currency import Currency
-from .account import Account
-from .session import Session
+from app.schemas import SessionCreateSchema
+from app.repositories import AccountRepository, SessionRepository
+from app.utils.router import Router
+from app.utils import Response
 
 
-models = (
-    Action,
-    ActionParameter,
-    Language,
-    Text,
-    TextTranslate,
-    TextPack,
-    Icon,
-    Country,
-    Timezone,
-    Currency,
-    Account,
-    Session,
+router = Router(
+    prefix='/create',
 )
+
+
+@router.get()
+async def route(account: SessionCreateSchema):
+    username = account.username
+    password = account.password
+
+    account = await AccountRepository.get_by_username(username=username)
+    token = await SessionRepository().create(account=account, password=password)
+
+    return Response(token=token)

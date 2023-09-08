@@ -15,31 +15,9 @@
 #
 
 
-from .action import Action
-from .action_parameter import ActionParameter
-from .language import Language
-from .text import Text
-from .text_translate import TextTranslate
-from .text_pack import TextPack
-from .icons import Icon
-from .country import Country
-from .timezone import Timezone
-from .currency import Currency
-from .account import Account
-from .session import Session
+from pydantic import BaseModel, Field
 
 
-models = (
-    Action,
-    ActionParameter,
-    Language,
-    Text,
-    TextTranslate,
-    TextPack,
-    Icon,
-    Country,
-    Timezone,
-    Currency,
-    Account,
-    Session,
-)
+class SessionCreateSchema(BaseModel):
+    username: str = Field(min_length=6, max_length=32)
+    password: str = Field(min_length=6, max_length=128)

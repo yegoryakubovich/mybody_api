@@ -69,6 +69,8 @@ class Router(APIRouter):
                 generate_unique_id
             ),
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
+        if not dependencies:
+            dependencies = []
         return self.api_route(
             path=path,
             response_model=response_model,
@@ -125,6 +127,8 @@ class Router(APIRouter):
                 generate_unique_id
             ),
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
+        if not dependencies:
+            dependencies = []
         return self.api_route(
             path=path,
             response_model=response_model,

@@ -16,7 +16,7 @@
 
 
 from app.repositories.action import ActionRepository
-from app.repositories.account import AccountRepository
+from app.repositories.account import AccountRepository, WrongPassword
 from app.repositories.session import SessionRepository
 from app.repositories.country import CountryRepository
 from app.repositories.language import LanguageRepository
@@ -30,6 +30,7 @@ from app.repositories.base import ModelDoesNotExist
 __all__ = [
     'ActionRepository',
     'AccountRepository',
+    'WrongPassword',
     'SessionRepository',
     'CountryRepository',
     'LanguageRepository',

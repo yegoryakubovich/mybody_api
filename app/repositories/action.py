@@ -29,9 +29,9 @@ class ActionRepository:
         action = Action.create(model=model, model_id=model_id, action=action)
         params_str = ''
         for key, value in parameters.items():
+            ActionParameter.create(action=action, key=key, value=value)
             if not value:
                 value = 'none'
-            ActionParameter.create(action=action, key=key, value=value)
             params_str += f'{key.upper()} = {value.upper()}\n'
 
         logging.debug(

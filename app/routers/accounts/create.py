@@ -15,11 +15,10 @@
 #
 
 
-from app.models import AccountModel
-from app.repositories import AccountRepository, CountryRepository, LanguageRepository, ModelDoesNotExist, \
-    TimezoneRepository, CurrencyRepository
-from app.utils.router import Router
-from app.utils.response import Response, ResponseState
+from app.schemas import AccountCreateSchema
+from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
+    CurrencyRepository
+from app.utils import Router, Response
 
 
 router = Router(
@@ -28,35 +27,23 @@ router = Router(
 
 
 @router.get()
-async def route(account: AccountModel):
+async def route(account: AccountCreateSchema):
     username = account.username
     password = account.password
     firstname = account.firstname
     lastname = account.lastname
     surname = account.surname
 
-    try:
-        country, language, timezone, currency = [
-            await repository().get_by_name(name=name)
-            for repository, name in
-            zip(
-                [CountryRepository, LanguageRepository, TimezoneRepository, CurrencyRepository],
-                [account.country, account.language, account.timezone, account.currency],
-            )
-        ]
-    except ModelDoesNotExist as e:
-        return Response(
-            state=ResponseState.error,
-            message=e.__str__(),
+    country, language, timezone, currency = [
+        await repository().get_by_name(name=name)
+        for repository, name in
+        zip(
+            [CountryRepository, LanguageRepository, TimezoneRepository, CurrencyRepository],
+            [account.country, account.language, account.timezone, account.currency],
         )
+    ]
 
     account_repository = AccountRepository()
-
-    if await account_repository.is_exists(username=username):
-        return Response(
-            state=ResponseState.error,
-            message=f'Account with username "{account.username}" already exists',
-        )
 
     await account_repository.create(
         username=username,

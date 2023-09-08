@@ -15,12 +15,46 @@
 #
 
 
+from app.repositories.account import AccountRepository
 from app.repositories.base import BaseRepository
-from app.db.models import Session
+from app.db.models import Session, Account
+from app.utils import ApiException
+from app.utils.crypto import create_salt, create_hash_by_string_and_salt
+
+
+class WrongToken(ApiException):
+    pass
 
 
 class SessionRepository(BaseRepository):
     model = Session
 
-    async def create(self) -> Session:
-        pass
+    async def create(self, account: Account, password: str) -> str:
+        await AccountRepository.check_password(account=account, password=password)
+
+        token = await create_salt()
+        token_salt = await create_salt()
+        token_hash = await create_hash_by_string_and_salt(string=token, salt=token_salt)
+
+        session = Session.create(
+            account=account,
+            token_hash=token_hash,
+            token_salt=token_salt,
+        )
+        await self.create_action(model=session, action='create', with_client=True)
+
+        token = f'{session.id:08}:{token}'
+        return token
+
+    async def get_account_by_token(self, token: str):
+        session_id_str, token = token.split(':')
+        session_id = int(session_id_str)
+
+        session: Session = await self.get_by_id(model_id=session_id)
+        if session.token_hash == await create_hash_by_string_and_salt(
+            string=token,
+            salt=session.token_salt,
+        ):
+            return session.account
+        else:
+            raise WrongToken('Wrong token')

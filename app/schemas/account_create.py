@@ -20,8 +20,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class AccountModel(BaseModel):
-    id: Optional[int] = Field(default=None)
+class AccountCreateSchema(BaseModel):
     username: str = Field(min_length=6, max_length=32)
     password: str = Field(min_length=6, max_length=128)
     firstname: str = Field(min_length=2, max_length=32)

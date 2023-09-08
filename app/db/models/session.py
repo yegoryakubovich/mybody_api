@@ -24,8 +24,8 @@ from app.db.models.base import BaseModel
 class Session(BaseModel):
     id = PrimaryKeyField()
     account = ForeignKeyField(model=Account, backref='parameters')
-    token = CharField(max_length=32)
     token_salt = CharField(max_length=32)
+    token_hash = CharField(max_length=32)
     is_deleted = BooleanField(default=False)
 
     class Meta:

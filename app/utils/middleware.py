@@ -18,10 +18,18 @@
 from fastapi import Request
 
 from app.db.db import db
+from app.utils import ApiException
+from app.utils.response import ResponseState, Response
 
 
 class Middleware:
     async def __call__(self, request: Request, call_next):
         with db:
-            response = await call_next(request)
+            try:
+                response = await call_next(request)
+            except ApiException as e:
+                response = Response(
+                    state=ResponseState.error,
+                    message=e.__str__(),
+                )
         return response

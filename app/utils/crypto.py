@@ -23,5 +23,5 @@ async def create_salt():
     return token_hex(16)
 
 
-async def create_md5_by_str_and_salt(string: str, salt: str):
+async def create_hash_by_string_and_salt(string: str, salt: str):
     return md5((string+salt).encode()).hexdigest()
