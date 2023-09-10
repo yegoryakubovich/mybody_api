@@ -17,8 +17,7 @@
 
 from app.schemas import SessionCreateSchema
 from app.repositories import AccountRepository, SessionRepository
-from app.utils.router import Router
-from app.utils import Response
+from app.utils import Response, Router
 
 
 router = Router(

@@ -15,7 +15,8 @@
 #
 
 
-from app.utils import client
+from app.schemas import SessionSchema
+from app.utils import client, use_schema
 from app.utils.router import Router
 from app.utils.response import Response
 
@@ -26,6 +27,7 @@ router = Router(
 
 
 @router.get()
+@use_schema(schema=SessionSchema)
 async def route():
     return Response(
         host=client.device.__dict__,

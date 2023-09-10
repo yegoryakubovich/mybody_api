@@ -21,6 +21,7 @@ from .router import Router
 from .response import Response, ResponseState
 from . import crypto
 from . import client
+from .use_schema import use_schema
 
 
 __all__ = [
@@ -31,4 +32,5 @@ __all__ = [
     'ResponseState',
     'crypto',
     'client',
+    'use_schema',
 ]

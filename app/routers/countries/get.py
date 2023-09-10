@@ -16,8 +16,7 @@
 
 
 from app.repositories import CountryRepository
-from app.utils.router import Router
-from app.utils.response import Response
+from app.utils import Router, Response
 
 
 router = Router(

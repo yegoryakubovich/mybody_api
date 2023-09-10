@@ -17,7 +17,7 @@
 
 from starlette.responses import FileResponse
 
-from app.utils.router import Router
+from app.utils import Router
 
 
 router = Router(

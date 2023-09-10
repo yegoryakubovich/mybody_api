@@ -15,13 +15,13 @@
 #
 
 
-from .account_create import AccountCreateSchema
-from .session import SessionSchema
-from .session_create import SessionCreateSchema
+import logging
 
 
-__all__ = [
-    'AccountCreateSchema',
-    'SessionCreateSchema',
-    'SessionSchema',
-]
+def use_schema(schema):
+    def wrapper_1(function):
+        async def wrapper_2(s: schema):
+            logging.debug(s)
+            return await function()
+        return wrapper_2
+    return wrapper_1

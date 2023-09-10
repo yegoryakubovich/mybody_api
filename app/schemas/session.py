@@ -15,13 +15,8 @@
 #
 
 
-from .account_create import AccountCreateSchema
-from .session import SessionSchema
-from .session_create import SessionCreateSchema
+from pydantic import BaseModel, Field
 
 
-__all__ = [
-    'AccountCreateSchema',
-    'SessionCreateSchema',
-    'SessionSchema',
-]
+class SessionSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
