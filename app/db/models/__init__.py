@@ -15,14 +15,24 @@
 #
 
 
+from .account_parameter import AccountParameter
+from .account_roles import AccountRole
 from .action import Action
 from .action_parameter import ActionParameter
+from .article import Article
+from .article_translate import ArticleTranslate
+from .category_article import CategoryArticle
+from .category_parameter_account import CategoryParameterAccount
 from .language import Language
-from .text import Text
-from .text_translate import TextTranslate
-from .text_pack import TextPack
+from .notification_services import NotificationService
+from .notification_services_requests import NotificationServiceRequest
+from app.db.models.text import Text
+from app.db.models.text_translate import TextTranslate
+from app.db.models.text_pack import TextPack
 from .icons import Icon
 from .country import Country
+from .parameter_account import ParameterAccount
+from .roles import Role
 from .timezone import Timezone
 from .currency import Currency
 from .account import Account
@@ -32,6 +42,7 @@ from .session import Session
 models = (
     Action,
     ActionParameter,
+
     Language,
     Text,
     TextTranslate,
@@ -42,4 +53,19 @@ models = (
     Currency,
     Account,
     Session,
+
+    NotificationService,
+    NotificationServiceRequest,
+
+    # AccountParameter
+    CategoryParameterAccount,
+    ParameterAccount,
+    AccountParameter,
+
+    CategoryArticle,
+    Article,
+    ArticleTranslate,
+
+    Role,
+    AccountRole,
 )

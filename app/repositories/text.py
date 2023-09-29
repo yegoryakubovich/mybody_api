@@ -15,25 +15,32 @@
 #
 
 
+from peewee import DoesNotExist
+
 from app.db.models import Text, Language, TextTranslate
 from app.repositories.base import BaseRepository
+from app.utils import ApiException
+
+
+class TextDoesNotExist(ApiException):
+    pass
 
 
 class TextRepository(BaseRepository):
     model = Text
 
-    async def get_value_by_key(self, key: str) -> str:
-        text = Text.get_or_none(Text.key == key)
-        if not text:
-            return 'TEXT_NOT_FOUND'
-        return await self.get_value(text=text)
+    @staticmethod
+    async def get_by_key(key: str) -> Text:
+        try:
+            return Text.get(Text.key == key)
+        except DoesNotExist:
+            raise TextDoesNotExist(f'Text with key "{key}" does not exist')
 
     @staticmethod
     async def get_value(text: Text, language: Language = None) -> str:
-        translate = TextTranslate.get_or_none(TextTranslate.text == text & TextTranslate.language == language)
-        if not translate:
-            value = text.value_default
-        else:
-            translate: TextTranslate
+        try:
+            translate = TextTranslate.get(TextTranslate.text == text & TextTranslate.language == language)
             value = translate.value
+        except DoesNotExist:
+            value = text.value_default
         return value

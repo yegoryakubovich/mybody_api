@@ -17,7 +17,26 @@
 
 from pydantic import BaseModel, Field
 
+from app.services import RoleService
+from app.utils import Router, Response
 
-class SessionCreateSchema(BaseModel):
-    username: str = Field(min_length=6, max_length=32)
-    password: str = Field(min_length=6, max_length=128)
+
+router = Router(
+    prefix='/create',
+)
+
+
+class CreateRoleSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_str: str = Field(min_length=2, max_length=128)
+    name_text_key: str = Field(min_length=2, max_length=128)
+
+
+@router.post()
+async def route(schema: CreateRoleSchema):
+    result = await RoleService().create(
+        token=schema.token,
+        id_str=schema.id_str,
+        name_text_key=schema.name_text_key,
+    )
+    return Response(**result)

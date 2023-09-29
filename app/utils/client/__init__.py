@@ -15,29 +15,16 @@
 #
 
 
-from json import JSONDecodeError
-
 from fastapi import Request
 
-from app.repositories import SessionRepository
 from app.utils.client.device import Device
 
 
 host = None
 device = None
-account = None
 
 
 async def init(request: Request = None):
-    global host, device, account
+    global host, device
     host = request.client.host
     device = Device(headers=request.headers)
-    account = None
-    try:
-        req = request
-        json = await req.json()
-        token = json.get('token')
-        if token:
-            account = await SessionRepository().get_account_by_token(token=token)
-    except JSONDecodeError:
-        pass

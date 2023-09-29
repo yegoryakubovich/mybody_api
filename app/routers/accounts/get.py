@@ -15,8 +15,10 @@
 #
 
 
-from app.schemas import SessionSchema
-from app.utils import client, use_schema
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import AccountService
 from app.utils.router import Router
 from app.utils.response import Response
 
@@ -26,9 +28,11 @@ router = Router(
 )
 
 
+class SessionSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+
+
 @router.get()
-@use_schema(schema=SessionSchema)
-async def route():
-    return Response(
-        host=client.device.__dict__,
-    )
+async def route(schema: SessionSchema = Depends()):
+    result = await AccountService().get(token=schema.token)
+    return Response(**result)

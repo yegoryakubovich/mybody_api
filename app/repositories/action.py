@@ -15,26 +15,14 @@
 #
 
 
-import logging
-
 from app.db.models import Action, ActionParameter
 
 
 class ActionRepository:
     @staticmethod
-    async def create(model: str, model_id: int, action: str, parameters: dict = None):
-        if not parameters:
-            parameters = {}
+    async def create(model: str, model_id: int, action: str) -> Action:
+        return Action.create(model=model, model_id=model_id, action=action)
 
-        action = Action.create(model=model, model_id=model_id, action=action)
-        params_str = ''
-        for key, value in parameters.items():
-            ActionParameter.create(action=action, key=key, value=value)
-            if not value:
-                value = 'none'
-            params_str += f'{key.upper()} = {value.upper()}\n'
-
-        logging.debug(
-            msg=f'ACTION: {action.model.upper()}.{action.model_id}.{action.action.upper()}. '
-                f'PARAMS: \n{params_str}',
-        )
+    @staticmethod
+    async def create_parameter(action: Action, key: str, value: str) -> ActionParameter:
+        return ActionParameter.create(action=action, key=key, value=value)

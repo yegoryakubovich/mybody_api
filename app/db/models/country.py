@@ -15,24 +15,25 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.models.language import Language
-from app.db.models.currency import Currency
-from app.db.models.timezone import Timezone
-from app.db.models.base import BaseModel
-from app.db.models.icons import Icon
-from app.db.models.text import Text
+from .language import Language
+from .currency import Currency
+from .timezone import Timezone
+from .base import BaseModel
+from .icons import Icon
+from .text import Text
 
 
 class Country(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=16)
+    id_str = CharField(max_length=16)
+    name_text = ForeignKeyField(model=Text)
     icon = ForeignKeyField(model=Icon, null=True)
     language_default = ForeignKeyField(model=Language, null=True)
     timezone_default = ForeignKeyField(model=Timezone, null=True)
     currency_default = ForeignKeyField(model=Currency, null=True)
-    text = ForeignKeyField(model=Text)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'countries'

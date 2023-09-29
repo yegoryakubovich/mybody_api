@@ -17,28 +17,21 @@
 
 from peewee import DoesNotExist
 
-from app.db.models.base import BaseModel
-from app.repositories.base import BaseRepository, ModelDoesNotExist
-from app.db.models import Account, Country, Language, Timezone, Currency
+from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService, AccountParameter
+from app.repositories import ParameterAccountRepository
 from app.utils import ApiException
-from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 
 
-class WrongPassword(ApiException):
+class AccountWithUsernameDoeNotExist(ApiException):
     pass
 
 
-class AccountUsernameExists(ApiException):
-    pass
-
-
-class AccountRepository(BaseRepository):
-    model = Account
-
+class AccountRepository:
+    @staticmethod
     async def create(
-            self,
             username: str,
-            password: str,
+            password_salt: str,
+            password_hash: str,
             firstname: str,
             lastname: str,
             country: Country,
@@ -47,12 +40,6 @@ class AccountRepository(BaseRepository):
             currency: Currency,
             surname: str = None,
     ) -> Account:
-        if await self.is_exists(username=username):
-            raise AccountUsernameExists(f'Account with username "{username}" already exists')
-
-        password_salt = await create_salt()
-        password_hash = await create_hash_by_string_and_salt(string=password, salt=password_salt)
-
         account = Account.create(
             username=username,
             password_salt=password_salt,
@@ -65,42 +52,35 @@ class AccountRepository(BaseRepository):
             timezone=timezone,
             currency=currency,
         )
-        await self.create_action(
-            model=account,
-            action='create',
-            parameters={
-                'username': username,
-                'firstname': firstname,
-                'lastname': lastname,
-                'surname': surname,
-                'country': country.name,
-                'language': language.name,
-                'timezone': timezone.name,
-                'currency': currency.name,
-            },
-            with_client=True,
-        )
         return account
 
     @staticmethod
-    async def is_exists(username: str) -> bool:
-        if Account.get_or_none(Account.username == username):
-            return True
-        return False
-
-    @staticmethod
-    async def check_password(account: Account, password: str):
-        if account.password_hash == await create_hash_by_string_and_salt(
-            string=password,
-            salt=account.password_salt,
-        ):
-            return True
-        else:
-            raise WrongPassword('Wrong password')
-
-    @staticmethod
-    async def get_by_username(username: str) -> BaseModel:
+    async def get_by_username(username: str) -> Account:
         try:
             return Account.get(Account.username == username)
         except DoesNotExist:
-            raise ModelDoesNotExist(f'Account with username "{username}" does not exist')
+            raise AccountWithUsernameDoeNotExist(f'Account @{username} does not exist')
+
+    @staticmethod
+    async def get_parameter_by_key(account: Account, key: str) -> AccountParameter:
+        parameter = ParameterAccountRepository.get_by_key(key=key)
+        return AccountParameter.get(
+            (AccountParameter.account == account) &
+            (AccountParameter.parameter == parameter)
+        )
+
+    @staticmethod
+    async def is_exist(username: str) -> bool:
+        try:
+            Account.get(Account.username == username)
+            return True
+        except DoesNotExist:
+            return False
+
+    @staticmethod
+    async def get_notification_services(account: Account, only_names=False):
+        services_active: list[NotificationService] = [
+            service for service in account.notification_services if not service.is_deleted
+        ]
+
+        return [service.name for service in services_active] if only_names else services_active

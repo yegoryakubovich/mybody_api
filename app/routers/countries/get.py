@@ -15,7 +15,7 @@
 #
 
 
-from app.repositories import CountryRepository
+from app.services import CountryService
 from app.utils import Router, Response
 
 
@@ -26,16 +26,5 @@ router = Router(
 
 @router.get()
 async def route():
-    countries = []
-
-    countries_models = await CountryRepository().get_all()
-    for country in countries_models:
-        countries.append(
-            {
-                'name': country.name,
-                'icon': country.icon,
-                'text_key': country.text.key,
-            }
-        )
-
-    return Response(countries=countries)
+    result = await CountryService().get_all()
+    return Response(**result)

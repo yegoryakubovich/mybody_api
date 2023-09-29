@@ -19,7 +19,7 @@ from datetime import datetime
 from peewee import PrimaryKeyField, CharField, BigIntegerField, DateTimeField
 from pytz import UTC
 
-from app.db.models.base import BaseModel
+from .base import BaseModel
 
 
 class Action(BaseModel):

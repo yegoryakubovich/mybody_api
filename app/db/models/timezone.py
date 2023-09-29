@@ -15,15 +15,16 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, IntegerField
+from peewee import PrimaryKeyField, CharField, IntegerField, BooleanField
 
 from app.db.models.base import BaseModel
 
 
 class Timezone(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=16)
+    id_str = CharField(max_length=16)
     deviation = IntegerField(default=0)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'timezones'

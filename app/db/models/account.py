@@ -17,11 +17,11 @@
 
 from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.models.base import BaseModel
-from app.db.models.country import Country
-from app.db.models.currency import Currency
-from app.db.models.language import Language
-from app.db.models.timezone import Timezone
+from .base import BaseModel
+from .country import Country
+from .currency import Currency
+from .language import Language
+from .timezone import Timezone
 
 
 class Account(BaseModel):
@@ -36,6 +36,7 @@ class Account(BaseModel):
     language = ForeignKeyField(model=Language)
     timezone = ForeignKeyField(model=Timezone)
     currency = ForeignKeyField(model=Currency)
+    is_active = BooleanField(default=False)
     is_deleted = BooleanField(default=False)
 
     class Meta:

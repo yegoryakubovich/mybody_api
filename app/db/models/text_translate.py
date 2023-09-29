@@ -15,7 +15,7 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
 from app.db.models.base import BaseModel
 from app.db.models.language import Language
@@ -27,6 +27,7 @@ class TextTranslate(BaseModel):
     text = ForeignKeyField(model=Text)
     language = ForeignKeyField(model=Language)
     value = CharField(max_length=1024)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'texts_translates'

@@ -15,13 +15,10 @@
 #
 
 
-from json import dumps
-
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
-from app.repositories import ActionRepository
-from app.utils import client, ApiException
+from app.utils import ApiException
 
 
 class ModelDoesNotExist(ApiException):
@@ -32,30 +29,22 @@ class BaseRepository:
     model: BaseModel
     model_name: str
 
-    async def create_action(self, model: BaseModel, action: str, with_client: bool = False, parameters: dict = None):
-        if not parameters:
-            parameters = {}
-        if with_client:
-            parameters['client_host'] = client.host
-            parameters['client_device'] = dumps(client.device.__dict__)
-        await ActionRepository.create(
-            model=self.model.__name__.lower(),
-            model_id=model.id,
-            action=action,
-            parameters=parameters,
-        )
+    def __init__(self, model: BaseModel = None):
+        if model:
+            self.model = model
 
     async def get_all(self) -> list[BaseModel]:
         return self.model.select().execute()
-
-    async def get_by_name(self, name: str) -> BaseModel:
-        try:
-            return self.model.get(self.model.name == name)
-        except DoesNotExist:
-            raise ModelDoesNotExist(f'{self.model.__name__} "{name}" does not exist')
 
     async def get_by_id(self, model_id: int) -> BaseModel:
         try:
             return self.model.get(self.model.id == model_id)
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__}.{model_id} does not exist')
+
+    async def get_by_id_str(self, id_str: str) -> BaseModel:
+        try:
+            self.model = self.model.get(self.model.id_str == id_str)
+            return self.model
+        except DoesNotExist:
+            raise ModelDoesNotExist(f'{self.model.__name__} "{id_str}" does not exist')

@@ -15,7 +15,7 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField
+from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
 
 from app.db.models import Language
 from app.db.models.base import BaseModel
@@ -24,7 +24,7 @@ from app.db.models.base import BaseModel
 class TextPack(BaseModel):
     id = PrimaryKeyField()
     language = ForeignKeyField(model=Language)
-    pack = CharField(max_length=32768)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'texts_packs'

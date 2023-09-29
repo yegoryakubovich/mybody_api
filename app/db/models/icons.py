@@ -15,15 +15,14 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField
+from peewee import PrimaryKeyField, BooleanField
 
 from app.db.models.base import BaseModel
 
 
 class Icon(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=32)
-    filename = CharField(max_length=64)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'icons'

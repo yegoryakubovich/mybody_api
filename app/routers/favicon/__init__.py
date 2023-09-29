@@ -22,10 +22,11 @@ from app.utils import Router
 
 router = Router(
     prefix='/favicon.ico',
+    include_in_schema=False,
 )
 ICON_PATH = 'assets/icons/icon.ico'
 
 
-@router.get(include_in_schema=False)
+@router.get()
 async def route():
     return FileResponse(path=ICON_PATH)

@@ -15,18 +15,18 @@
 #
 
 
-from typing import Optional
+from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
 
-from pydantic import BaseModel, Field
+from .account import Account
+from .base import BaseModel
+from .roles import Role
 
 
-class AccountCreateSchema(BaseModel):
-    username: str = Field(min_length=6, max_length=32)
-    password: str = Field(min_length=6, max_length=128)
-    firstname: str = Field(min_length=2, max_length=32)
-    lastname: str = Field(min_length=2, max_length=32)
-    surname: Optional[str] = Field(min_length=2, max_length=32, default=None)
-    country: str = Field(max_length=16)
-    language: str = Field(max_length=32)
-    timezone: str = Field(max_length=16)
-    currency: str = Field(max_length=16)
+class AccountRole(BaseModel):
+    id = PrimaryKeyField()
+    account = ForeignKeyField(model=Account, backref='roles')
+    role = ForeignKeyField(model=Role)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'accounts_roles'

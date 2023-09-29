@@ -15,14 +15,16 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField
+from peewee import PrimaryKeyField, CharField, BooleanField
 
 from app.db.models.base import BaseModel
 
 
 class Language(BaseModel):
     id = PrimaryKeyField()
+    id_str = CharField(max_length=16)
     name = CharField(max_length=32)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'languages'

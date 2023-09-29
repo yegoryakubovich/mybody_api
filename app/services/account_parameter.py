@@ -15,8 +15,8 @@
 #
 
 
-from pydantic import BaseModel, Field
+from app.services.base import BaseService
 
 
-class SessionSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
+class AccountParameterService(BaseService):
+    pass

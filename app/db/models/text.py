@@ -24,7 +24,7 @@ class Text(BaseModel):
     id = PrimaryKeyField()
     key = CharField(max_length=128)
     value_default = CharField(max_length=1024)
-    is_big = BooleanField(default=False)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'texts'

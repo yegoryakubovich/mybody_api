@@ -18,12 +18,22 @@
 from .favicon import router as router_favicon
 from .accounts import router as router_accounts
 from .sessions import router as router_sessions
+from .notifications import router as router_notifications
+from .languages import router as router_languages
 from .countries import router as router_countries
+from .currencies import router as router_currencies
+from .timezones import router as router_timezones
+from .roles import router as router_roles
 
 
 routers = [
     router_favicon,
     router_accounts,
     router_sessions,
+    router_notifications,
+    router_languages,
     router_countries,
+    router_currencies,
+    router_timezones,
+    router_roles,
 ]

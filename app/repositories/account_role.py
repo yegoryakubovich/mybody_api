@@ -15,13 +15,18 @@
 #
 
 
-from .account_create import AccountCreateSchema
-from .session import SessionSchema
-from .session_create import SessionCreateSchema
+from app.db.models import AccountRole, Account
+from app.repositories.base import BaseRepository
 
 
-__all__ = [
-    'AccountCreateSchema',
-    'SessionCreateSchema',
-    'SessionSchema',
-]
+class AccountRoleRepository(BaseRepository):
+    model = AccountRole
+
+    @staticmethod
+    async def get_roles_by_account(account: Account, only_id_str=False):
+        return [
+            account_role.role.id_str if only_id_str else account_role.role
+            for account_role in AccountRole.select().where(
+                (AccountRole.account == account) & (AccountRole.is_deleted == False)
+            )
+        ]

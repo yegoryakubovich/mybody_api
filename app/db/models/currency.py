@@ -15,7 +15,7 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
 from app.db.models.text import Text
 from app.db.models.base import BaseModel
@@ -23,8 +23,9 @@ from app.db.models.base import BaseModel
 
 class Currency(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(max_length=16)
-    text = ForeignKeyField(model=Text)
+    id_str = CharField(max_length=16)
+    name_text = ForeignKeyField(model=Text)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'currencies'

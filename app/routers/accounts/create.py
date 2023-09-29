@@ -15,9 +15,11 @@
 #
 
 
-from app.schemas import AccountCreateSchema
-from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
-    CurrencyRepository
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+from app.services import AccountService
 from app.utils import Router, Response
 
 
@@ -26,34 +28,29 @@ router = Router(
 )
 
 
-@router.get()
-async def route(account: AccountCreateSchema):
-    username = account.username
-    password = account.password
-    firstname = account.firstname
-    lastname = account.lastname
-    surname = account.surname
+class CreateAccountSchema(BaseModel):
+    username: str = Field(min_length=6, max_length=32)
+    password: str = Field(min_length=6, max_length=128)
+    firstname: str = Field(min_length=2, max_length=32)
+    lastname: str = Field(min_length=2, max_length=32)
+    surname: Optional[str] = Field(min_length=2, max_length=32, default=None)
+    country: str = Field(max_length=16)
+    language: str = Field(max_length=32)
+    timezone: str = Field(max_length=16)
+    currency: str = Field(max_length=16)
 
-    country, language, timezone, currency = [
-        await repository().get_by_name(name=name)
-        for repository, name in
-        zip(
-            [CountryRepository, LanguageRepository, TimezoneRepository, CurrencyRepository],
-            [account.country, account.language, account.timezone, account.currency],
-        )
-    ]
 
-    account_repository = AccountRepository()
-
-    await account_repository.create(
-        username=username,
-        password=password,
-        firstname=firstname,
-        lastname=lastname,
-        surname=surname,
-        country=country,
-        language=language,
-        timezone=timezone,
-        currency=currency,
+@router.post()
+async def route(schema: CreateAccountSchema):
+    result = await AccountService().create(
+        username=schema.username,
+        password=schema.password,
+        firstname=schema.firstname,
+        lastname=schema.lastname,
+        surname=schema.surname,
+        country_id_str=schema.country,
+        language_id_str=schema.language,
+        timezone_id_str=schema.timezone,
+        currency_id_str=schema.currency,
     )
-    return Response()
+    return Response(**result)

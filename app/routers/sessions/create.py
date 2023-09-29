@@ -15,8 +15,9 @@
 #
 
 
-from app.schemas import SessionCreateSchema
-from app.repositories import AccountRepository, SessionRepository
+from pydantic import BaseModel, Field
+
+from app.services import SessionService
 from app.utils import Response, Router
 
 
@@ -25,12 +26,15 @@ router = Router(
 )
 
 
-@router.get()
-async def route(account: SessionCreateSchema):
-    username = account.username
-    password = account.password
+class SessionCreateSchema(BaseModel):
+    username: str = Field(min_length=6, max_length=32)
+    password: str = Field(min_length=6, max_length=128)
 
-    account = await AccountRepository.get_by_username(username=username)
-    token = await SessionRepository().create(account=account, password=password)
 
-    return Response(token=token)
+@router.post()
+async def route(schema: SessionCreateSchema):
+    result = await SessionService().create(
+        username=schema.username,
+        password=schema.password,
+    )
+    return Response(**result)

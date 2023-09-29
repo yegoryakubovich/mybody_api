@@ -17,8 +17,8 @@
 
 from peewee import PrimaryKeyField, CharField, ForeignKeyField
 
-from app.db.models.action import Action
-from app.db.models.base import BaseModel
+from .action import Action
+from .base import BaseModel
 
 
 class ActionParameter(BaseModel):
