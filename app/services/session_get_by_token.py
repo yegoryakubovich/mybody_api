@@ -40,7 +40,7 @@ class SessionGetByTokenService(BaseService):
             raise WrongTokenFormat('Token does not match format')
         session_id = int(session_id_str)
 
-        session: Session = await SessionRepository().get_by_id(model_id=session_id)
+        session: Session = await SessionRepository().get_by_id(id_=session_id)
         if session.token_hash == await create_hash_by_string_and_salt(
             string=token,
             salt=session.token_salt,

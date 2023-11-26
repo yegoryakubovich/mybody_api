@@ -32,3 +32,5 @@ MYSQL_NAME = config_db['name']
 
 TG_BOT_USERNAME = config_tg['bot_username']
 TG_BOT_TOKEN = config_tg['bot_token']
+
+PATH_ARTICLES = 'assets/articles'

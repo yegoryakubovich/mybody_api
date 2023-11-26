@@ -19,6 +19,10 @@ from hashlib import md5
 from secrets import token_hex
 
 
+async def create_id_str():
+    return token_hex(8)
+
+
 async def create_salt():
     return token_hex(16)
 

@@ -19,6 +19,8 @@ from app.db.models import Action, ActionParameter
 
 
 class ActionRepository:
+    model = Action
+
     @staticmethod
     async def create(model: str, model_id: int, action: str) -> Action:
         return Action.create(model=model, model_id=model_id, action=action)

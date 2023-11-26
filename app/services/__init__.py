@@ -17,6 +17,8 @@
 
 from .account_check_role import AccountCheckRoleService
 from .account_parameter import AccountParameterService
+from .article import ArticleService
+from .article_translation import ArticleTranslationService
 from .category_parameter_account import CategoryParameterAccountService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
@@ -58,4 +60,6 @@ __all__ = [
     'AccountParameterService',
 
     'RoleService',
+    'ArticleService',
+    'ArticleTranslationService',
 ]

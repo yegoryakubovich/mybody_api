@@ -22,43 +22,35 @@ from app.repositories.base import BaseRepository
 from app.utils import ApiException
 
 
-class TextDoesNotExist(ApiException):
+class TextTranslationDoesNotExist(ApiException):
     pass
 
 
-class TextExist(ApiException):
+class TextTranslationExist(ApiException):
     pass
 
 
-class TextRepository(BaseRepository):
-    model = Text
-
-    async def create(self, key: str, value_default: str) -> Text:
-        try:
-            await self.get_by_key(key=key)
-            raise TextExist(f'Text with key "{key}" already exist')
-        except TextDoesNotExist:
-            return Text.create(
-                key=key,
-                value_default=value_default,
-            )
+class TextTranslationRepository(BaseRepository):
+    model = TextTranslation
 
     @staticmethod
-    async def get_by_key(key: str) -> Text:
+    async def get(text: Text, language: Language):
         try:
-            return Text.get((Text.key == key) & (Text.is_deleted == False))
-        except DoesNotExist:
-            raise TextDoesNotExist(f'Text with key "{key}" does not exist')
-
-    @staticmethod
-    async def get_value(text: Text, language: Language = None) -> str:
-        try:
-            translation = TextTranslation.get(
+            return TextTranslation.get(
                 (TextTranslation.text == text) &
                 (TextTranslation.language == language) &
                 (TextTranslation.is_deleted == False)
             )
-            value = translation.value
         except DoesNotExist:
-            value = text.value_default
-        return value
+            raise TextTranslationDoesNotExist(f'Text translation with language "{language.id_str}" does not exist')
+
+    async def create(self, text: Text, language: Language, value: str) -> TextTranslation:
+        try:
+            await self.get(text=text, language=language)
+            raise TextTranslationExist(f'Text translation with language "{language.id_str}" already exist')
+        except TextTranslationDoesNotExist:
+            return TextTranslation.create(
+                text=text,
+                language=language,
+                value=value,
+            )

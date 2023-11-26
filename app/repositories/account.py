@@ -19,6 +19,7 @@ from peewee import DoesNotExist
 
 from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService, AccountParameter
 from app.repositories import ParameterAccountRepository
+from app.repositories.base import BaseRepository
 from app.utils import ApiException
 
 
@@ -26,7 +27,9 @@ class AccountWithUsernameDoeNotExist(ApiException):
     pass
 
 
-class AccountRepository:
+class AccountRepository(BaseRepository):
+    model = Account
+
     @staticmethod
     async def create(
             username: str,

@@ -24,6 +24,7 @@ from app.db.models.text import Text
 class Article(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
+    is_hide = BooleanField(default=True)
     is_deleted = BooleanField(default=False)
 
     class Meta:

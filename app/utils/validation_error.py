@@ -15,16 +15,22 @@
 #
 
 
-from .create import router as router_create
-from .unit import router as router_unit
-from app.utils.router import Router
+from json import loads, dumps
+from urllib.request import Request
+
+from fastapi.exceptions import RequestValidationError
+
+from app.utils.response import Response, ResponseState
 
 
-router = Router(
-    prefix='/articles',
-    routes_included=[
-        router_create,
-        router_unit,
-    ],
-    tags=['Articles'],
-)
+async def validation_error(_: Request, exception: RequestValidationError):
+    try:
+        json = loads(dumps(exception.args))
+    except AttributeError:
+        json = exception
+
+    return Response(
+        state=ResponseState.error,
+        message='Validation error',
+        json=json,
+    )

@@ -20,7 +20,7 @@ from random import randint
 
 from pytz import UTC
 
-from app.db.models import NotificationServiceRequest, Account
+from app.db.models import NotificationServiceRequest, Session
 from app.repositories import VerificationRequisiteType, NotificationServiceRequestState, \
     NotificationServiceRequestRepository
 from app.repositories.account import AccountRepository
@@ -57,10 +57,12 @@ class NotificationServiceRequestService(BaseService):
     @session_required
     async def create(
             self,
-            account: Account,
+            session: Session,
             name: str,
             value: str,
     ) -> (NotificationServiceRequest, VerificationRequisite):
+        account = session.account
+
         # Checking for the presence of such services (only value) on all accounts (for phone and email)
         if (
                 name in [
@@ -107,12 +109,12 @@ class NotificationServiceRequestService(BaseService):
             model=notification_service_request,
             action='create',
             parameters={
+                'creator': f'session_{session.id}',
                 'name': name,
                 'verification_expired_datetime': verification_expired_datetime,
                 'verification_can_repeat_datetime': verification_can_repeat_datetime,
                 'state': state,
             },
-            with_client=True,
         )
 
         verification_requisite = VerificationRequisite(

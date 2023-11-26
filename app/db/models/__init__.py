@@ -20,14 +20,14 @@ from .account_roles import AccountRole
 from .action import Action
 from .action_parameter import ActionParameter
 from .article import Article
-from .article_translate import ArticleTranslate
+from .article_translation import ArticleTranslation
 from .category_article import CategoryArticle
 from .category_parameter_account import CategoryParameterAccount
 from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
 from app.db.models.text import Text
-from app.db.models.text_translate import TextTranslate
+from app.db.models.text_translation import TextTranslation
 from app.db.models.text_pack import TextPack
 from .icons import Icon
 from .country import Country
@@ -45,7 +45,7 @@ models = (
 
     Language,
     Text,
-    TextTranslate,
+    TextTranslation,
     TextPack,
     Icon,
     Country,
@@ -64,7 +64,7 @@ models = (
 
     CategoryArticle,
     Article,
-    ArticleTranslate,
+    ArticleTranslation,
 
     Role,
     AccountRole,

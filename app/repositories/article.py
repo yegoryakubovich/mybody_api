@@ -15,16 +15,17 @@
 #
 
 
-from .create import router as router_create
-from .unit import router as router_unit
-from app.utils.router import Router
+from app.db.models import Text, Article
+from app.repositories.base import BaseRepository
 
 
-router = Router(
-    prefix='/articles',
-    routes_included=[
-        router_create,
-        router_unit,
-    ],
-    tags=['Articles'],
-)
+class ArticleRepository(BaseRepository):
+    model = Article
+
+    @staticmethod
+    async def create(
+            name_text: Text,
+    ) -> Article:
+        return Article.create(
+            name_text=name_text,
+        )

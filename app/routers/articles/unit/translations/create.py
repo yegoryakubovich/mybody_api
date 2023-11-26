@@ -15,9 +15,11 @@
 #
 
 
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
-from app.services import ArticleService
+from app.services import ArticleTranslationService
 from app.utils import Router, Response
 
 
@@ -26,15 +28,18 @@ router = Router(
 )
 
 
-class ArticleCreateSchema(BaseModel):
+class ArticleTranslationCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=1, max_length=1024)
+    language: str = Field(max_length=32)
+    name: Optional[str] = Field()
 
 
 @router.post()
-async def route(schema: ArticleCreateSchema):
-    result = await ArticleService().create(
+async def route(schema: ArticleTranslationCreateSchema, article_id: int):
+    result = await ArticleTranslationService().create(
         token=schema.token,
+        article_id=article_id,
+        language_id_str=schema.language,
         name=schema.name,
     )
     return Response(**result)

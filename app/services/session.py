@@ -37,7 +37,11 @@ class SessionService(BaseService):
             token_hash=token_hash,
             token_salt=token_salt,
         )
-        await self.create_action(model=session, action='create', with_client=True)
+        await self.create_action(
+            model=session,
+            action='create',
+            with_client=True,
+        )
 
         token = f'{session.id:08}:{token}'
         return {'token': token}

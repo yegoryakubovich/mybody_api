@@ -17,6 +17,8 @@
 
 from .account_parameter import AccountParameterRepository
 from .account_role import AccountRoleRepository
+from .article import ArticleRepository
+from .article_translation import ArticleTranslationRepository
 from .category_parameter_account import CategoryParameterAccountRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
@@ -71,4 +73,7 @@ __all__ = [
 
     'RoleRepository',
     'AccountRoleRepository',
+
+    'ArticleRepository',
+    'ArticleTranslationRepository',
 ]

@@ -18,9 +18,11 @@
 import logging
 
 from fastapi import FastAPI, Depends
+from fastapi.exceptions import RequestValidationError
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.db import create_models
+from app.utils.validation_error import validation_error
 from app.utils.client import init
 from app.utils.middleware import Middleware
 from app.routers import routers
@@ -39,6 +41,7 @@ app = FastAPI(
         'url': 'https://www.apache.org/licenses/LICENSE-2.0.html',
     },
     dependencies=[Depends(init)],
+    exception_handlers={RequestValidationError: validation_error}
 )
 
 

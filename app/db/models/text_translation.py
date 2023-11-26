@@ -15,16 +15,19 @@
 #
 
 
-from .create import router as router_create
-from .unit import router as router_unit
-from app.utils.router import Router
+from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
+
+from app.db.models.base import BaseModel
+from app.db.models.language import Language
+from app.db.models.text import Text
 
 
-router = Router(
-    prefix='/articles',
-    routes_included=[
-        router_create,
-        router_unit,
-    ],
-    tags=['Articles'],
-)
+class TextTranslation(BaseModel):
+    id = PrimaryKeyField()
+    text = ForeignKeyField(model=Text, backref='translations')
+    language = ForeignKeyField(model=Language)
+    value = CharField(max_length=1024)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'texts_translations'

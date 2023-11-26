@@ -4,3 +4,5 @@ peewee
 pymysql
 pytz
 inflection
+starlette
+pydantic

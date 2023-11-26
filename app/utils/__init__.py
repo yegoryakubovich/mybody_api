@@ -22,6 +22,7 @@ from .response import Response, ResponseState
 from . import crypto
 from . import client
 from .use_schema import use_schema
+from .validation_error import validation_error
 
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     'crypto',
     'client',
     'use_schema',
+    'validation_error',
 ]

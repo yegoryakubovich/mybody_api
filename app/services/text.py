@@ -15,8 +15,35 @@
 #
 
 
+from app.db.models import Session, Text
+from app.repositories import TextRepository
 from app.services.base import BaseService
+from app.utils.decorators import session_required
 
 
 class TextService(BaseService):
-    pass
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            key: str,
+            value_default: str,
+            return_model: bool = False
+    ) -> dict | Text:
+        text = await TextRepository().create(
+            key=key,
+            value_default=value_default,
+        )
+        await self.create_action(
+            model=text,
+            action='create',
+            parameters={
+                'creator': f'session_{session.id}',
+                'value_default': value_default,
+            },
+        )
+        if return_model:
+            return text
+        return {
+            'text_id': text.id,
+        }

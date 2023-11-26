@@ -15,16 +15,19 @@
 #
 
 
-from .create import router as router_create
-from .unit import router as router_unit
+from .translations import router as router_translations
+from .get import router as router_get
+from .update import router as router_update
+from .update_md import router as router_update_md
 from app.utils.router import Router
 
 
 router = Router(
-    prefix='/articles',
+    prefix='/{article_id}',
     routes_included=[
-        router_create,
-        router_unit,
+        router_translations,
+        router_get,
+        router_update,
+        router_update_md,
     ],
-    tags=['Articles'],
 )

@@ -19,13 +19,21 @@ from app.services import AccountCheckRoleService
 from app.services.session_get_by_token import SessionGetByTokenService
 
 
-def session_required(only_account: bool = False, only_roles: list[str] = None):
+def session_required(
+        only_account: bool = False,
+        only_roles: list[str] = None,
+        can_guest: bool = False,
+):
     def inner(function):
         async def wrapper(*args, **kwargs):
+            session = kwargs.get('session')
             token = kwargs.get('token')
-            kwargs.pop('token')
+            if token or 'token' in kwargs.keys():
+                kwargs.pop('token')
 
-            session = await SessionGetByTokenService().execute(token=token)
+            if not session and not can_guest or (token and can_guest):
+                session = await SessionGetByTokenService().execute(token=token)
+
             if only_account:
                 kwargs['account'] = session.account
             else:

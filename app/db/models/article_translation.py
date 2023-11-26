@@ -22,12 +22,11 @@ from .article import Article
 from .base import BaseModel
 
 
-class ArticleTranslate(BaseModel):
+class ArticleTranslation(BaseModel):
     id = PrimaryKeyField()
-    article = ForeignKeyField(model=Article, backref='translates')
+    article = ForeignKeyField(model=Article, backref='translations')
     language = ForeignKeyField(model=Language)
-    update_required = BooleanField(default=False)
     is_deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'articles_translates'
+        db_table = 'articles_translations'

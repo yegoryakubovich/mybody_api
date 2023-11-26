@@ -24,7 +24,7 @@ from .text import Text
 class CategoryArticle(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
-    is_private = BooleanField(default=True)
+    is_hide = BooleanField(default=True)
     is_deleted = BooleanField(default=False)
 
     class Meta:

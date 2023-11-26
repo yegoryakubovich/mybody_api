@@ -29,7 +29,7 @@ class RoleAlreadyExist(ApiException):
 class RoleService(BaseService):
     model = Role
 
-    @session_required(only_roles=['admin_full'])
+    @session_required(only_roles=['create_roles'])
     async def create(
             self,
             session: Session,
@@ -49,9 +49,8 @@ class RoleService(BaseService):
             model=role,
             action='create',
             parameters={
-                'creator': f'session.{session.id}',
+                'creator': f'session_{session.id}',
                 'id_str': id_str,
             },
-            with_client=True,
         )
         return {'role_id': role.id}
