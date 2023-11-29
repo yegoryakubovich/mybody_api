@@ -19,7 +19,7 @@ from .translations import router as router_translations
 from .get import router as router_get
 from .update import router as router_update
 from .update_md import router as router_update_md
-from app.utils.router import Router
+from app.utils import Router
 
 
 router = Router(

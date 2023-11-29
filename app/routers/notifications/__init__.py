@@ -16,7 +16,7 @@
 
 
 from .services import router as router_services
-from app.utils.router import Router
+from app.utils import Router
 
 
 router = Router(

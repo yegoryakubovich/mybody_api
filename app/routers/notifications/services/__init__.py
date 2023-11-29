@@ -17,7 +17,7 @@
 
 from .request import router as router_request
 from .get import router as router_get
-from app.utils.router import Router
+from app.utils import Router
 
 
 router = Router(

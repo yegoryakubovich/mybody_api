@@ -24,6 +24,7 @@ from app.db.models.text import Text
 class Article(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
+    can_guest = BooleanField(default=False)
     is_hide = BooleanField(default=True)
     is_deleted = BooleanField(default=False)
 

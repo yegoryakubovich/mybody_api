@@ -41,13 +41,10 @@ app = FastAPI(
         'url': 'https://www.apache.org/licenses/LICENSE-2.0.html',
     },
     dependencies=[Depends(init)],
-    exception_handlers={RequestValidationError: validation_error}
+    exception_handlers={RequestValidationError: validation_error},
 )
-
-
 app.add_middleware(middleware_class=BaseHTTPMiddleware, dispatch=Middleware())
-for router in routers:
-    app.include_router(router)
+[app.include_router(router) for router in routers]
 
 
 def create_app():

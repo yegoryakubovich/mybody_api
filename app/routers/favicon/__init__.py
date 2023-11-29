@@ -24,7 +24,7 @@ router = Router(
     prefix='/favicon.ico',
     include_in_schema=False,
 )
-ICON_PATH = 'assets/icons/icon.ico'
+ICON_PATH = 'assets/icons/favicon.png'
 
 
 @router.get()

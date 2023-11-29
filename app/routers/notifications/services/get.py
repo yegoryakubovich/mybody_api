@@ -16,7 +16,7 @@
 
 
 from app.services import NotificationServiceService
-from app.utils.router import Router
+from app.utils import Router
 from app.utils.response import Response
 
 

@@ -118,7 +118,7 @@ class ArticleService(BaseService):
             action='update_md',
             parameters={
                 'updater': f'session_{session.id}',
-                'language': language.id_str if language else 'default',
+                'language': language.id_str if language else None,
             },
         )
 
@@ -136,12 +136,24 @@ class ArticleService(BaseService):
             language_id_str: str = None,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=article_id)
+
         name_text = article.name_text
         name = name_text.value_default
+
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str) if language_id_str else None
-        language_id_str = 'default'
+        language_id_str = None
 
         filename = f'{article.id}'
+
+        # Checks associated with a hidden article
+        if article.is_hide:
+            if not session:
+                raise SessionRequired(f'To read this article enter a token')
+            await AccountCheckRoleService().check_role(account=session.account, role_id_str='read_articles')
+
+        # Can guest
+        if not article.can_guest and not session:
+            raise SessionRequired(f'This article cannot be viewed by guests. Enter a token')
 
         if language:
             try:
@@ -152,14 +164,10 @@ class ArticleService(BaseService):
             except ModelDoesNotExist:
                 pass
 
-        if article.is_hide:
-            if not session:
-                raise SessionRequired(f'To read this article enter a token')
-            await AccountCheckRoleService().check_role(account=session.account, role_id_str='read_articles')
-
         with open(f'{PATH_ARTICLES}/{filename}.md', encoding='utf-8', mode='r') as md_file:
             md = md_file.read()
         return {
+            'can_guest': article.can_guest,
             'language': language_id_str,
             'name': name,
             'md': md,

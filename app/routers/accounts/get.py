@@ -19,7 +19,7 @@ from fastapi import Depends
 from pydantic import BaseModel, Field
 
 from app.services import AccountService
-from app.utils.router import Router
+from app.utils import Router
 from app.utils.response import Response
 
 
