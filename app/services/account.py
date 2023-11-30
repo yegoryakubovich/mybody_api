@@ -112,6 +112,10 @@ class AccountService(BaseService):
             'firstname': account.firstname,
             'lastname': account.lastname,
             'surname': account.surname,
+            'country': account.country.id_str,
+            'language': account.language.id_str,
+            'timezone': account.timezone.id_str,
+            'currency': account.currency.id_str,
             'roles': [account_role.role.id_str for account_role in account.roles],
         }
 
