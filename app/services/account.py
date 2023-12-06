@@ -109,6 +109,7 @@ class AccountService(BaseService):
     @session_required(only_account=True)
     async def get(self, account: Account) -> dict:
         return {
+            'username': account.username,
             'firstname': account.firstname,
             'lastname': account.lastname,
             'surname': account.surname,
