@@ -15,19 +15,30 @@
 #
 
 
-from .translations import router as router_translations
-from .get import router as router_get
-from .update import router as router_update
-from .update_md import router as router_update_md
-from app.utils import Router
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+from app.services import ArticleService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/{article_id}',
-    routes_included=[
-        router_translations,
-        router_get,
-        router_update,
-        router_update_md,
-    ],
+    prefix='/update',
 )
+
+
+class ArticleUpdateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    article_id: int = Field()
+    is_hide: Optional[bool] = Field(default=None)
+
+
+@router.post()
+async def route(schema: ArticleUpdateSchema):
+    result = await ArticleService().update(
+        token=schema.token,
+        article_id=schema.article_id,
+        is_hide=schema.is_hide,
+    )
+    return Response(**result)

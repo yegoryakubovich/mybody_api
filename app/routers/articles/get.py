@@ -17,29 +17,29 @@
 
 from typing import Optional
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import ArticleTranslationService
+from app.services import ArticleService
 from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/create',
+    prefix='/get',
 )
 
 
-class ArticleTranslationCreateSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    language: str = Field(max_length=32)
-    name: Optional[str] = Field()
+class ArticleUnitGetSchema(BaseModel):
+    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
+    article_id: int = Field()
+    language: Optional[str] = Field(max_length=32, default=None)
 
 
-@router.post()
-async def route(schema: ArticleTranslationCreateSchema, article_id: int):
-    result = await ArticleTranslationService().create(
+@router.get()
+async def route(schema: ArticleUnitGetSchema = Depends()):
+    result = await ArticleService().get(
         token=schema.token,
-        article_id=article_id,
+        article_id=schema.article_id,
         language_id_str=schema.language,
-        name=schema.name,
     )
     return Response(**result)

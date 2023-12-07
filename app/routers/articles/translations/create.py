@@ -19,25 +19,28 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from app.services import ArticleService
+from app.services import ArticleTranslationService
 from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/update',
+    prefix='/create',
 )
 
 
-class ArticleUpdateSchema(BaseModel):
+class ArticleTranslationCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    is_hide: Optional[bool] = Field(default=None)
+    article_id: int = Field()
+    language: str = Field(max_length=32)
+    name: Optional[str] = Field()
 
 
 @router.post()
-async def route(schema: ArticleUpdateSchema, article_id: int):
-    result = await ArticleService().update(
+async def route(schema: ArticleTranslationCreateSchema):
+    result = await ArticleTranslationService().create(
         token=schema.token,
-        article_id=article_id,
-        is_hide=schema.is_hide,
+        article_id=schema.article_id,
+        language_id_str=schema.language,
+        name=schema.name,
     )
     return Response(**result)

@@ -17,7 +17,6 @@
 
 from typing import Optional
 
-from fastapi import Depends
 from pydantic import BaseModel, Field
 
 from app.services import ArticleService
@@ -25,20 +24,23 @@ from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/get',
+    prefix='/md/update',
 )
 
 
-class ArticleUnitGetSchema(BaseModel):
-    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
+class ArticleUpdateMdSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    article_id: int = Field()
     language: Optional[str] = Field(max_length=32, default=None)
+    md: str = Field(min_length=0, max_length=8192)
 
 
-@router.get()
-async def route(article_id: int, schema: ArticleUnitGetSchema = Depends()):
-    result = await ArticleService().get(
+@router.post()
+async def route(schema: ArticleUpdateMdSchema):
+    result = await ArticleService().update_md(
         token=schema.token,
-        article_id=article_id,
+        article_id=schema.article_id,
         language_id_str=schema.language,
+        md=schema.md,
     )
     return Response(**result)
