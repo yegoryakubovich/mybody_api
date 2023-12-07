@@ -14,19 +14,23 @@
 # limitations under the License.
 #
 
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from app.utils import Router
+from app.services import AccountService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-    ],
-    tags=['Accounts'],
+    prefix='/username/check',
 )
+
+
+class CheckAccountUsernameSchema(BaseModel):
+    username: str = Field(min_length=6, max_length=32)
+
+
+@router.get()
+async def route(schema: CheckAccountUsernameSchema = Depends()):
+    result = await AccountService().check_username(username=schema.username)
+    return Response(**result)

@@ -39,6 +39,7 @@ class TextService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
+                'key': key,
                 'value_default': value_default,
             },
         )
@@ -47,3 +48,59 @@ class TextService(BaseService):
         return {
             'text_id': text.id,
         }
+
+    @session_required()
+    async def update(
+            self,
+            session: Session,
+            key: str,
+            value_default: str,
+            new_key: str = None,
+    ) -> dict:
+        text = await TextRepository().get_by_key(key=key)
+        await TextRepository().update(
+            text=text,
+            value_default=value_default,
+            new_key=new_key,
+        )
+
+        action_parameters = {
+            'updater': f'session_{session.id}',
+            'key': key,
+            'value_default': value_default,
+        }
+        if new_key:
+            action_parameters.update(
+                {
+                    'new_key': new_key,
+                }
+            )
+
+        await self.create_action(
+            model=text,
+            action='update',
+            parameters=action_parameters,
+        )
+
+        return {}
+
+    @session_required()
+    async def delete(
+            self,
+            session: Session,
+            key: str,
+    ) -> dict:
+        text = await TextRepository().get_by_key(key=key)
+        await TextRepository().delete(
+            text=text,
+        )
+        await self.create_action(
+            model=text,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+                'key': key,
+            },
+        )
+
+        return {}

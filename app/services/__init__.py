@@ -30,6 +30,7 @@ from .session import SessionService
 from .country import CountryService
 from .language import LanguageService
 from .session_get_by_token import SessionGetByTokenService
+from .text_translation import TextTranslationService
 from .timezone import TimezoneService
 from .currency import CurrencyService
 from .text import TextService
@@ -50,6 +51,7 @@ __all__ = [
     'CurrencyService',
 
     'TextService',
+    'TextTranslationService',
     'TextPackService',
 
     'NotificationServiceService',

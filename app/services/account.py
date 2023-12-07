@@ -106,6 +106,14 @@ class AccountService(BaseService):
         await self._is_correct_password(account=account, password=password)
         return True
 
+    @staticmethod
+    async def check_username(
+            username: str,
+    ):
+        if await AccountRepository.is_exist(username=username):
+            raise AccountUsernameExist(f'Account with username "{username}" already exist')
+        return {}
+
     @session_required(only_account=True)
     async def get(self, account: Account) -> dict:
         return {

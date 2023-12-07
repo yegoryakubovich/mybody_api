@@ -15,18 +15,17 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
 from app.utils import Router
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
 
 
 router = Router(
-    prefix='/accounts',
+    prefix='/translations',
     routes_included=[
-        router_get,
         router_create,
-        router_check_username,
+        router_update,
+        router_delete,
     ],
-    tags=['Accounts'],
 )

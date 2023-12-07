@@ -30,6 +30,7 @@ from .role import RoleRepository
 from .session import SessionRepository
 from .country import CountryRepository
 from .language import LanguageRepository
+from .text_translation import TextTranslationRepository
 from .timezone import TimezoneRepository
 from .currency import CurrencyRepository
 from .text import TextRepository
@@ -49,6 +50,7 @@ __all__ = [
     'CurrencyRepository',
 
     'TextRepository',
+    'TextTranslationRepository',
     'TextPackRepository',
 
     # Base

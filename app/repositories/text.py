@@ -33,7 +33,7 @@ class TextExist(ApiException):
 class TextRepository(BaseRepository):
     model = Text
 
-    async def create(self, key: str, value_default: str) -> Text:
+    async def create(self, key: str, value_default: str):
         try:
             await self.get_by_key(key=key)
             raise TextExist(f'Text with key "{key}" already exist')
@@ -42,6 +42,18 @@ class TextRepository(BaseRepository):
                 key=key,
                 value_default=value_default,
             )
+
+    @staticmethod
+    async def update(text: Text, value_default: str, new_key: str = None):
+        text.value_default = value_default
+        if new_key:
+            text.key = new_key
+        text.save()
+
+    @staticmethod
+    async def delete(text: Text):
+        text.is_deleted = True
+        text.save()
 
     @staticmethod
     async def get_by_key(key: str) -> Text:

@@ -15,18 +15,26 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import TextService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-    ],
-    tags=['Accounts'],
+    prefix='/delete',
 )
+
+
+class TextDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    key: str = Field(min_length=2, max_length=128)
+
+
+@router.post()
+async def route(schema: TextDeleteSchema):
+    result = await TextService().delete(
+        token=schema.token,
+        key=schema.key,
+    )
+    return Response(**result)
