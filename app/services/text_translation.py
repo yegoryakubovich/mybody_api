@@ -27,12 +27,12 @@ class TextTranslationService(BaseService):
             self,
             session: Session,
             text_key: str,
-            language_id_str: str,
+            language: str,
             value: str,
             return_model: bool = False
     ) -> dict | TextTranslation:
         text: Text = await TextRepository().get_by_key(key=text_key)
-        language: Language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        language: Language = await LanguageRepository().get_by_id_str(id_str=language)
         text_translation = await TextTranslationRepository().create(
             text=text,
             language=language,
@@ -44,7 +44,7 @@ class TextTranslationService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'text_key': text_key,
-                'language': language_id_str,
+                'language': language,
                 'value': value,
             },
         )
@@ -59,11 +59,11 @@ class TextTranslationService(BaseService):
             self,
             session: Session,
             text_key: str,
-            language_id_str: str,
+            language: str,
             value: str,
     ) -> dict:
         text: Text = await TextRepository().get_by_key(key=text_key)
-        language: Language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        language: Language = await LanguageRepository().get_by_id_str(id_str=language)
         text_translation: TextTranslation = await TextTranslationRepository().get(text=text, language=language)
         await TextTranslationRepository().update(
             text_translation=text_translation,
@@ -75,7 +75,7 @@ class TextTranslationService(BaseService):
             parameters={
                 'updater': f'session_{session.id}',
                 'text_key': text_key,
-                'language': language_id_str,
+                'language': language,
                 'value': value,
             },
         )

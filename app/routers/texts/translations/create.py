@@ -38,7 +38,7 @@ async def route(schema: TextTranslationCreateSchema):
     result = await TextTranslationService().create(
         token=schema.token,
         text_key=schema.text_key,
-        language_id_str=schema.language_id_str,
+        language=schema.language_id_str,
         value=schema.value,
     )
     return Response(**result)
