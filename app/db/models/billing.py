@@ -15,7 +15,7 @@
 #
 
 
-from peewee import CharField, ForeignKeyField, PrimaryKeyField, FloatField
+from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, FloatField
 
 from .account_service import AccountService
 from .service_cost import ServiceCost
@@ -28,6 +28,7 @@ class Billing(BaseModel):
     service_cost = ForeignKeyField(model=ServiceCost)
     cost = FloatField()
     state = CharField(max_length=64)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'billings'

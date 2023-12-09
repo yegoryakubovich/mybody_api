@@ -17,7 +17,7 @@
 
 from json import loads
 
-from peewee import CharField, PrimaryKeyField, TextField
+from peewee import BooleanField, CharField, PrimaryKeyField, TextField
 
 from .base import BaseModel
 
@@ -26,9 +26,10 @@ class Service(BaseModel):
     id = PrimaryKeyField()
     text = CharField(max_length=64)
     questions = TextField(default='[]')
+    is_deleted = BooleanField(default=False)
 
     async def get_questions(self):
-        return loads(str(self.fields))
+        return loads(str(self.questions))
 
     class Meta:
         db_table = 'services'

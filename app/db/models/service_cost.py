@@ -15,7 +15,7 @@
 #
 
 
-from peewee import FloatField, ForeignKeyField, PrimaryKeyField
+from peewee import BooleanField, FloatField, ForeignKeyField, PrimaryKeyField
 
 from .currency import Currency
 from .service import Service
@@ -27,6 +27,7 @@ class ServiceCost(BaseModel):
     service = ForeignKeyField(model=Service)
     currency = ForeignKeyField(model=Currency)
     cost = FloatField()
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         db_table = 'services_costs'
