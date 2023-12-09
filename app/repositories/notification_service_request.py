@@ -19,7 +19,7 @@ from datetime import datetime
 from enum import Enum
 
 from app.db.models import NotificationServiceRequest, Account
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class NotificationServiceRequestState(str, Enum):

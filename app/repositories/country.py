@@ -16,7 +16,7 @@
 
 
 from app.db.models import Country
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class CountryRepository(BaseRepository):

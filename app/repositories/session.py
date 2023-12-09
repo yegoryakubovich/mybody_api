@@ -15,7 +15,7 @@
 #
 
 
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 from app.db.models import Session, Account
 
 

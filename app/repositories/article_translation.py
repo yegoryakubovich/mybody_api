@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import ArticleTranslation, Article, Language
-from app.repositories.base import BaseRepository, ModelDoesNotExist
+from .base import BaseRepository, ModelDoesNotExist
 
 
 class ArticleTranslationRepository(BaseRepository):

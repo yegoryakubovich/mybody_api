@@ -15,15 +15,12 @@
 #
 
 
-from .account_parameter import AccountParameterRepository
 from .account_role import AccountRoleRepository
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
-from .category_parameter_account import CategoryParameterAccountRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
     NotificationServiceRequestRepository
-from .parameter_account import Gender, ParameterAccountType, ParameterAccountRepository
 from .action import ActionRepository
 from .account import AccountRepository
 from .role import RoleRepository
@@ -64,14 +61,6 @@ __all__ = [
     'NotificationServiceRequestState',
     'VerificationRequisiteType',
     'NotificationServiceRequestRepository',
-
-    'CategoryParameterAccountRepository',
-
-    # ParameterAccount
-    'ParameterAccountRepository',
-    'Gender',
-    'ParameterAccountType',
-    'AccountParameterRepository',
 
     'RoleRepository',
     'AccountRoleRepository',

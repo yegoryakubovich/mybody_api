@@ -36,7 +36,7 @@ class BaseRepository:
     async def get_all(self) -> list[BaseModel]:
         return self.model.select().where(self.model.is_deleted == False).execute()
 
-    async def get_by_id(self, id_: int, check_deleted=True) -> BaseModel:
+    async def get_by_id(self, id_: int) -> BaseModel:
         try:
             model = self.model.get(
                 (self.model.id == id_) &

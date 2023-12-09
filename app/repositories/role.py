@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import Role
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class RoleRepository(Role, BaseRepository):

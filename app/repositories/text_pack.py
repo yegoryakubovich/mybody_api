@@ -20,8 +20,8 @@ from json import dumps
 from peewee import DoesNotExist
 
 from app.db.models import Language, TextPack, Text
-from app.repositories import TextRepository
-from app.repositories.base import BaseRepository
+from .text import TextRepository
+from .base import BaseRepository
 from config import PATH_TEXTS_PACKS
 
 

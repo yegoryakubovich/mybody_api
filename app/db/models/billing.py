@@ -15,16 +15,16 @@
 #
 
 
-from peewee import CharField, FloatField, ForeignKeyField, PrimaryKeyField
+from peewee import CharField, ForeignKeyField, PrimaryKeyField, FloatField
 
-from .service_account import ServiceAccount
+from .account_service import AccountService
 from .service_cost import ServiceCost
 from .base import BaseModel
 
 
 class Billing(BaseModel):
     id = PrimaryKeyField()
-    service_account = ForeignKeyField(model=ServiceAccount)
+    service_account = ForeignKeyField(model=AccountService)
     service_cost = ForeignKeyField(model=ServiceCost)
     cost = FloatField()
     state = CharField(max_length=64)

@@ -16,7 +16,7 @@
 
 
 from app.db.models import Timezone
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class TimezoneRepository(BaseRepository):

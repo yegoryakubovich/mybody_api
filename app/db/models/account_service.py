@@ -15,18 +15,21 @@
 #
 
 
-from peewee import CharField, ForeignKeyField, PrimaryKeyField
+from peewee import CharField, ForeignKeyField, PrimaryKeyField, BooleanField, TextField
 
-from .form import Form
-from .service_account import ServiceAccount
+from .account import Account
+from .service import Service
 from .base import BaseModel
 
 
-class AccountForm(BaseModel):
+class AccountService(BaseModel):
     id = PrimaryKeyField()
-    service_account = ForeignKeyField(model=ServiceAccount)
-    fields = CharField(default='[]')
-    form = ForeignKeyField(model=Form)
+    account = ForeignKeyField(model=Account, backref='services')
+    service = ForeignKeyField(model=Service, backref='accounts')
+    questions = TextField(default='[]')
+    answers = TextField(default='[]')
+    state = CharField(max_length=64)
+    is_deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'accounts_forms'
+        db_table = 'accounts_services'

@@ -17,9 +17,8 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService, AccountParameter
-from app.repositories import ParameterAccountRepository
-from app.repositories.base import BaseRepository
+from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService
+from .base import BaseRepository
 from app.utils import ApiException
 
 
@@ -63,14 +62,6 @@ class AccountRepository(BaseRepository):
             return Account.get(Account.username == username)
         except DoesNotExist:
             raise AccountWithUsernameDoeNotExist(f'Account @{username} does not exist')
-
-    @staticmethod
-    async def get_parameter_by_key(account: Account, key: str) -> AccountParameter:
-        parameter = ParameterAccountRepository.get_by_key(key=key)
-        return AccountParameter.get(
-            (AccountParameter.account == account) &
-            (AccountParameter.parameter == parameter)
-        )
 
     @staticmethod
     async def is_exist(username: str) -> bool:

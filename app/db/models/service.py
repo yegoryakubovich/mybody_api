@@ -15,16 +15,20 @@
 #
 
 
-from peewee import CharField, ForeignKeyField, PrimaryKeyField
+from json import loads
 
-from .form import Form
+from peewee import CharField, PrimaryKeyField, TextField
+
 from .base import BaseModel
 
 
 class Service(BaseModel):
     id = PrimaryKeyField()
     text = CharField(max_length=64)
-    form = ForeignKeyField(model=Form)
+    questions = TextField(default='[]')
+
+    async def get_questions(self):
+        return loads(str(self.fields))
 
     class Meta:
         db_table = 'services'

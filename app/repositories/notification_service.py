@@ -19,7 +19,7 @@ from enum import Enum
 
 from peewee import DoesNotExist
 
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 from app.db.models import NotificationServiceRequest, NotificationService
 
 

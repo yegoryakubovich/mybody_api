@@ -15,11 +15,9 @@
 #
 
 
-from datetime import date
-
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
-    CurrencyRepository, ParameterAccountType, TextPackRepository
+    CurrencyRepository, TextPackRepository
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
@@ -130,18 +128,6 @@ class AccountService(BaseService):
             'roles': [account_role.role.id_str for account_role in account.roles],
             'text_pack_id': text_pack.id,
         }
-
-    @staticmethod
-    async def _get_parameter_value_by_key(account: Account, key: str):
-        parameter = await AccountRepository.get_parameter_by_key(account=account, key=key)
-        if parameter.type == ParameterAccountType.string:
-            return parameter.value
-        elif parameter.type == ParameterAccountType.integer:
-            return int(parameter.value)
-        elif parameter.type == ParameterAccountType.data:
-            return date(2023, 9, 9)
-        elif parameter.type == ParameterAccountType.gender:
-            return parameter.value
 
     @staticmethod
     async def _is_correct_password(account: Account, password: str):

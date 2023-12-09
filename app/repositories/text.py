@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import Text, Language, TextTranslation
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 from app.utils import ApiException
 
 

@@ -16,7 +16,7 @@
 
 
 from app.db.models import Language
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class LanguageRepository(BaseRepository):

@@ -16,7 +16,7 @@
 
 
 from app.db.models import AccountRole, Account
-from app.repositories.base import BaseRepository
+from .base import BaseRepository
 
 
 class AccountRoleRepository(BaseRepository):
