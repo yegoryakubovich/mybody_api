@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-
+from .account_form import AccountForm
 from .account_parameter import AccountParameter
 from .account_roles import AccountRole
 from .action import Action
@@ -23,6 +22,7 @@ from .article import Article
 from .article_translation import ArticleTranslation
 from .category_article import CategoryArticle
 from .category_parameter_account import CategoryParameterAccount
+from .form import Form
 from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
@@ -33,6 +33,9 @@ from .icons import Icon
 from .country import Country
 from .parameter_account import ParameterAccount
 from .roles import Role
+from .service import Service
+from .service_account import ServiceAccount
+from .service_cost import ServiceCost
 from .timezone import Timezone
 from .currency import Currency
 from .account import Account
@@ -56,6 +59,12 @@ models = (
 
     NotificationService,
     NotificationServiceRequest,
+
+    Form,
+    Service,
+    ServiceAccount,
+    ServiceCost,
+    AccountForm,
 
     # AccountParameter
     CategoryParameterAccount,

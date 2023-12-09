@@ -30,6 +30,10 @@ class TextExist(ApiException):
     pass
 
 
+class NoParametersRequired(ApiException):
+    pass
+
+
 class TextRepository(BaseRepository):
     model = Text
 
@@ -44,10 +48,13 @@ class TextRepository(BaseRepository):
             )
 
     @staticmethod
-    async def update(text: Text, value_default: str, new_key: str = None):
-        text.value_default = value_default
+    async def update(text: Text, value_default: str = None, new_key: str = None):
+        if value_default:
+            text.value_default = value_default
         if new_key:
             text.key = new_key
+        if not value_default and not new_key:
+            raise NoParametersRequired('One of the following parameters must be filled in: value_default, new_key')
         text.save()
 
     @staticmethod

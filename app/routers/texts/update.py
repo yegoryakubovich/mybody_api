@@ -32,7 +32,7 @@ class TextUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     key: str = Field(min_length=2, max_length=128)
     new_key: str = Field(default=None, min_length=2, max_length=128)
-    value_default: str = Field(min_length=1, max_length=1024)
+    value_default: str = Field(default=None, min_length=1, max_length=1024)
 
 
 @router.post()
@@ -40,7 +40,7 @@ async def route(schema: TextUpdateSchema):
     result = await TextService().update(
         token=schema.token,
         key=schema.key,
-        value_default=schema.value_default,
+        value_default=schema.value_default or None,
         new_key=schema.new_key or None,
     )
     return Response(**result)

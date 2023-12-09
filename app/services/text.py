@@ -54,7 +54,7 @@ class TextService(BaseService):
             self,
             session: Session,
             key: str,
-            value_default: str,
+            value_default: str = None,
             new_key: str = None,
     ) -> dict:
         text = await TextRepository().get_by_key(key=key)
@@ -67,8 +67,14 @@ class TextService(BaseService):
         action_parameters = {
             'updater': f'session_{session.id}',
             'key': key,
-            'value_default': value_default,
+
         }
+        if value_default:
+            action_parameters.update(
+                {
+                    'value_default': value_default,
+                }
+            )
         if new_key:
             action_parameters.update(
                 {
