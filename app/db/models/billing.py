@@ -17,8 +17,9 @@
 
 from peewee import CharField, FloatField, ForeignKeyField, PrimaryKeyField
 
-from app.db.models import ServiceAccount, ServiceCost
-from app.db.models.base import BaseModel
+from .service_account import ServiceAccount
+from .service_cost import ServiceCost
+from .base import BaseModel
 
 
 class Billing(BaseModel):

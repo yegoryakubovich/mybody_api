@@ -17,8 +17,8 @@
 
 from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.models.text import Text
-from app.db.models.base import BaseModel
+from .text import Text
+from .base import BaseModel
 
 
 class Currency(BaseModel):

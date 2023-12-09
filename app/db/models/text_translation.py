@@ -17,9 +17,9 @@
 
 from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.models.base import BaseModel
-from app.db.models.language import Language
-from app.db.models.text import Text
+from .base import BaseModel
+from .language import Language
+from .text import Text
 
 
 class TextTranslation(BaseModel):

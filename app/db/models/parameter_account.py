@@ -17,9 +17,9 @@
 
 from peewee import PrimaryKeyField, ForeignKeyField, CharField, BooleanField
 
-from app.db.models.category_parameter_account import CategoryParameterAccount
-from app.db.models.base import BaseModel
-from app.db.models.text import Text
+from .category_parameter_account import CategoryParameterAccount
+from .base import BaseModel
+from .text import Text
 
 
 class ParameterAccount(BaseModel):

@@ -17,8 +17,8 @@
 
 from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
 
-from app.db.models import Account
-from app.db.models.base import BaseModel
+from .account import Account
+from .base import BaseModel
 
 
 class Session(BaseModel):

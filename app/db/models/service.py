@@ -17,8 +17,8 @@
 
 from peewee import CharField, ForeignKeyField, PrimaryKeyField
 
-from app.db.models import Form
-from app.db.models.base import BaseModel
+from .form import Form
+from .base import BaseModel
 
 
 class Service(BaseModel):

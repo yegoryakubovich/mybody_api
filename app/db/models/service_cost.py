@@ -17,8 +17,9 @@
 
 from peewee import FloatField, ForeignKeyField, PrimaryKeyField
 
-from app.db.models import Currency, Service
-from app.db.models.base import BaseModel
+from .currency import Currency
+from .service import Service
+from .base import BaseModel
 
 
 class ServiceCost(BaseModel):

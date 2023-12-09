@@ -17,7 +17,7 @@
 
 from peewee import PrimaryKeyField, CharField, IntegerField, BooleanField
 
-from app.db.models.base import BaseModel
+from .base import BaseModel
 
 
 class Timezone(BaseModel):

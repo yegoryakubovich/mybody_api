@@ -19,7 +19,7 @@ from json import loads
 
 from peewee import CharField, PrimaryKeyField
 
-from app.db.models.base import BaseModel
+from .base import BaseModel
 
 
 class Form(BaseModel):

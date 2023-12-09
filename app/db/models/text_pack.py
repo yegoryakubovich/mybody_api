@@ -17,8 +17,8 @@
 
 from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
 
-from app.db.models import Language
-from app.db.models.base import BaseModel
+from .language import Language
+from .base import BaseModel
 
 
 class TextPack(BaseModel):

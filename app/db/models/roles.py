@@ -17,8 +17,8 @@
 
 from peewee import PrimaryKeyField, ForeignKeyField, CharField, BooleanField
 
-from app.db.models.base import BaseModel
-from app.db.models.text import Text
+from .base import BaseModel
+from .text import Text
 
 
 class Role(BaseModel):

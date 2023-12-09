@@ -17,7 +17,7 @@
 
 from peewee import PrimaryKeyField, BooleanField
 
-from app.db.models.base import BaseModel
+from .base import BaseModel
 
 
 class Icon(BaseModel):

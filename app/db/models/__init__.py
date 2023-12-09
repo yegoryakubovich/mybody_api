@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from .account_form import AccountForm
 from .account_parameter import AccountParameter
 from .account_roles import AccountRole
@@ -26,9 +28,9 @@ from .form import Form
 from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
-from app.db.models.text import Text
-from app.db.models.text_translation import TextTranslation
-from app.db.models.text_pack import TextPack
+from .text import Text
+from .text_translation import TextTranslation
+from .text_pack import TextPack
 from .icons import Icon
 from .country import Country
 from .parameter_account import ParameterAccount
