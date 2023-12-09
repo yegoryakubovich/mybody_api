@@ -19,7 +19,7 @@ from datetime import date
 
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
-    CurrencyRepository, ParameterAccountType
+    CurrencyRepository, ParameterAccountType, TextPackRepository
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
@@ -116,6 +116,8 @@ class AccountService(BaseService):
 
     @session_required(only_account=True)
     async def get(self, account: Account) -> dict:
+        text_pack = await TextPackRepository.get_current(language=account.language)
+
         return {
             'username': account.username,
             'firstname': account.firstname,
@@ -126,6 +128,7 @@ class AccountService(BaseService):
             'timezone': account.timezone.id_str,
             'currency': account.currency.id_str,
             'roles': [account_role.role.id_str for account_role in account.roles],
+            'text_pack_id': text_pack.id,
         }
 
     @staticmethod

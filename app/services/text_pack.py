@@ -15,36 +15,63 @@
 #
 
 
-from app.db.models import Text, Language, TextPack
-from app.repositories import TextRepository
+from json import loads
+
+from app.db.models import TextPack, Session
+from app.repositories import TextPackRepository, LanguageRepository
 from app.services.base import BaseService
+from app.utils.decorators import session_required
+from config import PATH_TEXTS_PACKS
 
 
 class TextPackService(BaseService):
     model = TextPack
 
-    async def create(self, language: Language) -> TextPack:
-        pack = {}
-        for text in Text.select():
-            key = text
-            value = TextRepository.get_value(text=text, language=language)
-            pack[key] = value
+    @staticmethod
+    async def get(language_id_str: str):
+        language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        text_pack = await TextPackRepository.get_current(language=language)
 
-        text_pack = TextPack.create(language=language, pack=pack)
+        # FIXME
+        if text_pack.id == 0:
+            return {
+                'text_pack_id': text_pack.id,
+                'text_pack': {},
+            }
+
+        with open(f'{PATH_TEXTS_PACKS}/{text_pack.id}.json', encoding='utf-8', mode='r') as md_file:
+            json_str = md_file.read()
+
+        json = loads(json_str)
+        return {
+            'text_pack_id': text_pack.id,
+            'text_pack': json,
+        }
+
+    @session_required()
+    async def create(self, session: Session, language_id_str: str):
+        language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        text_pack = await TextPackRepository.create(language=language)
         await self.create_action(
             model=text_pack,
             action='create',
             parameters={
-                'creator': 'system',
+                'creator': f'session_{session.id}',
             },
         )
-        return text_pack
+        return {
+            'id': text_pack.id,
+        }
 
-    async def create_all(self):
-        for language in Language.select():
-            await self.create(language=language)
-
-    @staticmethod
-    async def get(language: Language) -> TextPack:
-        text_pack = TextPack.select().where(TextPack.language == language).order_by(TextPack.id.desc()).get()
-        return text_pack
+    @session_required()
+    async def delete(self, session: Session, id_: int):
+        text_pack = await TextPackRepository().get_by_id(id_=id_)
+        await TextPackRepository().delete(text_pack=text_pack)
+        await self.create_action(
+            model=text_pack,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+            },
+        )
+        return {}

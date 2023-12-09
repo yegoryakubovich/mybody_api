@@ -16,22 +16,16 @@
 
 
 from app.utils import Router
-
+from .get import router as router_get
 from .create import router as router_create
-from .update import router as router_update
 from .delete import router as router_delete
-from .translations import router as router_translations
-from .packs import router as router_packs
 
 
 router = Router(
-    prefix='/texts',
+    prefix='/packs',
     routes_included=[
+        router_get,
         router_create,
-        router_update,
         router_delete,
-        router_translations,
-        router_packs,
     ],
-    tags=['Texts'],
 )

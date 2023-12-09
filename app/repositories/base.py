@@ -34,21 +34,24 @@ class BaseRepository:
             self.model = model
 
     async def get_all(self) -> list[BaseModel]:
-        return self.model.select().execute()
+        return self.model.select().where(self.model.is_deleted == False).execute()
 
     async def get_by_id(self, id_: int, check_deleted=True) -> BaseModel:
         try:
-            model = self.model.get(self.model.id == id_)
-            if check_deleted:
-                if model.is_deleted:
-                    raise DoesNotExist()
+            model = self.model.get(
+                (self.model.id == id_) &
+                (self.model.is_deleted == False)
+            )
             return model
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__}.{id_} does not exist')
 
     async def get_by_id_str(self, id_str: str) -> BaseModel:
         try:
-            self.model = self.model.get(self.model.id_str == id_str)
+            self.model = self.model.get(
+                (self.model.id_str == id_str) &
+                (self.model.is_deleted == False)
+            )
             return self.model
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__} "{id_str}" does not exist')

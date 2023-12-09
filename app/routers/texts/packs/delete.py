@@ -15,23 +15,26 @@
 #
 
 
-from app.utils import Router
+from pydantic import BaseModel, Field
 
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .translations import router as router_translations
-from .packs import router as router_packs
+from app.services import TextPackService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/texts',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_translations,
-        router_packs,
-    ],
-    tags=['Texts'],
+    prefix='/delete',
 )
+
+
+class TextPackDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_: int = Field()
+
+
+@router.post()
+async def route(schema: TextPackDeleteSchema):
+    result = await TextPackService().delete(
+        token=schema.token,
+        id_=schema.id_,
+    )
+    return Response(**result)

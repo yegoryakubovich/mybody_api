@@ -15,14 +15,50 @@
 #
 
 
-from app.db.models import Language, TextPack
+from json import dumps
+
+from peewee import DoesNotExist
+
+from app.db.models import Language, TextPack, Text
+from app.repositories import TextRepository
 from app.repositories.base import BaseRepository
+from config import PATH_TEXTS_PACKS
 
 
 class TextPackRepository(BaseRepository):
     model = TextPack
 
     @staticmethod
-    async def get_current(language: Language) -> TextPack:
-        text_pack = TextPack.select().where(TextPack.language == language).order_by(TextPack.id.desc()).get()
+    async def create(language: Language):
+        json = {}
+        for text in Text.select():
+            value = await TextRepository.get_value(text=text, language=language)
+            key = text.key
+            json[key] = value
+
+        text_pack = TextPack.create(language=language)
+
+        with open(f'{PATH_TEXTS_PACKS}/{text_pack.id}.json', encoding='utf-8', mode='w') as md_file:
+            md_file.write(dumps(json))
+
         return text_pack
+
+    async def create_all(self):
+        for language in Language.select():
+            await self.create(language=language)
+
+    @staticmethod
+    async def get_current(language: Language) -> TextPack:
+        try:
+            text_pack = TextPack.select().where(
+                (TextPack.language == language) &
+                (TextPack.is_deleted == False)
+            ).order_by(TextPack.id.desc()).get()
+            return text_pack
+        except DoesNotExist:
+            return TextPack(id=0)  # FIXME
+
+    @staticmethod
+    async def delete(text_pack: TextPack):
+        text_pack.is_deleted = True
+        text_pack.save()

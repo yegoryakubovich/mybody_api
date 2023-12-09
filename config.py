@@ -34,3 +34,4 @@ TG_BOT_USERNAME = config_tg['bot_username']
 TG_BOT_TOKEN = config_tg['bot_token']
 
 PATH_ARTICLES = 'assets/articles'
+PATH_TEXTS_PACKS = 'assets/texts_packs'

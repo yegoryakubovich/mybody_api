@@ -15,23 +15,23 @@
 #
 
 
-from app.utils import Router
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .translations import router as router_translations
-from .packs import router as router_packs
+from app.services import TextPackService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/texts',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_translations,
-        router_packs,
-    ],
-    tags=['Texts'],
+    prefix='/get',
 )
+
+
+class TextPackGetSchema(BaseModel):
+    language: str = Field(min_length=2, max_length=128)
+
+
+@router.get()
+async def route(schema: TextPackGetSchema = Depends()):
+    result = await TextPackService.get(language_id_str=schema.language)
+    return Response(**result)
