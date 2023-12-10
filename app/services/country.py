@@ -21,7 +21,7 @@ from app.services.base import BaseService
 
 class CountryService(BaseService):
     @staticmethod
-    async def get_all() -> dict:
+    async def get_list() -> dict:
         # FIXME
         countries = {
             'countries': [
@@ -35,7 +35,7 @@ class CountryService(BaseService):
                     'currency_default_id_str': country.currency_default.id_str,
 
                 }
-                for country in await CountryRepository().get_all()
+                for country in await CountryRepository().get_list()
             ],
         }
         return countries

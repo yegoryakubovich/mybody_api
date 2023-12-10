@@ -15,16 +15,25 @@
 #
 
 
-from app.services import TimezoneService
-from app.utils import Router, Response
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import TextService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/get',
+    prefix='/list/get',
 )
 
 
+class TextListGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+
+
 @router.get()
-async def route():
-    result = await TimezoneService().get_list()
+async def route(schema: TextListGetSchema = Depends()):
+    result = await TextService().get_list(
+        token=schema.token,
+    )
     return Response(**result)

@@ -21,14 +21,14 @@ from app.services.base import BaseService
 
 class CurrencyService(BaseService):
     @staticmethod
-    async def get_all() -> dict:
+    async def get_list() -> dict:
         currencies = {
             'currencies': [
                 {
                     'id': currency.id,
                     'id_str': currency.id_str,
                 }
-                for currency in await CurrencyRepository().get_all()
+                for currency in await CurrencyRepository().get_list()
             ],
         }
         return currencies

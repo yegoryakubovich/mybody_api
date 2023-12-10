@@ -26,5 +26,5 @@ router = Router(
 
 @router.get()
 async def route():
-    result = await LanguageService().get_all()
+    result = await LanguageService().get_list()
     return Response(**result)

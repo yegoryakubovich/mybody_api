@@ -21,7 +21,7 @@ from app.services.base import BaseService
 
 class LanguageService(BaseService):
     @staticmethod
-    async def get_all() -> dict:
+    async def get_list() -> dict:
         languages = {
             'languages': [
                 {
@@ -29,7 +29,7 @@ class LanguageService(BaseService):
                     'id_str': language.id_str,
                     'name': language.name,
                 }
-                for language in await LanguageRepository().get_all()
+                for language in await LanguageRepository().get_list()
             ],
         }
         return languages

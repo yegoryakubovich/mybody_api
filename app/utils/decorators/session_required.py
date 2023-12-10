@@ -23,6 +23,7 @@ def session_required(
         only_account: bool = False,
         only_roles: list[str] = None,
         can_guest: bool = False,
+        return_model: bool = True,
 ):
     def inner(function):
         async def wrapper(*args, **kwargs):
@@ -34,10 +35,11 @@ def session_required(
             if not session and not can_guest or (token and can_guest):
                 session = await SessionGetByTokenService().execute(token=token)
 
-            if only_account:
-                kwargs['account'] = session.account
-            else:
-                kwargs['session'] = session
+            if return_model:
+                if only_account:
+                    kwargs['account'] = session.account
+                else:
+                    kwargs['session'] = session
 
             if only_roles:
                 for role in only_roles:

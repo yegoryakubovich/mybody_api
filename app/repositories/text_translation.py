@@ -44,6 +44,13 @@ class TextTranslationRepository(BaseRepository):
         except DoesNotExist:
             raise TextTranslationDoesNotExist(f'Text translation with language "{language.id_str}" does not exist')
 
+    @staticmethod
+    async def get_list_by_text(text: Text) -> list[TextTranslation]:
+        return TextTranslation.select().where(
+            (TextTranslation.text == text) &
+            (TextTranslation.is_deleted == False)
+        ).execute()
+
     async def create(self, text: Text, language: Language, value: str) -> TextTranslation:
         try:
             await self.get(text=text, language=language)

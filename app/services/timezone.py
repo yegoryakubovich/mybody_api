@@ -21,7 +21,7 @@ from app.services.base import BaseService
 
 class TimezoneService(BaseService):
     @staticmethod
-    async def get_all() -> dict:
+    async def get_list() -> dict:
         timezones = {
             'timezones': [
                 {
@@ -29,7 +29,7 @@ class TimezoneService(BaseService):
                     'id_str': timezone.id_str,
                     'deviation': timezone.deviation
                 }
-                for timezone in await TimezoneRepository().get_all()
+                for timezone in await TimezoneRepository().get_list()
             ],
         }
         return timezones

@@ -16,19 +16,46 @@
 
 
 from app.db.models import Session, Text
-from app.repositories import TextRepository
+from app.repositories import TextRepository, TextTranslationRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 
 
 class TextService(BaseService):
+    @session_required(return_model=False)
+    async def get_list(
+            self,
+    ) -> dict:
+        texts_list = []
+
+        texts = await TextRepository().get_list()
+        for text in texts:
+            text: Text
+            translations = await TextTranslationRepository().get_list_by_text(text=text)
+            texts_list.append(
+                {
+                    'key': text.key,
+                    'value_default': text.value_default,
+                    'translates': [
+                        {
+                            'language': translation.language.id_str,
+                            'value': translation.value,
+                        }
+                        for translation in translations
+                    ],
+                }
+            )
+        return {
+            'texts': texts_list,
+        }
+
     @session_required()
     async def create(
             self,
             session: Session,
             key: str,
             value_default: str,
-            return_model: bool = False
+            return_model: bool = False,
     ) -> dict | Text:
         text = await TextRepository().create(
             key=key,
@@ -45,9 +72,7 @@ class TextService(BaseService):
         )
         if return_model:
             return text
-        return {
-            'text_id': text.id,
-        }
+        return {}
 
     @session_required()
     async def update(

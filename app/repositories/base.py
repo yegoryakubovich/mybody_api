@@ -33,7 +33,7 @@ class BaseRepository:
         if model:
             self.model = model
 
-    async def get_all(self) -> list[BaseModel]:
+    async def get_list(self) -> list[BaseModel]:
         return self.model.select().where(self.model.is_deleted == False).execute()
 
     async def get_by_id(self, id_: int) -> BaseModel:
