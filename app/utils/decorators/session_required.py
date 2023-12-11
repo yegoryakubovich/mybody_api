@@ -15,15 +15,15 @@
 #
 
 
-from app.services import AccountCheckRoleService
+from app.services import AccountRoleService
 from app.services.session_get_by_token import SessionGetByTokenService
 
 
 def session_required(
-        only_account: bool = False,
-        only_roles: list[str] = None,
-        can_guest: bool = False,
         return_model: bool = True,
+        return_account: bool = False,
+        permissions: list[str] = None,
+        can_guest: bool = False,
 ):
     def inner(function):
         async def wrapper(*args, **kwargs):
@@ -36,14 +36,13 @@ def session_required(
                 session = await SessionGetByTokenService().execute(token=token)
 
             if return_model:
-                if only_account:
+                if return_account:
                     kwargs['account'] = session.account
                 else:
                     kwargs['session'] = session
 
-            if only_roles:
-                for role in only_roles:
-                    await AccountCheckRoleService().check_role(account=session.account, role_id_str=role)
+                for permission in permissions or []:
+                    await AccountRoleService().check_permission(account=session.account, id_str=permission)
 
             return await function(*args, **kwargs)
         return wrapper

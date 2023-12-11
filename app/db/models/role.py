@@ -15,9 +15,16 @@
 #
 
 
-from app.services.base import BaseService
+from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
+
+from .base import BaseModel
+from .text import Text
 
 
-class ParameterAccountService(BaseService):
-    pass
+class Role(BaseModel):
+    id = PrimaryKeyField()
+    name_text = ForeignKeyField(model=Text)
+    is_deleted = BooleanField(default=False)
 
+    class Meta:
+        db_table = 'roles'

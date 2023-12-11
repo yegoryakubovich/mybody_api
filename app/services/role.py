@@ -29,7 +29,7 @@ class RoleAlreadyExist(ApiException):
 class RoleService(BaseService):
     model = Role
 
-    @session_required(only_roles=['create_roles'])
+    @session_required(permissions=['create_roles'])
     async def create(
             self,
             session: Session,
@@ -42,7 +42,6 @@ class RoleService(BaseService):
         name_text = await TextRepository().get_by_key(key=name_text_key)
 
         role = await RoleRepository.create(
-            id_str=id_str,
             name_text=name_text,
         )
         await self.create_action(

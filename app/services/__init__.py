@@ -15,14 +15,11 @@
 #
 
 
-from .account_check_role import AccountCheckRoleService
-from .account_parameter import AccountParameterService
+from .account_role import AccountRoleService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
-from .category_parameter_account import CategoryParameterAccountService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
-from .parameter_account import ParameterAccountService
 from .action import ActionService
 from .account import AccountService, WrongPassword
 from .role import RoleService
@@ -40,7 +37,6 @@ from .text_pack import TextPackService
 __all__ = [
     'ActionService',
     'AccountService',
-    'AccountCheckRoleService',
 
     'SessionService',
     'SessionGetByTokenService',
@@ -57,11 +53,9 @@ __all__ = [
     'NotificationServiceService',
     'NotificationServiceRequestService',
 
-    'CategoryParameterAccountService',
-    'ParameterAccountService',
-    'AccountParameterService',
-
     'RoleService',
+    'AccountRoleService',
+
     'ArticleService',
     'ArticleTranslationService',
 ]

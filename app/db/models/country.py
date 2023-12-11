@@ -21,7 +21,6 @@ from .language import Language
 from .currency import Currency
 from .timezone import Timezone
 from .base import BaseModel
-from .icons import Icon
 from .text import Text
 
 
@@ -29,7 +28,6 @@ class Country(BaseModel):
     id = PrimaryKeyField()
     id_str = CharField(max_length=16)
     name_text = ForeignKeyField(model=Text)
-    icon = ForeignKeyField(model=Icon, null=True)
     language_default = ForeignKeyField(model=Language, null=True)
     timezone_default = ForeignKeyField(model=Timezone, null=True)
     currency_default = ForeignKeyField(model=Currency, null=True)

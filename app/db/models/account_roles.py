@@ -19,7 +19,7 @@ from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
 
 from .account import Account
 from .base import BaseModel
-from .roles import Role
+from .role import Role
 
 
 class AccountRole(BaseModel):

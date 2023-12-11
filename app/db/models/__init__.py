@@ -26,13 +26,14 @@ from .category_parameter_account import CategoryParameterAccount
 from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
+from .permission import Permission
+from .role_permission import RolePermission
 from .text import Text
 from .text_translation import TextTranslation
 from .text_pack import TextPack
-from .icons import Icon
 from .country import Country
 from .parameter_account import ParameterAccount
-from .roles import Role
+from .role import Role
 from .service import Service
 from .account_service import AccountService
 from .service_cost import ServiceCost
@@ -50,7 +51,6 @@ models = (
     Text,
     TextTranslation,
     TextPack,
-    Icon,
     Country,
     Timezone,
     Currency,
@@ -73,6 +73,9 @@ models = (
     Article,
     ArticleTranslation,
 
+    # Roles & permisiions
     Role,
+    Permission,
+    RolePermission,
     AccountRole,
 )

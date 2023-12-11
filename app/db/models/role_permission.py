@@ -15,9 +15,18 @@
 #
 
 
-from app.services.base import BaseService
+from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
+
+from . import Permission
+from .base import BaseModel
+from .role import Role
 
 
-class CategoryParameterAccountService(BaseService):
-    pass
+class RolePermission(BaseModel):
+    id = PrimaryKeyField()
+    role = ForeignKeyField(model=Role)
+    permission = ForeignKeyField(model=Permission)
+    is_deleted = BooleanField(default=False)
 
+    class Meta:
+        db_table = 'roles_permissions'

@@ -15,27 +15,29 @@
 #
 
 
-from peewee import DoesNotExist
-
-from app.db.models import Role
+from app.db.models import Role, RolePermission, Permission
 from .base import BaseRepository
 
 
-class RoleRepository(Role, BaseRepository):
-    model = Role
+class RolePermissionRepository(Role, BaseRepository):
+    model = RolePermission
 
     @staticmethod
     async def create(
-            name_text: str,
-    ) -> Role:
-        return Role.create(
-            name_text=name_text,
+            role: Role,
+            permission: Permission,
+    ) -> RolePermission:
+        return RolePermission.create(
+            role=role,
+            permission=permission,
         )
 
     @staticmethod
-    async def is_exist(id_str: str) -> bool:
-        try:
-            Role.get(Role.id_str == id_str)
-            return True
-        except DoesNotExist:
-            return False
+    async def get_permissions_by_role(role: Role, only_id_str=False) -> list[str]:
+        return [
+            role_permission.permission.id_str if only_id_str else role_permission.permission
+            for role_permission in RolePermission.select().where(
+                (RolePermission.role == role) &
+                (RolePermission.is_deleted == False)
+            )
+        ]

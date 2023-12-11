@@ -18,6 +18,7 @@
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
     CurrencyRepository, TextPackRepository
+from app.services import AccountRoleService
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
@@ -112,9 +113,10 @@ class AccountService(BaseService):
             raise AccountUsernameExist(f'Account with username "{username}" already exist')
         return {}
 
-    @session_required(only_account=True)
+    @session_required(return_account=True)
     async def get(self, account: Account) -> dict:
         text_pack = await TextPackRepository.get_current(language=account.language)
+        permissions = await AccountRoleService.get_permissions(account=account)
 
         return {
             'username': account.username,
@@ -125,7 +127,7 @@ class AccountService(BaseService):
             'language': account.language.id_str,
             'timezone': account.timezone.id_str,
             'currency': account.currency.id_str,
-            'roles': [account_role.role.id_str for account_role in account.roles],
+            'permissions': permissions,
             'text_pack_id': text_pack.id,
         }
 

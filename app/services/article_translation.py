@@ -29,7 +29,7 @@ class ArticleTranslationExist(ApiException):
 
 
 class ArticleTranslationService(BaseService):
-    @session_required(only_roles=['articles'])
+    @session_required(permissions=['articles'])
     async def create(
             self,
             session: Session,

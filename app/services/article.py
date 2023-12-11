@@ -18,7 +18,7 @@
 from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository, ModelDoesNotExist, \
     TextRepository
-from app.services import AccountCheckRoleService
+from app.services import AccountRoleService
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils import ApiException
@@ -32,7 +32,7 @@ class SessionRequired(ApiException):
 
 
 class ArticleService(BaseService):
-    @session_required(only_roles=['articles'])
+    @session_required(permissions=['articles'])
     async def create(
             self,
             session: Session,
@@ -68,7 +68,7 @@ class ArticleService(BaseService):
 
         return {'article_id': article.id}
 
-    @session_required(only_roles=['articles'])
+    @session_required(permissions=['articles'])
     async def update(
             self,
             session: Session,
@@ -97,7 +97,7 @@ class ArticleService(BaseService):
 
         return {}
 
-    @session_required(only_roles=['articles'])
+    @session_required(permissions=['articles'])
     async def update_md(
             self,
             session: Session,
@@ -149,7 +149,7 @@ class ArticleService(BaseService):
         if article.is_hide:
             if not session:
                 raise SessionRequired(f'To read this article enter a token')
-            await AccountCheckRoleService().check_role(account=session.account, role_id_str='read_articles')
+            await AccountRoleService().check_permission(account=session.account, id_str='read_articles')
 
         # Can guest
         if not article.can_guest and not session:

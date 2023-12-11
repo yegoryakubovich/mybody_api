@@ -21,11 +21,11 @@ from .base import BaseModel
 from .text import Text
 
 
-class Role(BaseModel):
+class Permission(BaseModel):
     id = PrimaryKeyField()
     id_str = CharField(max_length=128)
     name_text = ForeignKeyField(model=Text)
     is_deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'roles'
+        db_table = 'permissions'

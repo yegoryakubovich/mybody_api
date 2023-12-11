@@ -15,7 +15,8 @@
 #
 
 
-from app.db.models import AccountRole, Account
+from app.db.models import AccountRole, Account, Permission
+from .role_permission import RolePermissionRepository
 from .base import BaseRepository
 
 
@@ -23,10 +24,16 @@ class AccountRoleRepository(BaseRepository):
     model = AccountRole
 
     @staticmethod
-    async def get_roles_by_account(account: Account, only_id_str=False):
-        return [
-            account_role.role.id_str if only_id_str else account_role.role
-            for account_role in AccountRole.select().where(
-                (AccountRole.account == account) & (AccountRole.is_deleted == False)
+    async def get_account_permissions(account: Account, only_id_str=False) -> list[str | Permission]:
+        permissions = []
+
+        for account_role in AccountRole.select().where(
+                (AccountRole.account == account) &
+                (AccountRole.is_deleted == False)
+        ):
+            permissions += await RolePermissionRepository.get_permissions_by_role(
+                role=account_role.role,
+                only_id_str=only_id_str,
             )
-        ]
+
+        return permissions
