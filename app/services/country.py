@@ -29,7 +29,6 @@ class CountryService(BaseService):
                     'id': country.id,
                     'id_str': country.id_str,
                     'name_text_key': country.name_text.key,
-                    'icon_id': country.icon.id if country.icon else 'NONE',
                     'language_default_id_str': country.language_default.id_str,
                     'timezone_default_id_str': country.timezone_default.id_str,
                     'currency_default_id_str': country.currency_default.id_str,
