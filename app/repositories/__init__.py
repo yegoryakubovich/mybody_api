@@ -25,6 +25,7 @@ from .action import ActionRepository
 from .account import AccountRepository
 from .role import RoleRepository
 from .role_permission import RolePermissionRepository
+from .service import ServiceRepository
 from .session import SessionRepository
 from .country import CountryRepository
 from .language import LanguageRepository
@@ -50,6 +51,8 @@ __all__ = [
     'TextRepository',
     'TextTranslationRepository',
     'TextPackRepository',
+
+    'ServiceRepository',
 
     # Base
     'ModelDoesNotExist',

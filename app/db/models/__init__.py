@@ -21,6 +21,7 @@ from .action import Action
 from .action_parameter import ActionParameter
 from .article import Article
 from .article_translation import ArticleTranslation
+from .billing import Billing
 from .category_article import CategoryArticle
 from .category_parameter_account import CategoryParameterAccount
 from .language import Language
@@ -63,6 +64,7 @@ models = (
     Service,
     ServiceCost,
     AccountService,
+    Billing,
 
     # AccountParameter
     CategoryParameterAccount,

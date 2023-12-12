@@ -26,6 +26,7 @@ from .timezones import router as router_timezones
 from .roles import router as router_roles
 from .articles import router as router_articles
 from .texts import router as router_texts
+from .services import router as router_services
 
 
 routers = [
@@ -40,4 +41,5 @@ routers = [
     router_roles,
     router_articles,
     router_texts,
+    router_services,
 ]

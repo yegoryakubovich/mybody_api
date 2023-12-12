@@ -32,7 +32,6 @@ class CountryService(BaseService):
                     'language_default_id_str': country.language_default.id_str,
                     'timezone_default_id_str': country.timezone_default.id_str,
                     'currency_default_id_str': country.currency_default.id_str,
-
                 }
                 for country in await CountryRepository().get_list()
             ],

@@ -23,6 +23,7 @@ from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
 from .account import AccountService, WrongPassword
 from .role import RoleService
+from .service import ServiceService
 from .session import SessionService
 from .country import CountryService
 from .language import LanguageService
@@ -45,6 +46,7 @@ __all__ = [
     'LanguageService',
     'TimezoneService',
     'CurrencyService',
+    'ServiceService',
 
     'TextService',
     'TextTranslationService',

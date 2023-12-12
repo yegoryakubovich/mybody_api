@@ -15,23 +15,20 @@
 #
 
 
-from json import loads
+from app.utils import Router
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, TextField
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
+from .get import router as router_get
 
-from .text import Text
-from .base import BaseModel
-
-
-class Service(BaseModel):
-    id = PrimaryKeyField()
-    id_str = CharField(max_length=64)
-    name_text = ForeignKeyField(model=Text)
-    questions = CharField(default='[]', max_length=8192)
-    is_deleted = BooleanField(default=False)
-
-    async def get_questions(self):
-        return loads(str(self.questions))
-
-    class Meta:
-        db_table = 'services'
+router = Router(
+    prefix='/services',
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+        router_get,
+    ],
+    tags=['Services']
+)
