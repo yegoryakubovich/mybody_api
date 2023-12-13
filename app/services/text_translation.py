@@ -87,10 +87,10 @@ class TextTranslationService(BaseService):
             self,
             session: Session,
             text_key: str,
-            language_id_str: str,
+            language: str,
     ) -> dict:
         text: Text = await TextRepository().get_by_key(key=text_key)
-        language: Language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        language: Language = await LanguageRepository().get_by_id_str(id_str=language)
         text_translation: TextTranslation = await TextTranslationRepository().get(text=text, language=language)
         await TextTranslationRepository().delete(
             text_translation=text_translation,
@@ -101,7 +101,7 @@ class TextTranslationService(BaseService):
             parameters={
                 'deleter': f'session_{session.id}',
                 'text_key': text_key,
-                'language': language_id_str,
+                'language': language,
             },
         )
 

@@ -29,7 +29,7 @@ router = Router(
 class TextTranslationDeleteSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     text_key: str = Field(min_length=2, max_length=128)
-    language_id_str: str = Field(min_length=2, max_length=128)
+    language: str = Field(min_length=2, max_length=128)
 
 
 @router.post()
@@ -37,6 +37,6 @@ async def route(schema: TextTranslationDeleteSchema):
     result = await TextTranslationService().delete(
         token=schema.token,
         text_key=schema.text_key,
-        language_id_str=schema.language_id_str,
+        language=schema.language,
     )
     return Response(**result)
