@@ -15,18 +15,12 @@
 #
 
 
-from peewee import DoesNotExist
-
 from app.db.models import Service, Text
 from .base import BaseRepository
 from app.utils import ApiException
 
 
-class ServiceExist(ApiException):
-    pass
-
-
-class NoParametersRequired(ApiException):
+class NoRequiredParameters(ApiException):
     pass
 
 
@@ -39,7 +33,6 @@ class ServiceRepository(BaseRepository):
             name_text: Text,
             questions: str = None,
     ):
-        print(id_str, name_text, questions, 'debug')
         return Service.create(
             id_str=id_str,
             name_text=name_text,
@@ -55,7 +48,7 @@ class ServiceRepository(BaseRepository):
         if questions:
             service.questions = questions
         if not name and not questions:
-            raise NoParametersRequired('One of the following parameters must be filled in: name, questions')
+            raise NoRequiredParameters('One of the following parameters must be filled in: name, questions')
         service.save()
 
     @staticmethod

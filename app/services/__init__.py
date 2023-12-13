@@ -16,6 +16,7 @@
 
 
 from .account_role import AccountRoleService
+from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
 from .notification_service import NotificationServiceService
@@ -38,6 +39,7 @@ from .text_pack import TextPackService
 __all__ = [
     'ActionService',
     'AccountService',
+    'AccountServiceService',
 
     'SessionService',
     'SessionGetByTokenService',
@@ -47,6 +49,7 @@ __all__ = [
     'TimezoneService',
     'CurrencyService',
     'ServiceService',
+
 
     'TextService',
     'TextTranslationService',

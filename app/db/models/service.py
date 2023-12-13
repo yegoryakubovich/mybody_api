@@ -17,7 +17,7 @@
 
 from json import loads
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, TextField
+from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField
 
 from .text import Text
 from .base import BaseModel

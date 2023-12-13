@@ -30,7 +30,7 @@ class TextExist(ApiException):
     pass
 
 
-class NoParametersRequired(ApiException):
+class NoRequiredParameters(ApiException):
     pass
 
 
@@ -54,7 +54,7 @@ class TextRepository(BaseRepository):
         if new_key:
             text.key = new_key
         if not value_default and not new_key:
-            raise NoParametersRequired('One of the following parameters must be filled in: value_default, new_key')
+            raise NoRequiredParameters('One of the following parameters must be filled in: value_default, new_key')
         text.save()
 
     @staticmethod

@@ -75,7 +75,7 @@ models = (
     Article,
     ArticleTranslation,
 
-    # Roles & permisiions
+    # Roles & permissions
     Role,
     Permission,
     RolePermission,
