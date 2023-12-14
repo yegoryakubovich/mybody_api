@@ -17,30 +17,22 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceService
+from app.services import ServiceCostService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/create',
+    prefix='/list/get'
 )
 
 
-class AccountServiceCreateSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    account_username: str = Field(min_length=6, max_length=32)
+class ServiceCostGetListSchema(BaseModel):
     service_id_str: str = Field(min_length=2, max_length=64)
-    answers: str = Field(min_length=2, max_length=8192)
-    state: str = Field(min_length=2, max_length=128)
 
 
 @router.post()
-async def route(schema: AccountServiceCreateSchema):
-    result = await AccountServiceService().create(
-        token=schema.token,
-        account_username=schema.account_username,
+async def route(schema: ServiceCostGetListSchema):
+    result = await ServiceCostService().get_list_by_service(
         service_id_str=schema.service_id_str,
-        answers=schema.answers,
-        state=schema.state,
     )
     return Response(**result)

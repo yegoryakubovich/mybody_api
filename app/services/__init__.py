@@ -25,6 +25,7 @@ from .action import ActionService
 from .account import AccountService, WrongPassword
 from .role import RoleService
 from .service import ServiceService
+from .service_cost import ServiceCostService
 from .session import SessionService
 from .country import CountryService
 from .language import LanguageService
@@ -48,8 +49,9 @@ __all__ = [
     'LanguageService',
     'TimezoneService',
     'CurrencyService',
-    'ServiceService',
 
+    'ServiceService',
+    'ServiceCostService',
 
     'TextService',
     'TextTranslationService',
