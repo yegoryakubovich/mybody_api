@@ -124,8 +124,12 @@ class ServiceService(BaseService):
             session: Session,
             id_str: str,
     ) -> dict:
-        service = await ServiceRepository().get_by_id_str(id_str=id_str)
+        service: Service = await ServiceRepository().get_by_id_str(id_str=id_str)
         await ServiceRepository().delete(service=service)
+        await TextService().delete(
+            session=session,
+            key=f'service_{service.id_str}',
+        )
         await self.create_action(
             model=service,
             action='delete',
