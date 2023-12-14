@@ -36,7 +36,7 @@ class TextService(BaseService):
                 {
                     'key': text.key,
                     'value_default': text.value_default,
-                    'translates': [
+                    'translations': [
                         {
                             'language': translation.language.id_str,
                             'value': translation.value,

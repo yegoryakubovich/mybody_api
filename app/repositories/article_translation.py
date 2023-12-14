@@ -38,6 +38,13 @@ class ArticleTranslationRepository(BaseRepository):
             raise ModelDoesNotExist(f'Article (id {article.id}) has no translation into {language.id_str} language')
 
     @staticmethod
+    async def get_list_by_article(article: Article) -> list[ArticleTranslation]:
+        return ArticleTranslation.select().where(
+            (ArticleTranslation.article == article) &
+            (ArticleTranslation.is_deleted == False)
+        ).execute()
+
+    @staticmethod
     async def create(
             article: Article,
             language: Language,

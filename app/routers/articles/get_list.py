@@ -15,24 +15,27 @@
 #
 
 
-from .create import router as router_create
-from .translations import router as router_translations
-from .get_list import router as router_get_list
-from .get import router as router_get
-from .update import router as router_update
-from .update_md import router as router_update_md
-from app.utils import Router
+from typing import Optional
+
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import ArticleService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/articles',
-    routes_included=[
-        router_create,
-        router_translations,
-        router_get_list,
-        router_get,
-        router_update,
-        router_update_md,
-    ],
-    tags=['Articles'],
+    prefix='/list/get',
 )
+
+
+class ArticleUnitGetSchema(BaseModel):
+    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
+
+
+@router.get()
+async def route(schema: ArticleUnitGetSchema = Depends()):
+    result = await ArticleService().get_list(
+        token=schema.token,
+    )
+    return Response(**result)

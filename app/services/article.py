@@ -128,6 +128,31 @@ class ArticleService(BaseService):
 
         return {}
 
+    @session_required(return_model=False)
+    async def get_list(self):
+        articles_list = []
+
+        articles = await ArticleRepository().get_list()
+        for article in articles:
+            article: Article
+            translations = await ArticleTranslationRepository().get_list_by_article(article=article)
+            articles_list.append(
+                {
+                    'name_text': article.name_text.key,
+                    'can_guest': article.can_guest,
+                    'is_hide': article.is_hide,
+                    'translations': [
+                        {
+                            'language': translation.language.id_str,
+                        }
+                        for translation in translations
+                    ],
+                }
+            )
+        return {
+            'articles': articles_list,
+        }
+
     @session_required(can_guest=True)
     async def get(
             self,
