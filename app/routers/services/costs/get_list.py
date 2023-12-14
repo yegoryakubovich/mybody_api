@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
 from app.services import ServiceCostService
@@ -30,8 +29,8 @@ class ServiceCostGetListSchema(BaseModel):
     service_id_str: str = Field(min_length=2, max_length=64)
 
 
-@router.post()
-async def route(schema: ServiceCostGetListSchema):
+@router.get()
+async def route(schema: ServiceCostGetListSchema = Depends()):
     result = await ServiceCostService().get_list_by_service(
         service_id_str=schema.service_id_str,
     )
