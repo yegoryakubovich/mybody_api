@@ -72,7 +72,7 @@ class TextService(BaseService):
         )
         if return_model:
             return text
-        return {}
+        return {'id': text.id}
 
     @session_required()
     async def update(

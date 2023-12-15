@@ -66,7 +66,7 @@ class ArticleService(BaseService):
         with open(f'{PATH_ARTICLES}/{article.id}.md', encoding='utf-8', mode='w') as md_file:
             md_file.write('')
 
-        return {'article_id': article.id}
+        return {'id': article.id}
 
     @session_required(permissions=['articles'])
     async def update(
@@ -138,6 +138,7 @@ class ArticleService(BaseService):
             translations = await ArticleTranslationRepository().get_list_by_article(article=article)
             articles_list.append(
                 {
+                    'id': article.id,
                     'name_text': article.name_text.key,
                     'can_guest': article.can_guest,
                     'is_hide': article.is_hide,
@@ -157,10 +158,10 @@ class ArticleService(BaseService):
     async def get(
             self,
             session: Session,
-            article_id: int,
+            id_: int,
             language_id_str: str = None,
     ) -> dict:
-        article: Article = await ArticleRepository().get_by_id(id_=article_id)
+        article: Article = await ArticleRepository().get_by_id(id_=id_)
 
         name_text = article.name_text
         name = name_text.value_default

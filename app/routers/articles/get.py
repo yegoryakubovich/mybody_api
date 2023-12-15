@@ -39,7 +39,7 @@ class ArticleUnitGetSchema(BaseModel):
 async def route(schema: ArticleUnitGetSchema = Depends()):
     result = await ArticleService().get(
         token=schema.token,
-        article_id=schema.article_id,
+        id_=schema.article_id,
         language_id_str=schema.language,
     )
     return Response(**result)
