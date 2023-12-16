@@ -21,18 +21,6 @@ from app.utils.decorators import session_required
 
 class ServiceCostService(BaseService):
 
-    @staticmethod
-    async def get_list_by_service(service_id_str: str):
-        service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
-        return {
-            'service_costs': [
-                {
-                    'currency': service_cost.currency.id_str,
-                    'cost': service_cost.cost
-                } for service_cost in await ServiceCostRepository().get_list_by_service(service=service)
-            ]
-        }
-
     @session_required()
     async def create(
             self,
@@ -105,3 +93,15 @@ class ServiceCostService(BaseService):
             },
         )
         return {}
+
+    @staticmethod
+    async def get_list_by_service(service_id_str: str):
+        service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
+        return {
+            'service_costs': [
+                {
+                    'currency': service_cost.currency.id_str,
+                    'cost': service_cost.cost
+                } for service_cost in await ServiceCostRepository().get_list_by_service(service=service)
+            ]
+        }

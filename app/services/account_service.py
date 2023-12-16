@@ -15,13 +15,25 @@
 #
 
 
+from json import JSONDecodeError, loads
+
 from app.db.models import Account, AccountService, Service, Session
 from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository
 from app.services.base import BaseService
+from app.utils import ApiException
 from app.utils.decorators import session_required
 
 
+class InvalidAnswerList(ApiException):
+    pass
+
+
 class AccountServiceService(BaseService):
+
+    async def check_answers(self, questions: str, answers: str):
+        if not await self._is_valid_answers(questions=questions, answers=answers):
+            raise InvalidAnswerList('Invalid answer list')
+
     @session_required()
     async def create(
             self,
@@ -31,8 +43,10 @@ class AccountServiceService(BaseService):
             answers: str,
             state: str,
     ):
+
         account: Account = await AccountRepository().get_by_username(username=account_username)
         service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
+        await self.check_answers(questions=service.questions, answers=answers)
         account_service = await AccountServiceRepository().create(
             account=account,
             service=service,
@@ -64,7 +78,8 @@ class AccountServiceService(BaseService):
             state: str = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
-
+        if answers:
+            await self.check_answers(questions=account_service.questions, answers=answers)
         await AccountServiceRepository().update(
             account_service=account_service,
             answers=answers,
@@ -114,3 +129,26 @@ class AccountServiceService(BaseService):
             },
         )
         return {}
+
+    @staticmethod
+    async def _is_valid_answers(questions: str, answers: str):
+        try:
+            questions = loads(questions)
+            answers = loads(answers)
+            if len(answers) != len(questions):
+                return False
+            for i in range(len(answers)):
+                if questions[i]['type'] == 'dropdown':
+                    if answers[i] not in questions[i]['values']:
+                        return False
+                if questions[i]['type'] == 'str' and type(answers[i]) != str:
+                    return False
+                if questions[i]['type'] == 'int' and type(answers[i]) != int:
+                    return False
+            return True
+        except JSONDecodeError:
+            return False
+        except TypeError:
+            return False
+        except KeyError:
+            return False
