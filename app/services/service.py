@@ -145,7 +145,7 @@ class ServiceService(BaseService):
                 {
                     'id': service.id,
                     'id_str': service.id_str,
-                    'name_text': service.name_text.value_default,
+                    'name_text': service.name_text.key,
                     'questions': service.questions,
                 }
                 for service in await ServiceRepository().get_list()

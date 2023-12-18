@@ -38,7 +38,7 @@ class ProductService(BaseService):
             nutrient_type: str,
     ):
         await self.check_nutrient_type(nutrient_type=nutrient_type)
-        name_text_key = f'article_{await create_id_str()}'
+        name_text_key = f'product_{await create_id_str()}'
         name_text = await TextService().create(
             session=session,
             key=name_text_key,
@@ -83,13 +83,26 @@ class ProductService(BaseService):
 
         return {}
 
-    @staticmethod
-    async def get_list_by_nutrient_type(nutrient_type: str):
+    async def get_list_by_nutrient_type(self, nutrient_type: str):
+        await self.check_nutrient_type(nutrient_type=nutrient_type)
         return {
             'products': [
                 {
-                    'name': product.name_text.value_default,
+                    'id': product.id,
+                    'name_text': product.name_text.key,
                 } for product in await ProductRepository().get_list_by_nutrient_type(nutrient_type=nutrient_type)
+            ]
+        }
+
+    @staticmethod
+    async def get_list():
+        return {
+            'products': [
+                {
+                    'id': product.id,
+                    'name_text': product.name_text.key,
+                    'nutrient_type': product.nutrient_type
+                } for product in await ProductRepository().get_list()
             ]
         }
 
