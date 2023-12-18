@@ -15,26 +15,18 @@
 #
 
 
-from .exception import ApiException
-from .middleware import Middleware
-from .nutrient import Nutrient
-from .router import Router
-from .response import Response, ResponseState
-from . import crypto
-from . import client
-from .use_schema import use_schema
-from .validation_error import validation_error
+from app.utils import Router
+from .create import router as router_create
+from .delete import router as router_delete
+from .get_list import router as router_get_list
 
 
-__all__ = [
-    'ApiException',
-    'Nutrient',
-    'Middleware',
-    'Router',
-    'Response',
-    'ResponseState',
-    'crypto',
-    'client',
-    'use_schema',
-    'validation_error',
-]
+router = Router(
+    prefix='/products',
+    routes_included=[
+        router_create,
+        router_delete,
+        router_get_list,
+    ],
+    tags=['Products']
+)

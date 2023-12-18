@@ -15,26 +15,17 @@
 #
 
 
-from .exception import ApiException
-from .middleware import Middleware
-from .nutrient import Nutrient
-from .router import Router
-from .response import Response, ResponseState
-from . import crypto
-from . import client
-from .use_schema import use_schema
-from .validation_error import validation_error
+from peewee import BooleanField, PrimaryKeyField, CharField, ForeignKeyField
+
+from .text import Text
+from .base import BaseModel
 
 
-__all__ = [
-    'ApiException',
-    'Nutrient',
-    'Middleware',
-    'Router',
-    'Response',
-    'ResponseState',
-    'crypto',
-    'client',
-    'use_schema',
-    'validation_error',
-]
+class Product(BaseModel):
+    id = PrimaryKeyField()
+    name_text = ForeignKeyField(model=Text)
+    nutrient_type = CharField(max_length=16)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'products'

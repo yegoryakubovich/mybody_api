@@ -23,6 +23,7 @@ from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
 from .account import AccountService, WrongPassword
+from .product import ProductService
 from .role import RoleService
 from .service import ServiceService
 from .service_cost import ServiceCostService
@@ -65,4 +66,6 @@ __all__ = [
 
     'ArticleService',
     'ArticleTranslationService',
+
+    'ProductService',
 ]

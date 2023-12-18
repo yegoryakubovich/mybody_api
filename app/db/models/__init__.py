@@ -28,6 +28,7 @@ from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
 from .permission import Permission
+from .product import Product
 from .role_permission import RolePermission
 from .text import Text
 from .text_translation import TextTranslation
@@ -80,4 +81,6 @@ models = (
     Permission,
     RolePermission,
     AccountRole,
+
+    Product,
 )

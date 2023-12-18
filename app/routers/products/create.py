@@ -15,26 +15,27 @@
 #
 
 
-from .exception import ApiException
-from .middleware import Middleware
-from .nutrient import Nutrient
-from .router import Router
-from .response import Response, ResponseState
-from . import crypto
-from . import client
-from .use_schema import use_schema
-from .validation_error import validation_error
+from pydantic import BaseModel, Field
+
+from app.services import ProductService, ServiceService
+from app.utils import Response, Router
+
+router = Router(
+    prefix='/create'
+)
 
 
-__all__ = [
-    'ApiException',
-    'Nutrient',
-    'Middleware',
-    'Router',
-    'Response',
-    'ResponseState',
-    'crypto',
-    'client',
-    'use_schema',
-    'validation_error',
-]
+class ProductCreateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    name: str = Field(min_length=2, max_length=1024)
+    nutrient_type: str = Field(min_length=2, max_length=16)
+
+
+@router.post()
+async def route(schema: ProductCreateSchema):
+    result = await ProductService().create(
+        token=schema.token,
+        name=schema.name,
+        nutrient_type=schema.nutrient_type,
+    )
+    return Response(**result)

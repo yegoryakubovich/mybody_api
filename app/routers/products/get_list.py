@@ -13,28 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import ProductService
+from app.utils import Response, Router
+
+router = Router(
+    prefix='/list/get'
+)
 
 
-from .exception import ApiException
-from .middleware import Middleware
-from .nutrient import Nutrient
-from .router import Router
-from .response import Response, ResponseState
-from . import crypto
-from . import client
-from .use_schema import use_schema
-from .validation_error import validation_error
+class ProductGetListSchema(BaseModel):
+    nutrient_type: str = Field(min_length=2, max_length=16)
 
 
-__all__ = [
-    'ApiException',
-    'Nutrient',
-    'Middleware',
-    'Router',
-    'Response',
-    'ResponseState',
-    'crypto',
-    'client',
-    'use_schema',
-    'validation_error',
-]
+@router.get()
+async def route(schema: ProductGetListSchema = Depends()):
+    result = await ProductService().get_list_by_nutrient_type(
+        nutrient_type=schema.nutrient_type
+    )
+    return Response(**result)

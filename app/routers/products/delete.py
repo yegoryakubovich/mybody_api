@@ -15,26 +15,25 @@
 #
 
 
-from .exception import ApiException
-from .middleware import Middleware
-from .nutrient import Nutrient
-from .router import Router
-from .response import Response, ResponseState
-from . import crypto
-from . import client
-from .use_schema import use_schema
-from .validation_error import validation_error
+from pydantic import BaseModel, Field
+
+from app.services import ProductService
+from app.utils import Response, Router
+
+router = Router(
+    prefix='/delete'
+)
 
 
-__all__ = [
-    'ApiException',
-    'Nutrient',
-    'Middleware',
-    'Router',
-    'Response',
-    'ResponseState',
-    'crypto',
-    'client',
-    'use_schema',
-    'validation_error',
-]
+class ProductDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_: int = Field()
+
+
+@router.post()
+async def route(schema: ProductDeleteSchema):
+    result = await ProductService().delete(
+        token=schema.token,
+        id_=schema.id_,
+    )
+    return Response(**result)
