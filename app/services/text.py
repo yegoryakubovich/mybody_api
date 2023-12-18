@@ -23,6 +23,29 @@ from app.utils.decorators import session_required
 
 class TextService(BaseService):
     @session_required(return_model=False)
+    async def get(
+            self,
+            id_: int,
+    ):
+        text = await TextRepository().get_by_id(id_=id_)
+        translations = await TextTranslationRepository().get_list_by_text(text=text)
+
+        return {
+            'text': {
+                'id': text.id,
+                'key': text.key,
+                'value_default': text.value_default,
+                'translations': [
+                    {
+                        'language': translation.language.id_str,
+                        'value': translation.value,
+                    }
+                    for translation in translations
+                ],
+            },
+        }
+
+    @session_required(return_model=False)
     async def get_list(
             self,
     ) -> dict:
@@ -34,6 +57,7 @@ class TextService(BaseService):
             translations = await TextTranslationRepository().get_list_by_text(text=text)
             texts_list.append(
                 {
+                    'id': text.id,
                     'key': text.key,
                     'value_default': text.value_default,
                     'translations': [

@@ -15,27 +15,27 @@
 #
 
 
-from typing import Optional
-
 from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import ArticleService
-from app.utils import Router, Response
+from app.services import TextService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/list/get',
+    prefix='/get',
 )
 
 
-class ArticleGetSchema(BaseModel):
+class TextGetSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
 
 
 @router.get()
-async def route(schema: ArticleGetSchema = Depends()):
-    result = await ArticleService().get_list(
+async def route(schema: TextGetSchema = Depends()):
+    result = await TextService().get(
         token=schema.token,
+        id_=schema.id,
     )
     return Response(**result)

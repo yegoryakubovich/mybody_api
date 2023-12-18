@@ -119,16 +119,18 @@ class AccountService(BaseService):
         permissions = await AccountRoleService.get_permissions(account=account)
 
         return {
-            'username': account.username,
-            'firstname': account.firstname,
-            'lastname': account.lastname,
-            'surname': account.surname,
-            'country': account.country.id_str,
-            'language': account.language.id_str,
-            'timezone': account.timezone.id_str,
-            'currency': account.currency.id_str,
-            'permissions': permissions,
-            'text_pack_id': text_pack.id,
+            'account': {
+                'username': account.username,
+                'firstname': account.firstname,
+                'lastname': account.lastname,
+                'surname': account.surname,
+                'country': account.country.id_str,
+                'language': account.language.id_str,
+                'timezone': account.timezone.id_str,
+                'currency': account.currency.id_str,
+                'permissions': permissions,
+                'text_pack_id': text_pack.id,
+            },
         }
 
     @staticmethod

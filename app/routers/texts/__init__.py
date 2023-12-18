@@ -17,6 +17,7 @@
 
 from app.utils import Router
 
+from .get import router as router_get
 from .get_list import router as router_get_list
 from .create import router as router_create
 from .update import router as router_update
@@ -28,6 +29,7 @@ from .packs import router as router_packs
 router = Router(
     prefix='/texts',
     routes_included=[
+        router_get,
         router_get_list,
         router_create,
         router_update,
