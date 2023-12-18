@@ -25,19 +25,21 @@ from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/get',
+    prefix='/additional/get',
 )
 
 
-class ArticleGetSchema(BaseModel):
+class ArticleAdditionalGetSchema(BaseModel):
     token: Optional[str] = Field(min_length=32, max_length=64, default=None)
     id: int = Field()
+    language: Optional[str] = Field(max_length=32, default=None)
 
 
 @router.get()
-async def route(schema: ArticleGetSchema = Depends()):
-    result = await ArticleService().get(
+async def route(schema: ArticleAdditionalGetSchema = Depends()):
+    result = await ArticleService().get_additional(
         token=schema.token,
         id_=schema.id,
+        language_id_str=schema.language,
     )
     return Response(**result)

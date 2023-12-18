@@ -19,6 +19,7 @@ from .create import router as router_create
 from .translations import router as router_translations
 from .get_list import router as router_get_list
 from .get import router as router_get
+from .get_additional import router as router_get_additional
 from .update import router as router_update
 from .update_md import router as router_update_md
 from app.utils import Router
@@ -31,6 +32,7 @@ router = Router(
         router_translations,
         router_get_list,
         router_get,
+        router_get_additional,
         router_update,
         router_update_md,
     ],

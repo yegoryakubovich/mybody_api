@@ -154,8 +154,27 @@ class ArticleService(BaseService):
             'articles': articles_list,
         }
 
+    @session_required(return_model=False)
+    async def get(self, id_):
+        article = await ArticleRepository().get_by_id(id_=id_)
+        translations = await ArticleTranslationRepository().get_list_by_article(article=article)
+        return {
+            'article': {
+                'id': article.id,
+                'name_text': article.name_text.key,
+                'can_guest': article.can_guest,
+                'is_hide': article.is_hide,
+                'translations': [
+                    {
+                        'language': translation.language.id_str,
+                    }
+                    for translation in translations
+                ],
+            },
+        }
+
     @session_required(can_guest=True)
-    async def get(
+    async def get_additional(
             self,
             session: Session,
             id_: int,
