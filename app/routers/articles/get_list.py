@@ -30,7 +30,7 @@ router = Router(
 
 
 class ArticleUnitGetSchema(BaseModel):
-    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
+    token: str = Field(min_length=32, max_length=64)
 
 
 @router.get()
