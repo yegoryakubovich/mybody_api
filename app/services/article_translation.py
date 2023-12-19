@@ -33,11 +33,11 @@ class ArticleTranslationService(BaseService):
     async def create(
             self,
             session: Session,
-            article_id: int,
+            id_: int,
             language_id_str: str,
             name: str = None,
     ) -> dict:
-        article = await ArticleRepository().get_by_id(id_=article_id)
+        article = await ArticleRepository().get_by_id(id_=id_)
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
 
         if await ArticleTranslationRepository().is_exist(

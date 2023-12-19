@@ -30,7 +30,7 @@ router = Router(
 
 class ArticleUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
+    id: int = Field()
     is_hide: Optional[bool] = Field(default=None)
 
 
@@ -38,7 +38,7 @@ class ArticleUpdateSchema(BaseModel):
 async def route(schema: ArticleUpdateSchema):
     result = await ArticleService().update(
         token=schema.token,
-        article_id=schema.article_id,
+        id_=schema.id,
         is_hide=schema.is_hide,
     )
     return Response(**result)

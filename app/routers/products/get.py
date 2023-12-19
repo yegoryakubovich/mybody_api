@@ -28,10 +28,10 @@ router = Router(
 
 
 class ProductGetSchema(BaseModel):
-    id_: int = Field()
+    id: int = Field()
 
 
 @router.get()
 async def route(schema: ProductGetSchema = Depends()):
-    result = await ProductService().get(id_=schema.id_)
+    result = await ProductService().get(id_=schema.id)
     return Response(**result)

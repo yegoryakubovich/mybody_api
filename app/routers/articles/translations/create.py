@@ -30,7 +30,7 @@ router = Router(
 
 class ArticleTranslationCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
+    id: int = Field()
     language: str = Field(max_length=32)
     name: Optional[str] = Field()
 
@@ -39,7 +39,7 @@ class ArticleTranslationCreateSchema(BaseModel):
 async def route(schema: ArticleTranslationCreateSchema):
     result = await ArticleTranslationService().create(
         token=schema.token,
-        article_id=schema.article_id,
+        id_=schema.id,
         language_id_str=schema.language,
         name=schema.name,
     )

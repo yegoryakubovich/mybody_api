@@ -28,7 +28,7 @@ router = Router(
 
 class ServiceCostUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_: int = Field()
+    id: int = Field()
     cost: float = Field()
 
 
@@ -36,7 +36,7 @@ class ServiceCostUpdateSchema(BaseModel):
 async def route(schema: ServiceCostUpdateSchema):
     result = await ServiceCostService().update(
         token=schema.token,
-        id_=schema.id_,
+        id_=schema.id,
         cost=schema.cost,
     )
     return Response(**result)

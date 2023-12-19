@@ -28,7 +28,7 @@ router = Router(
 
 class AccountServiceUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_: int = Field()
+    id: int = Field()
     answers: str = Field(default=None, min_length=2, max_length=8192)
     state: str = Field(default=None, min_length=2, max_length=128)
 
@@ -37,7 +37,7 @@ class AccountServiceUpdateSchema(BaseModel):
 async def route(schema: AccountServiceUpdateSchema):
     result = await AccountServiceService().update(
         token=schema.token,
-        id_=schema.id_,
+        id_=schema.id,
         answers=schema.answers,
         state=schema.state,
     )

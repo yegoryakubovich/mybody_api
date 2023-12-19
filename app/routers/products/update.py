@@ -27,7 +27,7 @@ router = Router(
 
 class ProductUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_: int = Field()
+    id: int = Field()
     nutrient_type: str = Field(min_length=2, max_length=16)
 
 
@@ -35,7 +35,7 @@ class ProductUpdateSchema(BaseModel):
 async def route(schema: ProductUpdateSchema):
     result = await ProductService().update(
         token=schema.token,
-        id_=schema.id_,
+        id_=schema.id,
         nutrient_type=schema.nutrient_type,
     )
     return Response(**result)

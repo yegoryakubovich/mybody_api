@@ -72,10 +72,10 @@ class ArticleService(BaseService):
     async def update(
             self,
             session: Session,
-            article_id: int,
+            id_: int,
             # is_hide: bool,
     ) -> dict:
-        article: Article = await ArticleRepository().get_by_id(id_=article_id)
+        article: Article = await ArticleRepository().get_by_id(id_=id_)
 
         # FIXME
         # updates = {}
@@ -101,11 +101,11 @@ class ArticleService(BaseService):
     async def update_md(
             self,
             session: Session,
-            article_id: int,
+            id_: int,
             language_id_str: str,
             md: str,
     ) -> dict:
-        article: Article = await ArticleRepository().get_by_id(id_=article_id)
+        article: Article = await ArticleRepository().get_by_id(id_=id_)
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str) if language_id_str else None
         filename = f'{article.id}_{language.id_str}' if language else f'{article.id}'
 
