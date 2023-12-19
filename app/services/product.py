@@ -64,6 +64,30 @@ class ProductService(BaseService):
         return {'product_id': product.id}
 
     @session_required()
+    async def update(
+            self,
+            session: Session,
+            id_: int,
+            nutrient_type: str,
+    ):
+        await self.check_nutrient_type(nutrient_type=nutrient_type)
+        product = await ProductRepository().get_by_id(id_=id_)
+
+        await ProductRepository().update(product=product, nutrient_type=nutrient_type)
+
+        await self.create_action(
+            model=product,
+            action='update',
+            parameters={
+                'updater': f'session_{session.id}',
+                'id': id_,
+                'nutrient_type': nutrient_type,
+            },
+        )
+
+        return {}
+
+    @session_required()
     async def delete(
             self,
             session: Session,
@@ -95,13 +119,21 @@ class ProductService(BaseService):
         }
 
     @staticmethod
+    async def get(id_: int):
+        product = await ProductRepository().get_by_id(id_=id_)
+        return {
+            'name_text': product.name_text.key,
+            'nutrient_type': product.nutrient_type,
+        }
+
+    @staticmethod
     async def get_list():
         return {
             'products': [
                 {
                     'id': product.id,
                     'name_text': product.name_text.key,
-                    'nutrient_type': product.nutrient_type
+                    'nutrient_type': product.nutrient_type,
                 } for product in await ProductRepository().get_list()
             ]
         }

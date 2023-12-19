@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field
 from app.services import ProductService
 from app.utils import Response, Router
 
+
 router = Router(
     prefix='/delete'
 )
