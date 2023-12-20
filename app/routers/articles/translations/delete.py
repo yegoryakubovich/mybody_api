@@ -15,15 +15,28 @@
 #
 
 
-from .create import router as router_create
-from .delete import router as router_delete
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import ArticleService, ArticleTranslationService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/translations',
-    routes_included=[
-        router_create,
-        router_delete,
-    ],
+    prefix='/delete',
 )
+
+
+class ArticleTranslationDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    article_id: int = Field()
+    language: str = Field(max_length=32)
+
+
+@router.post()
+async def route(schema: ArticleTranslationDeleteSchema):
+    result = await ArticleTranslationService().delete(
+        token=schema.token,
+        article_id=schema.article_id,
+        language_id_str=schema.language,
+    )
+    return Response(**result)

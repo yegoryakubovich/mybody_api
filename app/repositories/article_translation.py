@@ -32,7 +32,8 @@ class ArticleTranslationRepository(BaseRepository):
         try:
             return ArticleTranslation.get(
                 (ArticleTranslation.article == article) &
-                (ArticleTranslation.language == language)
+                (ArticleTranslation.language == language) &
+                (ArticleTranslation.is_deleted == False)
             )
         except DoesNotExist:
             raise ModelDoesNotExist(f'Article (id {article.id}) has no translation into {language.id_str} language')

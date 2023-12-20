@@ -15,7 +15,7 @@
 #
 
 
-from app.db.models import Session
+from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository
 from app.repositories.text_translation import TextTranslationRepository
 from app.services.base import BaseService
@@ -33,11 +33,11 @@ class ArticleTranslationService(BaseService):
     async def create(
             self,
             session: Session,
-            id_: int,
+            article_id: int,
             language_id_str: str,
             name: str = None,
     ) -> dict:
-        article = await ArticleRepository().get_by_id(id_=id_)
+        article = await ArticleRepository().get_by_id(id_=article_id)
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
 
         if await ArticleTranslationRepository().is_exist(
@@ -75,3 +75,29 @@ class ArticleTranslationService(BaseService):
             md_file.write('')
 
         return {'article_translation_id': article_translation.id}
+
+    @session_required(permissions=['articles'])
+    async def delete(
+            self,
+            session: Session,
+            article_id: int,
+            language_id_str: str,
+    ) -> dict:
+        language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+        article: Article = await ArticleRepository().get_by_id(id_=article_id)
+        article_translation = await ArticleTranslationRepository().get(
+            article=article,
+            language=language,
+        )
+        await ArticleTranslationRepository.delete(model=article_translation)
+
+        # Create action
+        await self.create_action(
+            model=article_translation,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+            },
+        )
+
+        return {}
