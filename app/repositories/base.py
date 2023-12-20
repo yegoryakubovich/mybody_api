@@ -55,3 +55,9 @@ class BaseRepository:
             return self.model
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__} "{id_str}" does not exist')
+
+    @staticmethod
+    async def delete(model: BaseModel) -> BaseModel:
+        model.is_deleted = True
+        model.save()
+        return model

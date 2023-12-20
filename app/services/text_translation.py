@@ -93,7 +93,7 @@ class TextTranslationService(BaseService):
         language: Language = await LanguageRepository().get_by_id_str(id_str=language)
         text_translation: TextTranslation = await TextTranslationRepository().get(text=text, language=language)
         await TextTranslationRepository().delete(
-            text_translation=text_translation,
+            model=text_translation,
         )
         await self.create_action(
             model=text_translation,

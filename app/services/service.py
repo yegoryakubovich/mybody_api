@@ -123,7 +123,7 @@ class ServiceService(BaseService):
             id_str: str,
     ) -> dict:
         service: Service = await ServiceRepository().get_by_id_str(id_str=id_str)
-        await ServiceRepository().delete(service=service)
+        await ServiceRepository().delete(model=service)
         await TextService().delete(
             session=session,
             key=f'service_{service.id_str}',

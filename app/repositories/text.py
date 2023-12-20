@@ -58,11 +58,6 @@ class TextRepository(BaseRepository):
         text.save()
 
     @staticmethod
-    async def delete(text: Text):
-        text.is_deleted = True
-        text.save()
-
-    @staticmethod
     async def get_by_key(key: str) -> Text:
         try:
             return Text.get((Text.key == key) & (Text.is_deleted == False))

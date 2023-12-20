@@ -50,8 +50,3 @@ class ServiceRepository(BaseRepository):
         if not name and not questions:
             raise NoRequiredParameters('One of the following parameters must be filled in: name, questions')
         service.save()
-
-    @staticmethod
-    async def delete(service: Service):
-        service.is_deleted = True
-        service.save()

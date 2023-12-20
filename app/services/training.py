@@ -81,7 +81,7 @@ class TrainingService(BaseService):
             id_: int,
     ):
         training = await TrainingRepository().get_by_id(id_=id_)
-        await TrainingRepository().delete(training=training)
+        await TrainingRepository().delete(model=training)
 
         await self.create_action(
             model=training,

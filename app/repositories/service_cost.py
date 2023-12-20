@@ -48,8 +48,3 @@ class ServiceCostRepository(BaseRepository):
     ):
         service_cost.cost = cost
         service_cost.save()
-
-    @staticmethod
-    async def delete(service_cost: ServiceCost):
-        service_cost.is_deleted = True
-        service_cost.save()

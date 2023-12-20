@@ -60,8 +60,3 @@ class AccountServiceRepository(BaseRepository):
         if state:
             account_service.state = state
         account_service.save()
-
-    @staticmethod
-    async def delete(account_service: AccountService):
-        account_service.is_deleted = True
-        account_service.save()

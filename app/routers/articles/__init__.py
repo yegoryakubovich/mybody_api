@@ -22,6 +22,7 @@ from .get import router as router_get
 from .get_additional import router as router_get_additional
 from .update import router as router_update
 from .update_md import router as router_update_md
+from .delete import router as router_delete
 from app.utils import Router
 
 
@@ -35,6 +36,7 @@ router = Router(
         router_get_additional,
         router_update,
         router_update_md,
+        router_delete,
     ],
     tags=['Articles'],
 )

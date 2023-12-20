@@ -39,10 +39,3 @@ class ExerciseRepository(BaseRepository):
     ):
         exercise.type = type_
         exercise.save()
-
-    @staticmethod
-    async def delete(
-            exercise: Exercise,
-    ):
-        exercise.is_deleted = True
-        exercise.save()

@@ -15,29 +15,26 @@
 #
 
 
-from datetime import date
+from pydantic import BaseModel, Field
 
-from app.db.models import Training, AccountService
-from .base import BaseRepository
+from app.services import ArticleService
+from app.utils import Router, Response
 
 
-class TrainingRepository(BaseRepository):
-    model = Training
+router = Router(
+    prefix='/delete',
+)
 
-    @staticmethod
-    async def create(
-            account_service: AccountService,
-            date_: date,
-    ):
-        return Training.create(
-            account_service=account_service,
-            date=date_,
-        )
 
-    @staticmethod
-    async def update(
-            training: Training,
-            date_: date,
-    ):
-        training.date = date_
-        training.save()
+class ArticleDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: ArticleDeleteSchema):
+    result = await ArticleService().delete(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

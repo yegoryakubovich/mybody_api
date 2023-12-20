@@ -57,8 +57,3 @@ class TextPackRepository(BaseRepository):
             return text_pack
         except DoesNotExist:
             return TextPack(id=0)  # FIXME
-
-    @staticmethod
-    async def delete(text_pack: TextPack):
-        text_pack.is_deleted = True
-        text_pack.save()

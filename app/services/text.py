@@ -147,7 +147,7 @@ class TextService(BaseService):
     ) -> dict:
         text = await TextRepository().get_by_key(key=key)
         await TextRepository().delete(
-            text=text,
+            model=text,
         )
         await self.create_action(
             model=text,

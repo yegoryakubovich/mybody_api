@@ -84,7 +84,7 @@ class ServiceCostService(BaseService):
     ):
         service_cost = await ServiceCostRepository().get_by_id(id_=id_)
 
-        await ServiceCostRepository().delete(service_cost=service_cost)
+        await ServiceCostRepository().delete(model=service_cost)
 
         await self.create_action(
             model=service_cost,

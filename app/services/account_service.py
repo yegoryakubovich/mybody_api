@@ -118,7 +118,7 @@ class AccountServiceService(BaseService):
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
 
-        await AccountServiceRepository().delete(account_service=account_service)
+        await AccountServiceRepository().delete(model=account_service)
 
         await self.create_action(
             model=account_service,

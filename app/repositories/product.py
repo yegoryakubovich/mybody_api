@@ -43,8 +43,3 @@ class ProductRepository(BaseRepository):
     async def update(product: Product, type_: str):
         product.type = type_
         product.save()
-
-    @staticmethod
-    async def delete(product: Product):
-        product.is_deleted = True
-        product.save()

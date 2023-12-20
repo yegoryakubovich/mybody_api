@@ -94,7 +94,7 @@ class ProductService(BaseService):
             id_: int,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
-        await ProductRepository().delete(product=product)
+        await ProductRepository().delete(model=product)
         await TextService().delete(
             session=session,
             key=product.name_text.key,

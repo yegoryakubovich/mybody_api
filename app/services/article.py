@@ -98,6 +98,26 @@ class ArticleService(BaseService):
         return {}
 
     @session_required(permissions=['articles'])
+    async def delete(
+            self,
+            session: Session,
+            id_: int,
+    ) -> dict:
+        article: Article = await ArticleRepository().get_by_id(id_=id_)
+        await ArticleRepository.delete(model=article)
+
+        # Create action
+        await self.create_action(
+            model=article,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+            },
+        )
+
+        return {}
+
+    @session_required(permissions=['articles'])
     async def update_md(
             self,
             session: Session,

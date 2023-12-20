@@ -92,7 +92,7 @@ class ExerciseService(BaseService):
             id_: int,
     ):
         exercise = await ExerciseRepository().get_by_id(id_=id_)
-        await ExerciseRepository().delete(exercise=exercise)
+        await ExerciseRepository().delete(model=exercise)
 
         await self.create_action(
             model=exercise,
