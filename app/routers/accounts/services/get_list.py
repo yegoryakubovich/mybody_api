@@ -15,21 +15,17 @@
 #
 
 
+from app.services import AccountServiceService
 from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
+from app.utils.response import Response
 
 
 router = Router(
-    prefix='/services',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
+    prefix='/list/get',
 )
+
+
+@router.get()
+async def route():
+    result = await AccountServiceService().get_list()
+    return Response(**result)

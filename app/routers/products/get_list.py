@@ -25,14 +25,14 @@ router = Router(
 
 
 class ProductGetListSchema(BaseModel):
-    nutrient_type: str = Field(default='', max_length=16)
+    type: str = Field(default='', max_length=16)
 
 
 @router.get()
 async def route(schema: ProductGetListSchema = Depends()):
-    if schema.nutrient_type:
-        result = await ProductService().get_list_by_nutrient_type(
-            nutrient_type=schema.nutrient_type
+    if schema.type:
+        result = await ProductService().get_list_by_type(
+            type_=schema.type
         )
     else:
         result = await ProductService().get_list()

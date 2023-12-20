@@ -16,20 +16,19 @@
 
 
 from app.db.models import Session
-from app.repositories import ProductRepository
+from app.repositories import ExerciseRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException, ProductTypes
+from app.utils import ApiException, ExerciseTypes
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 
 
-class InvalidProductType(ApiException):
+class InvalidExerciseType(ApiException):
     pass
 
 
-class ProductService(BaseService):
-
+class ExerciseService(BaseService):
     @session_required()
     async def create(
             self,
@@ -37,22 +36,22 @@ class ProductService(BaseService):
             name: str,
             type_: str,
     ):
-        await self.check_product_type(type_=type_)
-        name_text_key = f'product_{await create_id_str()}'
+        await self.check_exercise_type(type_=type_)
+
+        name_text_key = f'exercise_{await create_id_str()}'
         name_text = await TextService().create(
             session=session,
             key=name_text_key,
             value_default=name,
             return_model=True,
         )
-
-        product = await ProductRepository().create(
+        exercise = await ExerciseRepository().create(
             name_text=name_text,
             type_=type_,
         )
 
         await self.create_action(
-            model=product,
+            model=exercise,
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
@@ -61,7 +60,7 @@ class ProductService(BaseService):
             }
         )
 
-        return {'product_id': product.id}
+        return {'exercise_id': exercise.id}
 
     @session_required()
     async def update(
@@ -70,19 +69,18 @@ class ProductService(BaseService):
             id_: int,
             type_: str,
     ):
-        await self.check_product_type(type_=type_)
-        product = await ProductRepository().get_by_id(id_=id_)
-
-        await ProductRepository().update(product=product, type_=type_)
+        await self.check_exercise_type(type_=type_)
+        exercise = await ExerciseRepository().get_by_id(id_=id_)
+        await ExerciseRepository().update(exercise=exercise, type_=type_)
 
         await self.create_action(
-            model=product,
+            model=exercise,
             action='update',
             parameters={
                 'updater': f'session_{session.id}',
                 'id': id_,
                 'type': type_,
-            },
+            }
         )
 
         return {}
@@ -93,58 +91,33 @@ class ProductService(BaseService):
             session: Session,
             id_: int,
     ):
-        product = await ProductRepository().get_by_id(id_=id_)
-        await ProductRepository().delete(product=product)
-        await TextService().delete(
-            session=session,
-            key=product.name_text.key,
-        )
+        exercise = await ExerciseRepository().get_by_id(id_=id_)
+        await ExerciseRepository().delete(exercise=exercise)
 
         await self.create_action(
-            model=product,
+            model=exercise,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
                 'id': id_,
-            },
+            }
         )
 
         return {}
 
-    async def get_list_by_type(self, type_: str):
-        await self.check_product_type(type_=type_)
-        return {
-            'products': [
-                {
-                    'id': product.id,
-                    'name_text': product.name_text.key,
-                } for product in await ProductRepository().get_list_by_type(type_=type_)
-            ]
-        }
-
-    @staticmethod
-    async def get(id_: int):
-        product = await ProductRepository().get_by_id(id_=id_)
-        return {
-            'product': {
-                'name_text': product.name_text.key,
-                'type': product.type,
-            }
-        }
-
     @staticmethod
     async def get_list():
         return {
-            'products': [
+            'exercises': [
                 {
-                    'id': product.id,
-                    'name_text': product.name_text.key,
-                    'type': product.type,
-                } for product in await ProductRepository().get_list()
+                    'id': exercise.id,
+                    'name_text': exercise.name_text.key,
+                    'type': exercise.type,
+                } for exercise in await ExerciseRepository().get_list()
             ]
         }
 
     @staticmethod
-    async def check_product_type(type_: str):
-        if type_ not in ProductTypes.all:
-            raise InvalidProductType(f'Invalid product type. Available: {ProductTypes.all}')
+    async def check_exercise_type(type_: str):
+        if type_ not in ExerciseTypes.all:
+            raise InvalidExerciseType(f'Invalid exercise type. Available: {ExerciseTypes.all}')

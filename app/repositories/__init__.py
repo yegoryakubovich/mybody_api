@@ -19,6 +19,7 @@ from .account_role import AccountRoleRepository
 from .account_service import AccountServiceRepository
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
+from .exercise import ExerciseRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
     NotificationServiceRequestRepository
@@ -38,6 +39,7 @@ from .currency import CurrencyRepository
 from .text import TextRepository
 from .text_pack import TextPackRepository
 from .base import ModelDoesNotExist
+from .training import TrainingRepository
 
 
 __all__ = [
@@ -79,4 +81,7 @@ __all__ = [
     'ArticleTranslationRepository',
 
     'ProductRepository',
+
+    'ExerciseRepository',
+    'TrainingRepository',
 ]

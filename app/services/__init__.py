@@ -19,6 +19,7 @@ from .account_role import AccountRoleService
 from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
+from .exercise import ExerciseService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
@@ -36,6 +37,7 @@ from .timezone import TimezoneService
 from .currency import CurrencyService
 from .text import TextService
 from .text_pack import TextPackService
+from .training import TrainingService
 
 
 __all__ = [
@@ -68,4 +70,7 @@ __all__ = [
     'ArticleTranslationService',
 
     'ProductService',
+
+    'ExerciseService',
+    'TrainingService',
 ]

@@ -16,8 +16,9 @@
 
 
 from .exception import ApiException
+from .exercise_types import ExerciseTypes
 from .middleware import Middleware
-from .nutrient import Nutrient
+from .product_types import ProductTypes
 from .router import Router
 from .response import Response, ResponseState
 from . import crypto
@@ -28,7 +29,8 @@ from .validation_error import validation_error
 
 __all__ = [
     'ApiException',
-    'Nutrient',
+    'ProductTypes',
+    'ExerciseTypes',
     'Middleware',
     'Router',
     'Response',

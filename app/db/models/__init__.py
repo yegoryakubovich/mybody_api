@@ -24,6 +24,7 @@ from .article_translation import ArticleTranslation
 from .billing import Billing
 from .category_article import CategoryArticle
 from .category_parameter_account import CategoryParameterAccount
+from .exercise import Exercise
 from .language import Language
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
@@ -43,6 +44,8 @@ from .timezone import Timezone
 from .currency import Currency
 from .account import Account
 from .session import Session
+from .training import Training
+from .training_exercise import TrainingExercise
 
 
 models = (
@@ -83,4 +86,8 @@ models = (
     AccountRole,
 
     Product,
+
+    Exercise,
+    Training,
+    TrainingExercise,
 )

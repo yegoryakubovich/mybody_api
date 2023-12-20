@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import json
+
+
 from json import JSONDecodeError, loads
 
 from app.db.models import Service, Session, Text
@@ -151,7 +152,6 @@ class ServiceService(BaseService):
                 for service in await ServiceRepository().get_list()
             ]
         }
-        print(services)
         return services
 
     @staticmethod

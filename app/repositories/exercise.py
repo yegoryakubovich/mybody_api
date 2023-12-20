@@ -15,36 +15,34 @@
 #
 
 
-from app.db.models import Product, Text
+from app.db.models import Exercise, Text
 from .base import BaseRepository
 
 
-class ProductRepository(BaseRepository):
-    model = Product
-
-    @staticmethod
-    async def get_list_by_type(type_: str) -> list[Product]:
-        return Product.select().where(
-            (Product.type == type_) &
-            (Product.is_deleted == False)
-        ).execute()
+class ExerciseRepository(BaseRepository):
+    model = Exercise
 
     @staticmethod
     async def create(
             name_text: Text,
             type_: str,
     ):
-        return Product.create(
+        return Exercise.create(
             name_text=name_text,
             type=type_,
         )
 
     @staticmethod
-    async def update(product: Product, type_: str):
-        product.type = type_
-        product.save()
+    async def update(
+            exercise: Exercise,
+            type_: str,
+    ):
+        exercise.type = type_
+        exercise.save()
 
     @staticmethod
-    async def delete(product: Product):
-        product.is_deleted = True
-        product.save()
+    async def delete(
+            exercise: Exercise,
+    ):
+        exercise.is_deleted = True
+        exercise.save()

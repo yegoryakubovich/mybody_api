@@ -24,7 +24,7 @@ from .base import BaseModel
 class Product(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
-    nutrient_type = CharField(max_length=16)
+    type = CharField(max_length=16)
     is_deleted = BooleanField(default=False)
 
     class Meta:

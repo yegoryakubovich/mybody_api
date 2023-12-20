@@ -131,6 +131,38 @@ class AccountServiceService(BaseService):
         return {}
 
     @staticmethod
+    async def get(
+            id_: int,
+    ):
+        account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
+        return {
+            'account_service': {
+                'id': account_service.id,
+                'account': account_service.account.id,
+                'service': account_service.service.id,
+                'questions': account_service.questions,
+                'answers': account_service.answers,
+                'state': account_service.state,
+            }
+        }
+
+    @staticmethod
+    async def get_list():
+        response = {
+            'accounts_services': [
+                {
+                    'id': account_service.id,
+                    'account': account_service.account.id,
+                    'service': account_service.service.id,
+                    'questions': account_service.questions,
+                    'answers': account_service.answers,
+                    'state': account_service.state,
+                } for account_service in await AccountServiceRepository().get_list()
+            ]
+        }
+        return response
+
+    @staticmethod
     async def _is_valid_answers(questions: str, answers: str):
         try:
             questions = loads(questions)

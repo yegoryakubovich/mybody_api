@@ -15,36 +15,36 @@
 #
 
 
-from app.db.models import Product, Text
+from datetime import date
+
+from app.db.models import Training, AccountService
 from .base import BaseRepository
 
 
-class ProductRepository(BaseRepository):
-    model = Product
-
-    @staticmethod
-    async def get_list_by_type(type_: str) -> list[Product]:
-        return Product.select().where(
-            (Product.type == type_) &
-            (Product.is_deleted == False)
-        ).execute()
+class TrainingRepository(BaseRepository):
+    model = Training
 
     @staticmethod
     async def create(
-            name_text: Text,
-            type_: str,
+            account_service: AccountService,
+            date_: date,
     ):
-        return Product.create(
-            name_text=name_text,
-            type=type_,
+        return Training.create(
+            account_service=account_service,
+            date=date_,
         )
 
     @staticmethod
-    async def update(product: Product, type_: str):
-        product.type = type_
-        product.save()
+    async def update(
+            training: Training,
+            date_: date,
+    ):
+        training.date = date_
+        training.save()
 
     @staticmethod
-    async def delete(product: Product):
-        product.is_deleted = True
-        product.save()
+    async def delete(
+            training: Training,
+    ):
+        training.is_deleted = True
+        training.save()

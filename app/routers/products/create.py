@@ -17,7 +17,7 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import ProductService, ServiceService
+from app.services import ProductService
 from app.utils import Response, Router
 
 router = Router(
@@ -28,7 +28,7 @@ router = Router(
 class ProductCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     name: str = Field(min_length=2, max_length=1024)
-    nutrient_type: str = Field(min_length=2, max_length=16)
+    type: str = Field(min_length=2, max_length=16)
 
 
 @router.post()
@@ -36,6 +36,6 @@ async def route(schema: ProductCreateSchema):
     result = await ProductService().create(
         token=schema.token,
         name=schema.name,
-        nutrient_type=schema.nutrient_type,
+        type_=schema.type,
     )
     return Response(**result)

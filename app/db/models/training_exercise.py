@@ -15,21 +15,21 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
+from peewee import BooleanField, IntegerField, PrimaryKeyField, ForeignKeyField
+
+from .base import BaseModel
+from .exercise import Exercise
+from .training import Training
 
 
-router = Router(
-    prefix='/services',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
-)
+class TrainingExercise(BaseModel):
+    id = PrimaryKeyField()
+    training = ForeignKeyField(model=Training)
+    exercise = ForeignKeyField(model=Exercise)
+    priority = IntegerField()
+    value = IntegerField()
+    rest = IntegerField()
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'trainings_exercises'

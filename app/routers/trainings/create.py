@@ -15,21 +15,28 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
+from pydantic import BaseModel, Field
+
+from app.services import TrainingService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/services',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
+    prefix='/create',
 )
+
+
+class TrainingCreateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_service_id: int = Field()
+    date: str = Field()
+
+
+@router.post()
+async def route(schema: TrainingCreateSchema):
+    result = await TrainingService().create(
+        token=schema.token,
+        account_service_id=schema.account_service_id,
+        date_=schema.date,
+    )
+    return Response(**result)
