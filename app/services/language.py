@@ -15,11 +15,37 @@
 #
 
 
+from app.db.models import Session
 from app.repositories import LanguageRepository
 from app.services.base import BaseService
+from app.utils.decorators import session_required
 
 
 class LanguageService(BaseService):
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            id_str: str,
+            name: str,
+    ):
+        language = await LanguageRepository().create(
+            id_str=id_str,
+            name=name,
+        )
+
+        await self.create_action(
+            model=language,
+            action='create',
+            parameters={
+                'creator': f'session_{session.id}',
+                'id_str': language.id_str,
+                'name': language.name,
+            },
+            with_client=True,
+        )
+        return {'id': language.id}
+
     @staticmethod
     async def get_list() -> dict:
         languages = {

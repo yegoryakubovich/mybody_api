@@ -15,19 +15,28 @@
 #
 
 
-from app.db.models import Language
-from .base import BaseRepository
+from pydantic import BaseModel, Field
+
+from app.services import LanguageService
+from app.utils import Router, Response
 
 
-class LanguageRepository(BaseRepository):
-    model = Language
+router = Router(
+    prefix='/create',
+)
 
-    @staticmethod
-    async def create(
-            id_str: str,
-            name: str,
-    ) -> Language:
-        return Language.create(
-            id_str=id_str,
-            name=name,
-        )
+
+class LanguageCreateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_str: str = Field(min_length=1, max_length=16)
+    name: str = Field(min_length=1, max_length=32)
+
+
+@router.post()
+async def route(schema: LanguageCreateSchema):
+    result = await LanguageService().create(
+        token=schema.token,
+        id_str=schema.id_str,
+        name=schema.name,
+    )
+    return Response(**result)
