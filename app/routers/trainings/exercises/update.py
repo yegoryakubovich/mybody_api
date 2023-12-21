@@ -29,6 +29,7 @@ router = Router(
 class TrainingExerciseUpdateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
+    exercise_id: int = Field(default=None)
     priority: int = Field(default=None)
     value: int = Field(default=None)
     rest: int = Field(default=None)
@@ -39,6 +40,7 @@ async def route(schema: TrainingExerciseUpdateSchema):
     result = await TrainingExerciseService().update(
         token=schema.token,
         id_=schema.id,
+        exercise_id=schema.exercise_id,
         priority=schema.priority,
         value=schema.value,
         rest=schema.rest,

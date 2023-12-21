@@ -67,6 +67,7 @@ class TrainingExerciseService(BaseService):
             self,
             session: Session,
             id_: int,
+            exercise_id: int = None,
             priority: int = None,
             value: int = None,
             rest: int = None,
@@ -78,8 +79,14 @@ class TrainingExerciseService(BaseService):
                 'updater': f'session_{session.id}',
                 'id': id_,
         }
-        if not priority and not value and not rest:
-            raise NoRequiredParameters('One of the following parameters must be filled in: priority, value, rest')
+        if not priority and not value and not rest and not exercise_id:
+            raise NoRequiredParameters('One of the following parameters must be filled in: exercise_id, priority, value, rest')
+        if exercise_id:
+            action_parameters.update(
+                {
+                    'exercise_id': exercise_id,
+                }
+            )
         if priority:
             action_parameters.update(
                 {
@@ -99,8 +106,11 @@ class TrainingExerciseService(BaseService):
                 }
             )
 
+        exercise = await ExerciseRepository().get_by_id(id_=id_)
+
         await TrainingExerciseRepository().update(
             training_exercise=training_exercise,
+            exercise=exercise,
             priority=priority,
             value=value,
             rest=rest,
