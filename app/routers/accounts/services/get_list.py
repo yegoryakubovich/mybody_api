@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
 from app.services import AccountServiceService
 from app.utils import Router
@@ -25,7 +26,13 @@ router = Router(
 )
 
 
+class AccountServiceGetListSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+
+
 @router.get()
-async def route():
-    result = await AccountServiceService().get_list()
+async def route(schema: AccountServiceGetListSchema = Depends()):
+    result = await AccountServiceService().get_list(
+        token=schema.token,
+    )
     return Response(**result)
