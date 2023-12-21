@@ -19,16 +19,15 @@ from app.utils import Router
 from .create import router as router_create
 from .update import router as router_update
 from .delete import router as router_delete
-from .exercises import router as router_exercises
+from .get_list import router as router_get_list
 
 
 router = Router(
-    prefix='/trainings',
+    prefix='/exercises',
     routes_included=[
         router_create,
         router_update,
         router_delete,
-        router_exercises,
-    ],
-    tags=['Trainings'],
+        router_get_list,
+    ]
 )

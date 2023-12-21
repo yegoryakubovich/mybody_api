@@ -38,6 +38,7 @@ from .currency import CurrencyService
 from .text import TextService
 from .text_pack import TextPackService
 from .training import TrainingService
+from .training_exercise import TrainingExerciseService
 
 
 __all__ = [
@@ -73,4 +74,5 @@ __all__ = [
 
     'ExerciseService',
     'TrainingService',
+    'TrainingExerciseService',
 ]

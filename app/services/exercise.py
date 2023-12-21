@@ -93,6 +93,7 @@ class ExerciseService(BaseService):
     ):
         exercise = await ExerciseRepository().get_by_id(id_=id_)
         await ExerciseRepository().delete(model=exercise)
+        await TextService().delete(session=session, key=exercise.name_text.key)
 
         await self.create_action(
             model=exercise,

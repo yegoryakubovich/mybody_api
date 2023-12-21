@@ -15,20 +15,26 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .exercises import router as router_exercises
+from pydantic import BaseModel, Field
+
+from app.utils import Response, Router
+from app.services import TrainingExerciseService
 
 
 router = Router(
-    prefix='/trainings',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_exercises,
-    ],
-    tags=['Trainings'],
+    prefix='/delete'
 )
+
+
+class TrainingExerciseDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: TrainingExerciseDeleteSchema):
+    result = await TrainingExerciseService().delete(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

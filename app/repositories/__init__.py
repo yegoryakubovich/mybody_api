@@ -40,6 +40,7 @@ from .text import TextRepository
 from .text_pack import TextPackRepository
 from .base import ModelDoesNotExist
 from .training import TrainingRepository
+from .training_exercise import TrainingExerciseRepository
 
 
 __all__ = [
@@ -84,4 +85,5 @@ __all__ = [
 
     'ExerciseRepository',
     'TrainingRepository',
+    'TrainingExerciseRepository',
 ]
