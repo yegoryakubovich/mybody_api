@@ -67,7 +67,7 @@ class TrainingService(BaseService):
             parameters=action_parameters,
         )
 
-        return {'training_id': training.id}
+        return {'id': training.id}
 
     @session_required()
     async def update(

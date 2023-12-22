@@ -52,4 +52,4 @@ class RoleService(BaseService):
                 'id_str': id_str,
             },
         )
-        return {'role_id': role.id}
+        return {'id': role.id}

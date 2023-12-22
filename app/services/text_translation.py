@@ -51,7 +51,7 @@ class TextTranslationService(BaseService):
         if return_model:
             return text_translation
         return {
-            'translation_id': text_translation.id,
+            'id': text_translation.id,
         }
 
     @session_required()

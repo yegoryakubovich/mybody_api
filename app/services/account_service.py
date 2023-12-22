@@ -60,14 +60,14 @@ class AccountServiceService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'account': account.username,
+                'account_id': account.id,
                 'service': service.id_str,
                 'questions': service.questions,
                 'answers': answers,
                 'state': state,
             },
         )
-        return {}
+        return {'id': account_service.id}
 
     @session_required()
     async def update(

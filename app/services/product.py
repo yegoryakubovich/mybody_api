@@ -79,7 +79,7 @@ class ProductService(BaseService):
             parameters=action_parameters,
         )
 
-        return {'product_id': product.id}
+        return {'id': product.id}
 
     @session_required()
     async def update(

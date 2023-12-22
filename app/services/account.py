@@ -95,7 +95,7 @@ class AccountService(BaseService):
             },
             with_client=True,
         )
-        return {'account_id': account.id}
+        return {'id': account.id}
 
     async def check_password(
             self,

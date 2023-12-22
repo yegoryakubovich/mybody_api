@@ -74,7 +74,7 @@ class ArticleTranslationService(BaseService):
         with open(f'{PATH_ARTICLES}/{article.id}_{language.id_str}.md', encoding='utf-8', mode='w') as md_file:
             md_file.write('')
 
-        return {'article_translation_id': article_translation.id}
+        return {'id': article_translation.id}
 
     @session_required(permissions=['articles'])
     async def delete(

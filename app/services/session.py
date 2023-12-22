@@ -22,7 +22,11 @@ from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 
 
 class SessionService(BaseService):
-    async def create(self, username: str, password: str) -> dict:
+    async def create(
+            self,
+            username: str,
+            password: str,
+    ) -> dict:
         account = await AccountRepository.get_by_username(username=username)
         await AccountService().check_password(account=account, password=password)
 

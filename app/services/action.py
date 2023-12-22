@@ -22,7 +22,12 @@ from app.repositories import ActionRepository
 
 class ActionService:
     @staticmethod
-    async def create(model: str, model_id: int, action: str, parameters: dict = None):
+    async def create(
+            model: str,
+            model_id: int,
+            action: str,
+            parameters: dict = None,
+    ):
         if not parameters:
             parameters = {}
 

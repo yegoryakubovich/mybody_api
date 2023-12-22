@@ -49,7 +49,11 @@ class TextPackService(BaseService):
         }
 
     @session_required()
-    async def create(self, session: Session, language_id_str: str):
+    async def create(
+            self,
+            session: Session,
+            language_id_str: str,
+    ):
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
         text_pack = await TextPackRepository.create(language=language)
         await self.create_action(
@@ -66,7 +70,7 @@ class TextPackService(BaseService):
     @session_required()
     async def delete(self, session: Session, id_: int):
         text_pack = await TextPackRepository().get_by_id(id_=id_)
-        await TextPackRepository().delete(text_pack=text_pack)
+        await TextPackRepository().delete(model=text_pack)
         await self.create_action(
             model=text_pack,
             action='delete',

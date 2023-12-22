@@ -49,7 +49,7 @@ class ServiceCostService(BaseService):
                 'cost': cost,
             },
         )
-        return {'service_cost_id': service_cost.id}
+        return {'id': service_cost.id}
 
     @session_required()
     async def update(

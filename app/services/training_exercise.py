@@ -60,7 +60,7 @@ class TrainingExerciseService(BaseService):
             }
         )
 
-        return {'training_exercise_id': training_exercise.id}
+        return {'id': training_exercise.id}
 
     @session_required()
     async def update(
