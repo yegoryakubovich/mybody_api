@@ -15,29 +15,23 @@
 #
 
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import ProductService
+from app.services import ServiceService
 from app.utils import Response, Router
 
+
 router = Router(
-    prefix='/create'
+    prefix='/get'
 )
 
 
-class ProductCreateSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=2, max_length=1024)
-    type: str = Field(min_length=2, max_length=16)
-    article_id: int = Field(default=None)
+class ServiceGetSchema(BaseModel):
+    id_str: str = Field(min_length=2, max_length=64)
 
 
-@router.post()
-async def route(schema: ProductCreateSchema):
-    result = await ProductService().create(
-        token=schema.token,
-        name=schema.name,
-        type_=schema.type,
-        article_id=schema.article_id,
-    )
+@router.get()
+async def route(schema: ServiceGetSchema = Depends()):
+    result = await ServiceService().get(id_str=schema.id_str)
     return Response(**result)

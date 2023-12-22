@@ -130,10 +130,9 @@ class AccountServiceService(BaseService):
         )
         return {}
 
-    @session_required()
+    @session_required(return_model=False)
     async def get(
             self,
-            session: Session,
             id_: int,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
@@ -148,10 +147,9 @@ class AccountServiceService(BaseService):
             }
         }
 
-    @session_required()
+    @session_required(return_model=False)
     async def get_list(
             self,
-            session: Session,
     ):
         response = {
             'accounts_services': [

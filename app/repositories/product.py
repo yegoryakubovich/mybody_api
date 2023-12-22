@@ -15,7 +15,7 @@
 #
 
 
-from app.db.models import Product, Text
+from app.db.models import Article, Product, Text
 from .base import BaseRepository
 
 
@@ -33,13 +33,18 @@ class ProductRepository(BaseRepository):
     async def create(
             name_text: Text,
             type_: str,
+            article: Article = None,
     ):
         return Product.create(
             name_text=name_text,
             type=type_,
+            article=article,
         )
 
     @staticmethod
-    async def update(product: Product, type_: str):
-        product.type = type_
+    async def update(product: Product, type_: str = None, article: Article = None):
+        if type_:
+            product.type = type_
+        if article:
+            product.article = Article
         product.save()

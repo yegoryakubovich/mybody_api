@@ -30,6 +30,7 @@ class TrainingCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
     date: str = Field()
+    article_id: int = Field(default=None)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: TrainingCreateSchema):
         token=schema.token,
         account_service_id=schema.account_service_id,
         date_=schema.date,
+        article_id=schema.article_id,
     )
     return Response(**result)

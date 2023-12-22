@@ -17,6 +17,7 @@
 
 from peewee import BooleanField, DateField, PrimaryKeyField, ForeignKeyField
 
+from .article import Article
 from .account_service import AccountService
 from .base import BaseModel
 
@@ -25,6 +26,7 @@ class Training(BaseModel):
     id = PrimaryKeyField()
     account_service = ForeignKeyField(model=AccountService)
     date = DateField()
+    article = ForeignKeyField(null=True, model=Article)
     is_deleted = BooleanField(default=False)
 
     class Meta:

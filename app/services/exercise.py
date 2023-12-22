@@ -107,6 +107,17 @@ class ExerciseService(BaseService):
         return {}
 
     @staticmethod
+    async def get(id_: int):
+        exercise = await ExerciseRepository().get_by_id(id_=id_)
+        return {
+            'exercise': {
+                    'id': exercise.id,
+                    'name_text': exercise.name_text.key,
+                    'type': exercise.type,
+            }
+        }
+
+    @staticmethod
     async def get_list():
         return {
             'exercises': [

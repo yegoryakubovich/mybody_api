@@ -140,6 +140,18 @@ class ServiceService(BaseService):
         return {}
 
     @staticmethod
+    async def get(id_str: str):
+        service = await ServiceRepository().get_by_id_str(id_str=id_str)
+        return {
+            'service': {
+                'id': service.id,
+                'id_str': service.id_str,
+                'name_text': service.name_text.key,
+                'questions': service.questions,
+            }
+        }
+
+    @staticmethod
     async def get_list() -> dict:
         services = {
             'services': [

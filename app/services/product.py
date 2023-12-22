@@ -15,13 +15,17 @@
 #
 
 
-from app.db.models import Session
-from app.repositories import ProductRepository
+from app.db.models import Article, Session
+from app.repositories import ArticleRepository, ProductRepository
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils import ApiException, ProductTypes
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
+
+
+class NoRequiredParameters(ApiException):
+    pass
 
 
 class InvalidProductType(ApiException):
@@ -36,6 +40,7 @@ class ProductService(BaseService):
             session: Session,
             name: str,
             type_: str,
+            article_id: int = None,
     ):
         await self.check_product_type(type_=type_)
         name_text_key = f'product_{await create_id_str()}'
@@ -46,19 +51,32 @@ class ProductService(BaseService):
             return_model=True,
         )
 
+        action_parameters = {
+            'creator': f'session_{session.id}',
+            'name_text_id': name_text.id,
+            'type': type_,
+        }
+
+        if article_id:
+            article = await ArticleRepository().get_by_id(id_=article_id)
+            action_parameters.update(
+                {
+                    'article': article_id,
+                }
+            )
+        else:
+            article = None
+
         product = await ProductRepository().create(
             name_text=name_text,
             type_=type_,
+            article=article,
         )
 
         await self.create_action(
             model=product,
             action='create',
-            parameters={
-                'creator': f'session_{session.id}',
-                'name_text_id': name_text.id,
-                'type': type_,
-            }
+            parameters=action_parameters,
         )
 
         return {'product_id': product.id}
@@ -68,21 +86,40 @@ class ProductService(BaseService):
             self,
             session: Session,
             id_: int,
-            type_: str,
+            type_: str = None,
+            article_id: int = None,
     ):
-        await self.check_product_type(type_=type_)
         product = await ProductRepository().get_by_id(id_=id_)
 
-        await ProductRepository().update(product=product, type_=type_)
+        action_parameters = {
+            'updater': f'session_{session.id}',
+            'id': id_,
+        }
+        if not type_ and not article_id:
+            raise NoRequiredParameters('One of the following parameters must be filled in: type_, article')
+        if type_:
+            await self.check_product_type(type_=type_)
+            action_parameters.update(
+                {
+                    'type': type_,
+                }
+            )
+        if article_id:
+            article = await ArticleRepository().get_by_id(id_=article_id)
+            action_parameters.update(
+                {
+                    'article': article_id,
+                }
+            )
+        else:
+            article = None
+
+        await ProductRepository().update(product=product, type_=type_, article=article)
 
         await self.create_action(
             model=product,
             action='update',
-            parameters={
-                'updater': f'session_{session.id}',
-                'id': id_,
-                'type': type_,
-            },
+            parameters=action_parameters,
         )
 
         return {}
