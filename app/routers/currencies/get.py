@@ -16,9 +16,7 @@
 
 
 from fastapi import Depends
-from pydantic import Field
-
-from app.db.models.base import BaseModel
+from pydantic import Field, BaseModel
 from app.services import CurrencyService
 from app.utils import Router, Response
 

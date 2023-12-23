@@ -15,21 +15,25 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.utils import Response, Router
+from app.services import TrainingExerciseService
 
 
 router = Router(
-    prefix='/exercises',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-    ]
+    prefix='/get'
 )
+
+
+class TrainingExerciseGetSchema(BaseModel):
+    id: int = Field()
+
+
+@router.get()
+async def route(schema: TrainingExerciseGetSchema = Depends()):
+    result = await TrainingExerciseService().get(
+        id_=schema.id,
+    )
+    return Response(**result)
