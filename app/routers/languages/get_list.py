@@ -15,16 +15,16 @@
 #
 
 
-from app.services import CountryService
+from app.services import LanguageService
 from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/get',
+    prefix='/list/get',
 )
 
 
 @router.get()
 async def route():
-    result = await CountryService().get_list()
+    result = await LanguageService().get_list()
     return Response(**result)
