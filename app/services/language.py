@@ -46,6 +46,39 @@ class LanguageService(BaseService):
         )
         return {'id': language.id}
 
+    @session_required()
+    async def delete(
+            self,
+            session: Session,
+            id_str: str,
+    ):
+        language = await LanguageRepository().get_by_id_str(id_str=id_str)
+        await LanguageRepository().delete(model=language)
+
+        await self.create_action(
+            model=language,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+                'id_str': id_str,
+            }
+        )
+
+        return {}
+
+    @staticmethod
+    async def get(
+            id_str: str,
+    ):
+        language = await LanguageRepository().get_by_id_str(id_str=id_str)
+        return {
+            'language': {
+                'id': language.id,
+                'id_str': language.id_str,
+                'name_text': language.name_text.key,
+            }
+        }
+
     @staticmethod
     async def get_list() -> dict:
         languages = {

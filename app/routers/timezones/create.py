@@ -15,20 +15,28 @@
 #
 
 
-from .create import router as router_create
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import TimezoneService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/currencies',
-    routes_included=[
-        router_create,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
-    tags=['Currencies'],
+    prefix='/create',
 )
+
+
+class TimezoneCreateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_str: str = Field(min_length=1, max_length=16)
+    deviation: int = Field()
+
+
+@router.post()
+async def route(schema: TimezoneCreateSchema):
+    result = await TimezoneService().create(
+        token=schema.token,
+        id_str=schema.id_str,
+        deviation=schema.deviation,
+    )
+    return Response(**result)

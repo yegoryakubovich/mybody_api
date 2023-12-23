@@ -15,20 +15,24 @@
 #
 
 
-from .create import router as router_create
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from app.utils import Router
+from fastapi import Depends
+from pydantic import Field
+
+from app.db.models.base import BaseModel
+from app.services import CurrencyService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/currencies',
-    routes_included=[
-        router_create,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
-    tags=['Currencies'],
+    prefix='/get',
 )
+
+
+class CurrencyGetSchema(BaseModel):
+    id_str: str = Field(min_length=2, max_length=32)
+
+
+@router.get()
+async def route(schema: CurrencyGetSchema = Depends()):
+    result = await CurrencyService().get(id_str=schema.id_str)
+    return Response(**result)

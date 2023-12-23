@@ -21,3 +21,13 @@ from .base import BaseRepository
 
 class TimezoneRepository(BaseRepository):
     model = Timezone
+
+    @staticmethod
+    async def create(
+            id_str: str,
+            deviation: int,
+    ):
+        return Timezone.create(
+            id_str=id_str,
+            deviation=deviation,
+        )

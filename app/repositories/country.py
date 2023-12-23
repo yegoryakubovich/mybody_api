@@ -15,9 +15,40 @@
 #
 
 
-from app.db.models import Country
+from app.db.models import Country, Currency, Language, Text, Timezone
 from .base import BaseRepository
 
 
 class CountryRepository(BaseRepository):
     model = Country
+
+    @staticmethod
+    async def create(
+            id_str: str,
+            name_text: Text,
+            language_default: Language,
+            timezone_default: Timezone,
+            currency_default: Currency,
+    ):
+        return Country.create(
+            id_str=id_str,
+            name_text=name_text,
+            language_default=language_default,
+            timezone_default=timezone_default,
+            currency_default=currency_default,
+        )
+
+    @staticmethod
+    async def update(
+            country: Country,
+            language_default: Language = None,
+            timezone_default: Timezone = None,
+            currency_default: Currency = None,
+    ):
+        if language_default:
+            country.language_default = language_default
+        if timezone_default:
+            country.timezone_default = timezone_default
+        if currency_default:
+            country.currency_default = currency_default
+        country.save()

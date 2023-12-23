@@ -15,11 +15,71 @@
 #
 
 
+from app.db.models import Session
 from app.repositories import TimezoneRepository
 from app.services.base import BaseService
+from app.utils.decorators import session_required
 
 
 class TimezoneService(BaseService):
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            id_str: str,
+            deviation: int,
+    ):
+        timezone = await TimezoneRepository().create(
+            id_str=id_str,
+            deviation=deviation
+        )
+
+        await self.create_action(
+            model=timezone,
+            action='create',
+            parameters={
+                'creator': f'session_{session.id}',
+                'id_str': timezone.id_str,
+                'deviation': timezone.deviation,
+            },
+            with_client=True,
+        )
+
+        return {'id': timezone.id}
+
+    @session_required()
+    async def delete(
+            self,
+            session: Session,
+            id_str: str,
+    ):
+        timezone = await TimezoneRepository().get_by_id_str(id_str=id_str)
+        await TimezoneRepository().delete(model=timezone)
+
+        await self.create_action(
+            model=timezone,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+                'id_str': id_str,
+            }
+        )
+
+        return {}
+
+    @staticmethod
+    async def get(
+            id_str: str,
+    ):
+        timezone = await TimezoneRepository().get_by_id_str(id_str=id_str)
+        return {
+            'language': {
+                'id': timezone.id,
+                'id_str': timezone.id_str,
+                'deviation': timezone.deviation,
+            }
+        }
+
     @staticmethod
     async def get_list() -> dict:
         timezones = {

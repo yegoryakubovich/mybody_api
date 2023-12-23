@@ -15,11 +15,77 @@
 #
 
 
+from app.db.models import Session
 from app.repositories import CurrencyRepository
+from app.services.text import TextService
 from app.services.base import BaseService
+from app.utils.decorators import session_required
 
 
 class CurrencyService(BaseService):
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            id_str: str,
+            name: str,
+    ):
+        name_text = await TextService().create(
+            session=session,
+            key=f'currency_{id_str}',
+            value_default=name,
+        )
+
+        currency = await CurrencyRepository().create(
+            id_str=id_str,
+            name_text=name_text,
+        )
+
+        await self.create_action(
+            model=currency,
+            action='create',
+            parameters={
+                'creator': f'session_{session.id}',
+                'id_str': id_str,
+                'name': name,
+            }
+        )
+
+        return {'id': currency.id}
+
+    @session_required()
+    async def delete(
+            self,
+            session: Session,
+            id_str: str,
+    ):
+        currency = await CurrencyRepository().get_by_id_str(id_str=id_str)
+        await CurrencyRepository().delete(model=currency)
+
+        await self.create_action(
+            model=currency,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+                'id_str': id_str,
+            }
+        )
+
+        return {}
+
+    @staticmethod
+    async def get(
+            id_str: str,
+    ):
+        currency = await CurrencyRepository().get_by_id_str(id_str=id_str)
+        return {
+            'currency': {
+                'id': currency.id,
+                'id_str': currency.id_str,
+                'name_text': currency.name_text.key,
+            }
+        }
+
     @staticmethod
     async def get_list() -> dict:
         currencies = {
@@ -27,6 +93,7 @@ class CurrencyService(BaseService):
                 {
                     'id': currency.id,
                     'id_str': currency.id_str,
+                    'name_text': currency.name_text.key,
                 }
                 for currency in await CurrencyRepository().get_list()
             ],
