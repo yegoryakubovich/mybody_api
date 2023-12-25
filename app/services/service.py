@@ -66,7 +66,10 @@ class ServiceService(BaseService):
                 'questions': questions,
             },
         )
-        return {'id': service.id}
+        return {
+            'id': service.id,
+            'id_str': service.id_str,
+        }
 
     @session_required()
     async def update(

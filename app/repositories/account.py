@@ -18,6 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService
+from config import ITEMS_PER_PAGE
 from .base import BaseRepository
 from app.utils import ApiException
 
@@ -78,3 +79,20 @@ class AccountRepository(BaseRepository):
         ]
 
         return [service.name for service in services_active] if only_names else services_active
+
+    @staticmethod
+    async def search(id_, username: str, page: int) -> tuple[list[Account], int]:
+        if not username:
+            username = ''
+        if not id_:
+            id_ = ''
+
+        query = Account.select().where(
+            (Account.is_deleted == False) &
+            (Account.username % f'%{username}%') &
+            (Account.id % f'%{id_}%')
+        )
+
+        accounts = query.limit(ITEMS_PER_PAGE).offset(ITEMS_PER_PAGE*(page-1)).order_by(Account.id).execute()
+        results = query.count()
+        return accounts, results

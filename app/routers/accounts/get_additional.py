@@ -15,24 +15,26 @@
 #
 
 
-from configparser import ConfigParser
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import AccountService
+from app.utils import Router
+from app.utils.response import Response
 
 
-config = ConfigParser()
-config.read('config.ini')
+router = Router(
+    prefix='/additional/get',
+)
 
-config_db = config['db']
-config_tg = config['tg']
 
-MYSQL_HOST = config_db['host']
-MYSQL_PORT = int(config_db['port'])
-MYSQL_USER = config_db['user']
-MYSQL_PASSWORD = config_db['password']
-MYSQL_NAME = config_db['name']
+class AccountAdditionalGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
 
-TG_BOT_USERNAME = config_tg['bot_username']
-TG_BOT_TOKEN = config_tg['bot_token']
 
-PATH_ARTICLES = 'assets/articles'
-PATH_TEXTS_PACKS = 'assets/texts_packs'
-ITEMS_PER_PAGE = 10
+@router.get()
+async def route(schema: AccountAdditionalGetSchema = Depends()):
+    result = await AccountService().get_additional(
+        token=schema.token,
+    )
+    return Response(**result)

@@ -41,8 +41,8 @@ def session_required(
                 else:
                     kwargs['session'] = session
 
-                for permission in permissions or []:
-                    await AccountRoleService().check_permission(account=session.account, id_str=permission)
+            for permission in permissions or []:
+                await AccountRoleService().check_permission(account=session.account, id_str=permission)
 
             return await function(*args, **kwargs)
         return wrapper

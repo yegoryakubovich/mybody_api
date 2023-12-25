@@ -28,11 +28,15 @@ router = Router(
 )
 
 
-class SessionSchema(BaseModel):
+class AccountGetSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
+    id: int = Field(default=1)
 
 
-@router.get()
-async def route(schema: SessionSchema = Depends()):
-    result = await AccountService().get(token=schema.token)
+@router.post()
+async def route(schema: AccountGetSchema):
+    result = await AccountService().get(
+        token=schema.token,
+        id_=schema.id,
+    )
     return Response(**result)

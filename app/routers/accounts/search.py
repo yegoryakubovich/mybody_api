@@ -15,24 +15,32 @@
 #
 
 
-from .get import router as router_get
-from .get_additional import router as router_get_additional
-from .search import router as router_search
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .services import router as router_services
-from app.utils import Router
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+from app.services import AccountService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_get_additional,
-        router_search,
-        router_create,
-        router_check_username,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/search',
 )
+
+
+class AccountSearchSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: Optional[int] = Field(default=None)
+    username: Optional[str] = Field(default=None)
+    page: Optional[int] = Field(default=1)
+
+
+@router.post()
+async def route(schema: AccountSearchSchema):
+    result = await AccountService().search(
+        token=schema.token,
+        id_=schema.id,
+        username=schema.username,
+        page=schema.page,
+    )
+    return Response(**result)

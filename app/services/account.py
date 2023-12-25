@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from math import ceil
 
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
@@ -23,6 +23,7 @@ from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
+from config import ITEMS_PER_PAGE
 
 
 class WrongPassword(ApiException):
@@ -113,8 +114,27 @@ class AccountService(BaseService):
             raise AccountUsernameExist(f'Account with username "{username}" already exist')
         return {}
 
+    @session_required(return_model=False, permissions=['accounts'])
+    async def get(self, id_: int) -> dict:
+        account = await AccountRepository().get_by_id(id_=id_)
+        permissions = await AccountRoleService.get_permissions(account=account)
+
+        return {
+            'account': {
+                'username': account.username,
+                'firstname': account.firstname,
+                'lastname': account.lastname,
+                'surname': account.surname,
+                'country': account.country.id_str,
+                'language': account.language.id_str,
+                'timezone': account.timezone.id_str,
+                'currency': account.currency.id_str,
+                'permissions': permissions,
+            },
+        }
+
     @session_required(return_account=True)
-    async def get(self, account: Account) -> dict:
+    async def get_additional(self, account: Account) -> dict:
         text_pack = await TextPackRepository.get_current(language=account.language)
         permissions = await AccountRoleService.get_permissions(account=account)
 
@@ -131,6 +151,33 @@ class AccountService(BaseService):
                 'permissions': permissions,
                 'text_pack_id': text_pack.id,
             },
+        }
+
+    @session_required(return_model=False, permissions=['accounts'])
+    async def search(self, id_, username: str, page: int) -> dict:
+        accounts, results = await AccountRepository.search(id_=id_, username=username, page=page)
+
+        accounts = [
+            {
+                'id': account.id,
+                'username': account.username,
+                'firstname': account.firstname,
+                'lastname': account.lastname,
+                'surname': account.surname,
+                'country': account.country.id_str,
+                'language': account.language.id_str,
+                'timezone': account.timezone.id_str,
+                'currency': account.currency.id_str,
+            }
+            for account in accounts
+        ]
+
+        return {
+            'accounts': accounts,
+            'results': results,
+            'pages': ceil(results/ITEMS_PER_PAGE),
+            'page': page,
+            'items_per_page': ITEMS_PER_PAGE,
         }
 
     @staticmethod
