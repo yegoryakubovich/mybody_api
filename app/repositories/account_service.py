@@ -28,6 +28,13 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class AccountServiceStates:
+    creation = 'CREATION'
+    payment = 'PAYMENT'
+    active = 'ACTIVE'
+    expired = 'EXPIRED'
+
+
 class AccountServiceRepository(BaseRepository):
     model = AccountService
 

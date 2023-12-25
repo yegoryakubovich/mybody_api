@@ -16,7 +16,7 @@
 
 
 from .account_role import AccountRoleRepository
-from .account_service import AccountServiceRepository
+from .account_service import AccountServiceRepository, AccountServiceStates
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
 from .exercise import ExerciseRepository

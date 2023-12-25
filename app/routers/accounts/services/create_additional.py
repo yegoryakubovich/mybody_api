@@ -24,22 +24,20 @@ from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/create',
+    prefix='/additional/create',
 )
 
 
-class AccountServiceCreateSchema(BaseModel):
+class AccountServiceAdditionalCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    account_id: int = Field()
     service: str = Field(min_length=2, max_length=64)
     answers: Optional[str] = Field(min_length=2, max_length=8192, default=None)
 
 
 @router.post()
-async def route(schema: AccountServiceCreateSchema):
-    result = await AccountServiceService().create(
+async def route(schema: AccountServiceAdditionalCreateSchema):
+    result = await AccountServiceService().create_additional(
         token=schema.token,
-        account_id=schema.account_id,
         service_id_str=schema.service,
         answers=schema.answers,
     )

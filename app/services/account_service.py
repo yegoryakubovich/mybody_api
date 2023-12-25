@@ -18,7 +18,7 @@
 from json import JSONDecodeError, loads
 
 from app.db.models import Account, AccountService, Service, Session
-from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository
+from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.decorators import session_required
@@ -34,18 +34,14 @@ class AccountServiceService(BaseService):
         if not await self._is_valid_answers(questions=questions, answers=answers):
             raise InvalidAnswerList('Invalid answer list')
 
-    @session_required()
-    async def create(
+    async def _create(
             self,
             session: Session,
-            account_username: str,
-            service_id_str: str,
+            account: Account,
+            service: Service,
             answers: str,
-            state: str,
-    ):
-
-        account: Account = await AccountRepository().get_by_username(username=account_username)
-        service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
+    ) -> AccountService:
+        state = AccountServiceStates.creation
         await self.check_answers(questions=service.questions, answers=answers)
         account_service = await AccountServiceRepository().create(
             account=account,
@@ -67,6 +63,31 @@ class AccountServiceService(BaseService):
                 'state': state,
             },
         )
+        return account_service
+
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            account_id: int,
+            service_id_str: str,
+            answers: str,
+    ):
+        account: Account = await AccountRepository().get_by_id(id_=account_id)
+        service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
+        account_service = await self._create(session=session, account=account, service=service, answers=answers)
+        return {'id': account_service.id}
+
+    @session_required()
+    async def create_additional(
+            self,
+            session: Session,
+            service_id_str: str,
+            answers: str,
+    ):
+        account = session.account
+        service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
+        account_service = await self._create(session=session, account=account, service=service, answers=answers)
         return {'id': account_service.id}
 
     @session_required()
