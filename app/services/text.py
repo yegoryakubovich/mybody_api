@@ -25,9 +25,9 @@ class TextService(BaseService):
     @session_required(return_model=False)
     async def get(
             self,
-            id_: int,
+            key: str,
     ):
-        text = await TextRepository().get_by_id(id_=id_)
+        text = await TextRepository().get_by_key(key=key)
         translations = await TextTranslationRepository().get_list_by_text(text=text)
 
         return {
