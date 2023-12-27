@@ -17,32 +17,24 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceService
-from app.utils import Response, Router
+from app.services import RolePermissionService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/update',
+    prefix='/delete',
 )
 
 
-class AccountServiceUpdateSchema(BaseModel):
+class RolePermissionDeleteSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    answers: str = Field(default=None, min_length=2, max_length=8192)
-    state: str = Field(default=None, min_length=2, max_length=128)
-    datetime_from: str = Field(default=None)
-    datetime_to: str = Field(default=None)
 
 
 @router.post()
-async def route(schema: AccountServiceUpdateSchema):
-    result = await AccountServiceService().update(
+async def route(schema: RolePermissionDeleteSchema):
+    result = await RolePermissionService().delete(
         token=schema.token,
-        id_=schema.id,
-        answers=schema.answers,
-        state=schema.state,
-        datetime_from=schema.datetime_from,
-        datetime_to=schema.datetime_to,
+        id_=schema.id
     )
     return Response(**result)

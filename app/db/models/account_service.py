@@ -15,7 +15,7 @@
 #
 
 
-from peewee import CharField, ForeignKeyField, PrimaryKeyField, BooleanField, TextField
+from peewee import CharField, DateTimeField, ForeignKeyField, PrimaryKeyField, BooleanField, TextField
 
 from .account import Account
 from .service import Service
@@ -29,6 +29,8 @@ class AccountService(BaseModel):
     questions = TextField(default=None, null=True)
     answers = TextField(default=None, null=True)
     state = CharField(max_length=64)
+    datetime_from = DateTimeField(null=True, default=None)
+    datetime_to = DateTimeField(null=True, default=None)
     is_deleted = BooleanField(default=False)
 
     class Meta:

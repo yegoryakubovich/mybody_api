@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-
+from datetime import datetime
 from json import JSONDecodeError, loads
 
 from app.db.models import Account, AccountService, Service, Session
@@ -104,14 +103,22 @@ class AccountServiceService(BaseService):
             id_: int,
             answers: str = None,
             state: str = None,
+            datetime_from: str = None,
+            datetime_to: str = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
         if answers:
             await self.check_answers(questions=account_service.questions, answers=answers)
+        if datetime_from:
+            datetime_from = datetime.strptime(datetime_from, '')  # FIXME format
+        if datetime_to:
+            datetime_to = datetime.strptime(datetime_to, '')  # FIXME format
         await AccountServiceRepository().update(
             account_service=account_service,
             answers=answers,
             state=state,
+            datetime_from=datetime_from,
+            datetime_to=datetime_to,
         )
 
         action_parameters = {

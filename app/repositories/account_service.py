@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from datetime import datetime
 
 from .base import BaseRepository
 from app.utils import ApiException
@@ -59,11 +59,18 @@ class AccountServiceRepository(BaseRepository):
             account_service: AccountService,
             answers: str = None,
             state: str = None,
+            datetime_from: datetime = None,
+            datetime_to: datetime = None,
     ):
-        if not answers and not state:
-            raise NoRequiredParameters('One of the following parameters must be filled in: answers, state')
+        if not answers and not state and not datetime_from and not datetime_to:
+            raise NoRequiredParameters('One of the following parameters must be filled in: answers, state, '
+                                       'datetime_from, datetime_to')
         if answers:
             account_service.answers = answers
         if state:
             account_service.state = state
+        if datetime_from:
+            account_service.datetime_from = datetime_from
+        if datetime_to:
+            account_service.datetime_to = datetime_to
         account_service.save()

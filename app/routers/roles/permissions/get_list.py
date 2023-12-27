@@ -15,22 +15,16 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .permissions import router as router_permissions
+from app.services import RolePermissionService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/roles',
-    routes_included=[
-        router_create,
-        router_delete,
-        router_get,
-        router_get_list,
-        router_permissions,
-    ],
-    tags=['Roles'],
+    prefix='/list/get',
 )
+
+
+@router.get()
+async def route():
+    result = await RolePermissionService().get_list()
+    return Response(**result)

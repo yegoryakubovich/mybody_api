@@ -17,32 +17,26 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceService
-from app.utils import Response, Router
+from app.services import RolePermissionService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/update',
+    prefix='/create',
 )
 
 
-class AccountServiceUpdateSchema(BaseModel):
+class RolePermissionCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
-    answers: str = Field(default=None, min_length=2, max_length=8192)
-    state: str = Field(default=None, min_length=2, max_length=128)
-    datetime_from: str = Field(default=None)
-    datetime_to: str = Field(default=None)
+    role_id: int = Field()
+    permission: str = Field(min_length=2, max_length=128)
 
 
 @router.post()
-async def route(schema: AccountServiceUpdateSchema):
-    result = await AccountServiceService().update(
+async def route(schema: RolePermissionCreateSchema):
+    result = await RolePermissionService().create(
         token=schema.token,
-        id_=schema.id,
-        answers=schema.answers,
-        state=schema.state,
-        datetime_from=schema.datetime_from,
-        datetime_to=schema.datetime_to,
+        role_id=schema.role_id,
+        permission_id_str=schema.permission,
     )
     return Response(**result)
