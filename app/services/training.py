@@ -143,7 +143,7 @@ class TrainingService(BaseService):
             'training': {
                 'id': training.id,
                 'account_service': training.account_service.id,
-                'date': training.date,
+                'date': str(training.date),
             }
         }
 
@@ -154,7 +154,7 @@ class TrainingService(BaseService):
                 {
                     'id': training.id,
                     'account_service': training.account_service.id,
-                    'date': training.date,
+                    'date': str(training.date),
                 } for training in await TrainingRepository().get_list()
             ]
         }

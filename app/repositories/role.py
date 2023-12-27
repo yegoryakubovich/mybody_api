@@ -17,16 +17,16 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import Role
+from app.db.models import Role, Text
 from .base import BaseRepository
 
 
-class RoleRepository(Role, BaseRepository):
+class RoleRepository(BaseRepository):
     model = Role
 
     @staticmethod
     async def create(
-            name_text: str,
+            name_text: Text,
     ) -> Role:
         return Role.create(
             name_text=name_text,

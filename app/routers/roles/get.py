@@ -15,6 +15,10 @@
 #
 
 
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import RoleService
 from app.utils import Router, Response
 
 
@@ -23,7 +27,11 @@ router = Router(
 )
 
 
+class RoleGetSchema(BaseModel):
+    id: int = Field()
+
+
 @router.get()
-async def route():
-    result = {}
+async def route(schema: RoleGetSchema = Depends()):
+    result = await RoleService().get(id_=schema.id)
     return Response(**result)

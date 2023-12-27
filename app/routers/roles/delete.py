@@ -15,23 +15,26 @@
 #
 
 
-from json import loads
+from pydantic import BaseModel, Field
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField
-
-from .text import Text
-from .base import BaseModel
+from app.services import RoleService
+from app.utils import Router, Response
 
 
-class Service(BaseModel):
-    id = PrimaryKeyField()
-    id_str = CharField(max_length=64)
-    name_text = ForeignKeyField(model=Text)
-    questions = CharField(null=True, default=None, max_length=8192)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/delete',
+)
 
-    async def get_questions(self):
-        return loads(str(self.questions))
 
-    class Meta:
-        db_table = 'services'
+class RoleDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: RoleDeleteSchema):
+    result = await RoleService().delete(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

@@ -34,6 +34,7 @@ class CurrencyService(BaseService):
             session=session,
             key=f'currency_{id_str}',
             value_default=name,
+            return_model=True,
         )
 
         currency = await CurrencyRepository().create(
@@ -51,7 +52,7 @@ class CurrencyService(BaseService):
             }
         )
 
-        return {'id': currency.id}
+        return {'id_str': currency.id_str}
 
     @session_required()
     async def delete(
@@ -60,6 +61,7 @@ class CurrencyService(BaseService):
             id_str: str,
     ):
         currency = await CurrencyRepository().get_by_id_str(id_str=id_str)
+        await TextService().delete(session=session, key=f'currency_{id_str}')
         await CurrencyRepository().delete(model=currency)
 
         await self.create_action(

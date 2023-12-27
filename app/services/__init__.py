@@ -24,8 +24,10 @@ from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
 from .account import AccountService, WrongPassword
+from .permission import PermissionService
 from .product import ProductService
 from .role import RoleService
+from .role_permission import RolePermissionService
 from .service import ServiceService
 from .service_cost import ServiceCostService
 from .session import SessionService
@@ -66,6 +68,8 @@ __all__ = [
 
     'RoleService',
     'AccountRoleService',
+    'RolePermissionService',
+    'PermissionService',
 
     'ArticleService',
     'ArticleTranslationService',

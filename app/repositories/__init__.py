@@ -25,6 +25,7 @@ from .notification_service_request import NotificationServiceRequestState, Verif
     NotificationServiceRequestRepository
 from .action import ActionRepository
 from .account import AccountRepository
+from .permission import PermissionRepository
 from .product import ProductRepository
 from .role import RoleRepository
 from .role_permission import RolePermissionRepository
@@ -77,6 +78,7 @@ __all__ = [
     'RoleRepository',
     'AccountRoleRepository',
     'RolePermissionRepository',
+    'PermissionRepository',
 
     'ArticleRepository',
     'ArticleTranslationRepository',

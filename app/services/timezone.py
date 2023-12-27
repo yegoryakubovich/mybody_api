@@ -45,7 +45,7 @@ class TimezoneService(BaseService):
             with_client=True,
         )
 
-        return {'id': timezone.id}
+        return {'id_str': timezone.id_str}
 
     @session_required()
     async def delete(
@@ -73,7 +73,7 @@ class TimezoneService(BaseService):
     ):
         timezone = await TimezoneRepository().get_by_id_str(id_str=id_str)
         return {
-            'language': {
+            'timezone': {
                 'id': timezone.id,
                 'id_str': timezone.id_str,
                 'deviation': timezone.deviation,

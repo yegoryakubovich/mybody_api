@@ -32,7 +32,7 @@ class AccountServiceCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_id: int = Field()
     service: str = Field(min_length=2, max_length=64)
-    answers: Optional[str] = Field(min_length=2, max_length=8192, default=None)
+    answers: str = Field(min_length=2, max_length=8192, default=None)
 
 
 @router.post()

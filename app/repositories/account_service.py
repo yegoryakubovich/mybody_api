@@ -42,9 +42,9 @@ class AccountServiceRepository(BaseRepository):
     async def create(
             account: Account,
             service: Service,
-            questions: str,
-            answers: str,
             state: str,
+            questions: str = None,
+            answers: str = None,
     ):
         return AccountService.create(
             account=account,

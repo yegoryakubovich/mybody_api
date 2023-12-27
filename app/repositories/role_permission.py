@@ -19,7 +19,7 @@ from app.db.models import Role, RolePermission, Permission
 from .base import BaseRepository
 
 
-class RolePermissionRepository(Role, BaseRepository):
+class RolePermissionRepository(BaseRepository):
     model = RolePermission
 
     @staticmethod

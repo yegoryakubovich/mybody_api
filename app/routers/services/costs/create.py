@@ -28,8 +28,8 @@ router = Router(
 
 class ServiceCostCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    service_id_str: str = Field(min_length=2, max_length=64)
-    currency_id_str: str = Field(min_length=2, max_length=16)
+    service: str = Field(min_length=2, max_length=64)
+    currency: str = Field(min_length=2, max_length=16)
     cost: float = Field()
 
 
@@ -37,8 +37,8 @@ class ServiceCostCreateSchema(BaseModel):
 async def route(schema: ServiceCostCreateSchema):
     result = await ServiceCostService().create(
         token=schema.token,
-        service_id_str=schema.service_id_str,
-        currency_id_str=schema.currency_id_str,
+        service_id_str=schema.service,
+        currency_id_str=schema.currency,
         cost=schema.cost,
     )
     return Response(**result)

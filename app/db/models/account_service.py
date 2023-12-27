@@ -26,8 +26,8 @@ class AccountService(BaseModel):
     id = PrimaryKeyField()
     account = ForeignKeyField(model=Account, backref='services')
     service = ForeignKeyField(model=Service, backref='accounts')
-    questions = TextField(default='[]')
-    answers = TextField(default='[]')
+    questions = TextField(default=None, null=True)
+    answers = TextField(default=None, null=True)
     state = CharField(max_length=64)
     is_deleted = BooleanField(default=False)
 

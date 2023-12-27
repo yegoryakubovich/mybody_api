@@ -106,7 +106,7 @@ class TrainingExerciseService(BaseService):
                 }
             )
 
-        exercise = await ExerciseRepository().get_by_id(id_=id_)
+        exercise = await ExerciseRepository().get_by_id(id_=exercise_id)
 
         await TrainingExerciseRepository().update(
             training_exercise=training_exercise,

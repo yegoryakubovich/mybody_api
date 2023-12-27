@@ -15,23 +15,23 @@
 #
 
 
-from json import loads
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField
-
-from .text import Text
-from .base import BaseModel
+from app.services import PermissionService
+from app.utils import Router, Response
 
 
-class Service(BaseModel):
-    id = PrimaryKeyField()
-    id_str = CharField(max_length=64)
-    name_text = ForeignKeyField(model=Text)
-    questions = CharField(null=True, default=None, max_length=8192)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/get',
+)
 
-    async def get_questions(self):
-        return loads(str(self.questions))
 
-    class Meta:
-        db_table = 'services'
+class PermissionGetSchema(BaseModel):
+    id_str: str = Field(min_length=2, max_length=32)
+
+
+@router.get()
+async def route(schema: PermissionGetSchema = Depends()):
+    result = await PermissionService().get(id_str=schema.id_str)
+    return Response(**result)

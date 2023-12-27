@@ -40,6 +40,7 @@ class CountryService(BaseService):
             session=session,
             key=f'country_{id_str}',
             value_default=name,
+            return_model=True,
         )
         language_default = await LanguageRepository().get_by_id_str(id_str=language)
         timezone_default = await TimezoneRepository().get_by_id_str(id_str=timezone)
@@ -67,7 +68,7 @@ class CountryService(BaseService):
             }
         )
 
-        return {'id': country.id}
+        return {'id_str': country.id_str}
 
     @session_required()
     async def update(
@@ -141,6 +142,8 @@ class CountryService(BaseService):
             id_str: str,
     ):
         country: Country = await CountryRepository().get_by_id_str(id_str=id_str)
+
+        await TextService().delete(session=session, key=f'country_{id_str}')
         await CountryRepository().delete(model=country)
 
         await self.create_action(
@@ -165,10 +168,10 @@ class CountryService(BaseService):
                 {
                     'id': country.id,
                     'id_str': country.id_str,
-                    'name_text': country.name_text,
-                    'language': country.language_default,
-                    'timezone': country.timezone_default,
-                    'currency': country.currency_default,
+                    'name_text': country.name_text.key,
+                    'language': country.language_default.id_str,
+                    'timezone': country.timezone_default.id_str,
+                    'currency': country.currency_default.id_str,
                 }
         }
 

@@ -15,23 +15,28 @@
 #
 
 
-from json import loads
+from pydantic import BaseModel, Field
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField
-
-from .text import Text
-from .base import BaseModel
+from app.services import PermissionService
+from app.utils import Router, Response
 
 
-class Service(BaseModel):
-    id = PrimaryKeyField()
-    id_str = CharField(max_length=64)
-    name_text = ForeignKeyField(model=Text)
-    questions = CharField(null=True, default=None, max_length=8192)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/create',
+)
 
-    async def get_questions(self):
-        return loads(str(self.questions))
 
-    class Meta:
-        db_table = 'services'
+class PermissionCreateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id_str: str = Field(min_length=2, max_length=32)
+    name: str = Field(min_length=2, max_length=1024)
+
+
+@router.post()
+async def route(schema: PermissionCreateSchema):
+    result = await PermissionService().create(
+        token=schema.token,
+        id_str=schema.id_str,
+        name=schema.name,
+    )
+    return Response(**result)

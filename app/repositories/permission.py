@@ -15,38 +15,19 @@
 #
 
 
-from app.db.models import Service, Text
+from app.db.models import Permission, Text
 from .base import BaseRepository
-from app.utils import ApiException
 
 
-class NoRequiredParameters(ApiException):
-    pass
-
-
-class ServiceRepository(BaseRepository):
-    model = Service
+class PermissionRepository(BaseRepository):
+    model = Permission
 
     @staticmethod
     async def create(
             id_str: str,
             name_text: Text,
-            questions: str = None,
-    ):
-        return Service.create(
+    ) -> Permission:
+        return Permission.create(
             id_str=id_str,
             name_text=name_text,
-            questions=questions,
         )
-
-    @staticmethod
-    async def update(
-            service: Service,
-            name: str = None,
-            questions: str = None,
-    ):
-        if not name and not questions:
-            raise NoRequiredParameters('One of the following parameters must be filled in: name, questions')
-        if questions:
-            service.questions = questions
-        service.save()

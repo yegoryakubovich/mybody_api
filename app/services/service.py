@@ -40,9 +40,20 @@ class ServiceService(BaseService):
             session: Session,
             id_str: str,
             name: str,
-            questions: str,
+            questions: str = None,
     ) -> dict:
-        await self.check_questions(questions=questions)
+        action_parameters = {
+            'creator': f'session_{session.id}',
+            'id_str': id_str,
+            'name': name,
+        }
+        if questions:
+            action_parameters.update(
+                {
+                    'questions': questions,
+                }
+            )
+            await self.check_questions(questions=questions)
         name_text_key = f'service_{id_str}'
         name_text = await TextService().create(
             session=session,
@@ -59,12 +70,7 @@ class ServiceService(BaseService):
         await self.create_action(
             model=service,
             action='create',
-            parameters={
-                'creator': f'session_{session.id}',
-                'id_str': id_str,
-                'name': name,
-                'questions': questions,
-            },
+            parameters=action_parameters,
         )
         return {
             'id': service.id,

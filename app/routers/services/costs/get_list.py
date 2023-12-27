@@ -26,12 +26,12 @@ router = Router(
 
 
 class ServiceCostGetListSchema(BaseModel):
-    service_id_str: str = Field(min_length=2, max_length=64)
+    service: str = Field(min_length=2, max_length=64)
 
 
 @router.get()
 async def route(schema: ServiceCostGetListSchema = Depends()):
     result = await ServiceCostService().get_list_by_service(
-        service_id_str=schema.service_id_str,
+        service_id_str=schema.service,
     )
     return Response(**result)

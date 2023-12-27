@@ -26,17 +26,15 @@ router = Router(
 )
 
 
-class CreateRoleSchema(BaseModel):
+class RoleCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=2, max_length=128)
-    name_text_key: str = Field(min_length=2, max_length=128)
+    name: str = Field(min_length=2, max_length=1024)
 
 
 @router.post()
-async def route(schema: CreateRoleSchema):
+async def route(schema: RoleCreateSchema):
     result = await RoleService().create(
         token=schema.token,
-        id_str=schema.id_str,
-        name_text_key=schema.name_text_key,
+        name=schema.name,
     )
     return Response(**result)

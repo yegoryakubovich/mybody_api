@@ -17,6 +17,7 @@
 
 from app.db.models import Session
 from app.repositories import LanguageRepository
+from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 
@@ -44,7 +45,7 @@ class LanguageService(BaseService):
             },
             with_client=True,
         )
-        return {'id': language.id}
+        return {'id_str': language.id_str}
 
     @session_required()
     async def delete(
@@ -53,6 +54,7 @@ class LanguageService(BaseService):
             id_str: str,
     ):
         language = await LanguageRepository().get_by_id_str(id_str=id_str)
+
         await LanguageRepository().delete(model=language)
 
         await self.create_action(
@@ -75,7 +77,7 @@ class LanguageService(BaseService):
             'language': {
                 'id': language.id,
                 'id_str': language.id_str,
-                'name_text': language.name_text.key,
+                'name_text': language.name,
             }
         }
 

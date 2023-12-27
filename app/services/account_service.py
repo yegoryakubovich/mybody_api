@@ -39,10 +39,25 @@ class AccountServiceService(BaseService):
             session: Session,
             account: Account,
             service: Service,
-            answers: str,
+            answers: str = None,
     ) -> AccountService:
         state = AccountServiceStates.creation
-        await self.check_answers(questions=service.questions, answers=answers)
+        action_parameters = {
+            'creator': f'session_{session.id}',
+            'account_id': account.id,
+            'service': service.id_str,
+            'state': state,
+        }
+        if service.questions:
+            action_parameters.update(
+                {
+                    'questions': service.questions,
+                    'answers': answers,
+                }
+            )
+            await self.check_answers(questions=service.questions, answers=answers)
+        else:
+            answers = None
         account_service = await AccountServiceRepository().create(
             account=account,
             service=service,
@@ -50,18 +65,10 @@ class AccountServiceService(BaseService):
             answers=answers,
             state=state,
         )
-
         await self.create_action(
             model=account_service,
             action='create',
-            parameters={
-                'creator': f'session_{session.id}',
-                'account_id': account.id,
-                'service': service.id_str,
-                'questions': service.questions,
-                'answers': answers,
-                'state': state,
-            },
+            parameters=action_parameters,
         )
         return account_service
 
@@ -71,7 +78,7 @@ class AccountServiceService(BaseService):
             session: Session,
             account_id: int,
             service_id_str: str,
-            answers: str,
+            answers: str = None,
     ):
         account: Account = await AccountRepository().get_by_id(id_=account_id)
         service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
@@ -83,7 +90,7 @@ class AccountServiceService(BaseService):
             self,
             session: Session,
             service_id_str: str,
-            answers: str,
+            answers: str = None,
     ):
         account = session.account
         service: Service = await ServiceRepository().get_by_id_str(id_str=service_id_str)
