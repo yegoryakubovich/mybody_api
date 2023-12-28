@@ -34,7 +34,7 @@ class InvalidProductType(ApiException):
 
 class ProductService(BaseService):
 
-    @session_required()
+    @session_required(permissions=['products'])
     async def create(
             self,
             session: Session,
@@ -81,7 +81,7 @@ class ProductService(BaseService):
 
         return {'id': product.id}
 
-    @session_required()
+    @session_required(permissions=['products'])
     async def update(
             self,
             session: Session,
@@ -124,7 +124,7 @@ class ProductService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['products'])
     async def delete(
             self,
             session: Session,

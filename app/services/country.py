@@ -26,7 +26,7 @@ class NoRequiredParameters(ApiException):
 
 
 class CountryService(BaseService):
-    @session_required()
+    @session_required(permissions=['countries'])
     async def create(
             self,
             session: Session,
@@ -70,7 +70,7 @@ class CountryService(BaseService):
 
         return {'id_str': country.id_str}
 
-    @session_required()
+    @session_required(permissions=['countries'])
     async def update(
             self,
             session: Session,
@@ -135,7 +135,7 @@ class CountryService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['countries'])
     async def delete(
             self,
             session: Session,

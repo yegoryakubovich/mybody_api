@@ -73,7 +73,7 @@ class TextService(BaseService):
             'texts': texts_list,
         }
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def create(
             self,
             session: Session,
@@ -98,7 +98,7 @@ class TextService(BaseService):
             return text
         return {'id': text.id}
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def update(
             self,
             session: Session,
@@ -139,7 +139,7 @@ class TextService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def delete(
             self,
             session: Session,

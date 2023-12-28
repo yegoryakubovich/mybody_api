@@ -29,7 +29,6 @@ router = Router(
 class CurrencyCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id_str: str = Field(min_length=2, max_length=32)
-    name: str = Field(min_length=1, max_length=1024)
 
 
 @router.post()
@@ -37,6 +36,5 @@ async def route(schema: CurrencyCreateSchema):
     result = await CurrencyService().create(
         token=schema.token,
         id_str=schema.id_str,
-        name=schema.name,
     )
     return Response(**result)

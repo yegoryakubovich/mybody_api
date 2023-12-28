@@ -24,7 +24,6 @@ from .base import BaseModel
 class Currency(BaseModel):
     id = PrimaryKeyField()
     id_str = CharField(max_length=16)
-    name_text = ForeignKeyField(model=Text)
     is_deleted = BooleanField(default=False)
 
     class Meta:

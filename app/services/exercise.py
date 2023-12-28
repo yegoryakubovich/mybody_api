@@ -29,7 +29,7 @@ class InvalidExerciseType(ApiException):
 
 
 class ExerciseService(BaseService):
-    @session_required()
+    @session_required(permissions=['exercises'])
     async def create(
             self,
             session: Session,
@@ -62,7 +62,7 @@ class ExerciseService(BaseService):
 
         return {'id': exercise.id}
 
-    @session_required()
+    @session_required(permissions=['exercises'])
     async def update(
             self,
             session: Session,
@@ -85,7 +85,7 @@ class ExerciseService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['exercises'])
     async def delete(
             self,
             session: Session,

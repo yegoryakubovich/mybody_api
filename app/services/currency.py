@@ -23,23 +23,14 @@ from app.utils.decorators import session_required
 
 
 class CurrencyService(BaseService):
-    @session_required()
+    @session_required(permissions=['currencies'])
     async def create(
             self,
             session: Session,
             id_str: str,
-            name: str,
     ):
-        name_text = await TextService().create(
-            session=session,
-            key=f'currency_{id_str}',
-            value_default=name,
-            return_model=True,
-        )
-
         currency = await CurrencyRepository().create(
             id_str=id_str,
-            name_text=name_text,
         )
 
         await self.create_action(
@@ -48,20 +39,18 @@ class CurrencyService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'id_str': id_str,
-                'name': name,
             }
         )
 
         return {'id_str': currency.id_str}
 
-    @session_required()
+    @session_required(permissions=['currencies'])
     async def delete(
             self,
             session: Session,
             id_str: str,
     ):
         currency = await CurrencyRepository().get_by_id_str(id_str=id_str)
-        await TextService().delete(session=session, key=f'currency_{id_str}')
         await CurrencyRepository().delete(model=currency)
 
         await self.create_action(
@@ -84,7 +73,6 @@ class CurrencyService(BaseService):
             'currency': {
                 'id': currency.id,
                 'id_str': currency.id_str,
-                'name_text': currency.name_text.key,
             }
         }
 
@@ -95,7 +83,6 @@ class CurrencyService(BaseService):
                 {
                     'id': currency.id,
                     'id_str': currency.id_str,
-                    'name_text': currency.name_text.key,
                 }
                 for currency in await CurrencyRepository().get_list()
             ],

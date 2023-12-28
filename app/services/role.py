@@ -29,7 +29,7 @@ class RoleAlreadyExist(ApiException):
 
 
 class RoleService(BaseService):
-    @session_required()
+    @session_required(permissions=['roles'])
     async def create(
             self,
             session: Session,
@@ -57,7 +57,7 @@ class RoleService(BaseService):
 
         return {'id': role.id}
 
-    @session_required()
+    @session_required(permissions=['roles'])
     async def delete(
             self,
             session: Session,

@@ -27,7 +27,7 @@ class NoRequiredParameters(ApiException):
 
 
 class TrainingExerciseService(BaseService):
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def create(
             self,
             session: Session,
@@ -62,7 +62,7 @@ class TrainingExerciseService(BaseService):
 
         return {'id': training_exercise.id}
 
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def update(
             self,
             session: Session,
@@ -80,7 +80,8 @@ class TrainingExerciseService(BaseService):
                 'id': id_,
         }
         if not priority and not value and not rest and not exercise_id:
-            raise NoRequiredParameters('One of the following parameters must be filled in: exercise_id, priority, value, rest')
+            raise NoRequiredParameters('One of the following parameters must be filled in: exercise_id, priority,'
+                                       ' value, rest')
         if exercise_id:
             action_parameters.update(
                 {
@@ -124,7 +125,7 @@ class TrainingExerciseService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def delete(
             self,
             session: Session,

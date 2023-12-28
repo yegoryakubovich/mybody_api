@@ -29,7 +29,7 @@ class NoRequiredParameters(ApiException):
 
 
 class TrainingService(BaseService):
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def create(
             self,
             session: Session,
@@ -69,7 +69,7 @@ class TrainingService(BaseService):
 
         return {'id': training.id}
 
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def update(
             self,
             session: Session,
@@ -116,7 +116,7 @@ class TrainingService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['trainings'])
     async def delete(
             self,
             session: Session,

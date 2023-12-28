@@ -48,7 +48,7 @@ class TextPackService(BaseService):
             'text_pack': json,
         }
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def create(
             self,
             session: Session,
@@ -67,7 +67,7 @@ class TextPackService(BaseService):
             'id': text_pack.id,
         }
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def delete(self, session: Session, id_: int):
         text_pack = await TextPackRepository().get_by_id(id_=id_)
         await TextPackRepository().delete(model=text_pack)

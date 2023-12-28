@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class TimezoneService(BaseService):
-    @session_required()
+    @session_required(permissions=['timezones'])
     async def create(
             self,
             session: Session,
@@ -47,7 +47,7 @@ class TimezoneService(BaseService):
 
         return {'id_str': timezone.id_str}
 
-    @session_required()
+    @session_required(permissions=['timezones'])
     async def delete(
             self,
             session: Session,

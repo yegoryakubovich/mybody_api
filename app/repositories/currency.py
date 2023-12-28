@@ -25,9 +25,7 @@ class CurrencyRepository(BaseRepository):
     @staticmethod
     async def create(
             id_str: str,
-            name_text: Text,
     ) -> Currency:
         return Currency.create(
             id_str=id_str,
-            name_text=name_text,
         )

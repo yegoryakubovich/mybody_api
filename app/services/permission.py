@@ -23,7 +23,7 @@ from ..utils.decorators import session_required
 
 
 class PermissionService(BaseService):
-    @session_required()
+    @session_required(permissions=['permissions'])
     async def create(
             self,
             session: Session,
@@ -54,7 +54,7 @@ class PermissionService(BaseService):
 
         return {'id': permission.id}
 
-    @session_required()
+    @session_required(permissions=['permissions'])
     async def delete(
             self,
             session: Session,

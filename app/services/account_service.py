@@ -71,7 +71,7 @@ class AccountServiceService(BaseService):
         )
         return account_service
 
-    @session_required()
+    @session_required(permissions=['accounts'])
     async def create(
             self,
             session: Session,
@@ -84,7 +84,7 @@ class AccountServiceService(BaseService):
         account_service = await self._create(session=session, account=account, service=service, answers=answers)
         return {'id': account_service.id}
 
-    @session_required()
+    @session_required(permissions=['accounts'])
     async def create_additional(
             self,
             session: Session,
@@ -96,7 +96,7 @@ class AccountServiceService(BaseService):
         account_service = await self._create(session=session, account=account, service=service, answers=answers)
         return {'id': account_service.id}
 
-    @session_required()
+    @session_required(permissions=['accounts'])
     async def update(
             self,
             session: Session,
@@ -145,7 +145,7 @@ class AccountServiceService(BaseService):
         )
         return {}
 
-    @session_required()
+    @session_required(permissions=['accounts'])
     async def delete(
             self,
             session: Session,

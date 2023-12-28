@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class TextTranslationService(BaseService):
-    @session_required()
+    @session_required(permissions=['texts'])
     async def create(
             self,
             session: Session,
@@ -54,7 +54,7 @@ class TextTranslationService(BaseService):
             'id': text_translation.id,
         }
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def update(
             self,
             session: Session,
@@ -82,7 +82,7 @@ class TextTranslationService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['texts'])
     async def delete(
             self,
             session: Session,

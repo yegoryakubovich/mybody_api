@@ -34,7 +34,7 @@ class ServiceService(BaseService):
         if not await self._is_valid_questions(questions=questions):
             raise InvalidQuestionList('Invalid question list')
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def create(
             self,
             session: Session,
@@ -77,7 +77,7 @@ class ServiceService(BaseService):
             'id_str': service.id_str,
         }
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def update(
             self,
             session: Session,
@@ -125,7 +125,7 @@ class ServiceService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def delete(
             self,
             session: Session,

@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class ServiceCostService(BaseService):
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def create(
             self,
             session: Session,
@@ -51,7 +51,7 @@ class ServiceCostService(BaseService):
         )
         return {'id': service_cost.id}
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def update(
             self,
             session: Session,
@@ -76,7 +76,7 @@ class ServiceCostService(BaseService):
         )
         return {}
 
-    @session_required()
+    @session_required(permissions=['services'])
     async def delete(
             self,
             session: Session,
