@@ -73,18 +73,12 @@ class ArticleService(BaseService):
             self,
             session: Session,
             id_: int,
-            # is_hide: bool,
+            is_hide: bool,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=id_)
 
-        # FIXME
-        # updates = {}
-        #
-        # if is_hide is not None:
-        #     article.is_hide = is_hide
-        #     updates['is_hide'] = is_hide
-        #
-        # article.save()
+        article.is_hide = is_hide
+        article.save()
 
         # Create action
         await self.create_action(
@@ -92,6 +86,7 @@ class ArticleService(BaseService):
             action='update',
             parameters={
                 'updater': f'session_{session.id}',
+                'is_hide': is_hide,
             },
         )
 
