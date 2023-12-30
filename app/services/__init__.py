@@ -20,6 +20,7 @@ from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
 from .exercise import ExerciseService
+from .meal import MealService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
@@ -79,4 +80,6 @@ __all__ = [
     'ExerciseService',
     'TrainingService',
     'TrainingExerciseService',
+
+    'MealService',
 ]

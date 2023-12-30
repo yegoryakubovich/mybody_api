@@ -16,4 +16,9 @@
 
 
 class ProductTypes:
-    all = ['proteins', 'fats', 'carbohydrates']
+    PROTEINS = 'proteins'
+    FATS = 'fats'
+    CARBOHYDRATES = 'carbohydrates'
+
+    def all(self):
+        return [self.PROTEINS, self.FATS, self.CARBOHYDRATES]

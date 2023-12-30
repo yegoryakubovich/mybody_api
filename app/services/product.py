@@ -183,5 +183,6 @@ class ProductService(BaseService):
 
     @staticmethod
     async def check_product_type(type_: str):
-        if type_ not in ProductTypes.all:
-            raise InvalidProductType(f'Invalid product type. Available: {ProductTypes.all}')
+        all_ = ProductTypes().all()
+        if type_ not in all_:
+            raise InvalidProductType(f'Invalid product type. Available: {all_}')

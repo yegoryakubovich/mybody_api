@@ -15,9 +15,26 @@
 #
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+from pydantic import BaseModel, Field
 
-    def all(self):
-        return [self.TIME, self.QUANTITY]
+from app.services import MealService
+from app.utils import Response, Router
+
+
+router = Router(
+    prefix='/delete'
+)
+
+
+class MealDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: MealDeleteSchema):
+    result = await MealService().delete(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

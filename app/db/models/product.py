@@ -26,6 +26,7 @@ class Product(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
     type = CharField(max_length=16)
+    unit = CharField(max_length=4)
     article = ForeignKeyField(null=True, model=Article)
     is_deleted = BooleanField(default=False)
 

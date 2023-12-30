@@ -15,9 +15,30 @@
 #
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+from pydantic import BaseModel, Field
 
-    def all(self):
-        return [self.TIME, self.QUANTITY]
+from app.services import MealService
+from app.utils import Response, Router
+
+
+router = Router(
+    prefix='/update'
+)
+
+
+class MealUpdateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+    date: str = Field(default=None, max_length=8)
+    type: str = Field(default=None, max_length=16)
+
+
+@router.post()
+async def route(schema: MealUpdateSchema):
+    result = await MealService().update(
+        token=schema.token,
+        id_=schema.id,
+        date_=schema.date,
+        type_=schema.type,
+    )
+    return Response(**result)

@@ -13,11 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import MealService
+from app.utils import Response, Router
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+router = Router(
+    prefix='/get'
+)
 
-    def all(self):
-        return [self.TIME, self.QUANTITY]
+
+class MealGetSchema(BaseModel):
+    id: int = Field()
+
+
+@router.get()
+async def route(schema: MealGetSchema = Depends()):
+    result = await MealService().get(id_=schema.id)
+    return Response(**result)

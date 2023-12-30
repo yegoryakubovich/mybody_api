@@ -20,6 +20,7 @@ from .account_service import AccountServiceRepository, AccountServiceStates
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
 from .exercise import ExerciseRepository
+from .meal import MealRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
     NotificationServiceRequestRepository
@@ -88,4 +89,6 @@ __all__ = [
     'ExerciseRepository',
     'TrainingRepository',
     'TrainingExerciseRepository',
+
+    'MealRepository',
 ]

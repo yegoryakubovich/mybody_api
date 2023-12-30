@@ -15,9 +15,22 @@
 #
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+from app.utils import Router
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
+from .get import router as router_get
+from .get_list import router as router_get_list
 
-    def all(self):
-        return [self.TIME, self.QUANTITY]
+
+router = Router(
+    prefix='/meals',
+    tags=['Meals'],
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+        router_get,
+        router_get_list,
+    ]
+)

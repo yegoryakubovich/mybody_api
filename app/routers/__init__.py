@@ -31,6 +31,7 @@ from .services import router as router_services
 from .products import router as router_products
 from .exercises import router as router_exercises
 from .trainings import router as router_trainings
+from .meals import router as router_meals
 
 
 routers = [
@@ -50,4 +51,5 @@ routers = [
     router_products,
     router_exercises,
     router_trainings,
+    router_meals,
 ]

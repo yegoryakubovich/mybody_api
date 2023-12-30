@@ -32,7 +32,7 @@ class ArticleTranslationCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     article_id: int = Field()
     language: str = Field(max_length=32)
-    name: Optional[str] = Field()
+    name: str = Field(default=None)
 
 
 @router.post()

@@ -131,5 +131,6 @@ class ExerciseService(BaseService):
 
     @staticmethod
     async def check_exercise_type(type_: str):
-        if type_ not in ExerciseTypes.all:
-            raise InvalidExerciseType(f'Invalid exercise type. Available: {ExerciseTypes.all}')
+        all_ = ExerciseTypes().all()
+        if type_ not in all_:
+            raise InvalidExerciseType(f'Invalid exercise type. Available: {all_}')

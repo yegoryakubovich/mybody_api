@@ -15,9 +15,12 @@
 #
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+class MealTypes:
+    BREAKFAST = 'breakfast'
+    TIFFIN = 'tiffin'
+    LUNCH = 'lunch'
+    AFTERNOON_MEAL = 'afternoon meal'
+    DINNER = 'dinner'
 
     def all(self):
-        return [self.TIME, self.QUANTITY]
+        return [self.BREAKFAST, self.TIFFIN, self.LUNCH, self.AFTERNOON_MEAL, self.DINNER]

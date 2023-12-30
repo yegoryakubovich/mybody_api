@@ -15,9 +15,16 @@
 #
 
 
-class ExerciseTypes:
-    TIME = 'time'
-    QUANTITY = 'quantity'
+from app.services import MealService
+from app.utils import Response, Router
 
-    def all(self):
-        return [self.TIME, self.QUANTITY]
+
+router = Router(
+    prefix='/list/get'
+)
+
+
+@router.get()
+async def route():
+    result = await MealService().get_list()
+    return Response(**result)
