@@ -15,28 +15,9 @@
 #
 
 
-from pydantic import BaseModel, Field
+class Units:
+    GRAMS = 'gr'
+    MILLILITRES = 'ml'
 
-from app.services import ArticleTranslationService
-from app.utils import Router, Response
-
-
-router = Router(
-    prefix='/delete',
-)
-
-
-class ArticleTranslationDeleteSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
-    language: str = Field(max_length=32)
-
-
-@router.post()
-async def route(schema: ArticleTranslationDeleteSchema):
-    result = await ArticleTranslationService().delete(
-        token=schema.token,
-        article_id=schema.article_id,
-        language_id_str=schema.language,
-    )
-    return Response(**result)
+    def all(self):
+        return [self.GRAMS, self.MILLILITRES]

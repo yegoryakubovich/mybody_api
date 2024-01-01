@@ -177,18 +177,16 @@ class CountryService(BaseService):
 
     @staticmethod
     async def get_list() -> dict:
-        # FIXME
-        countries = {
+        return {
             'countries': [
                 {
                     'id': country.id,
                     'id_str': country.id_str,
                     'name_text': country.name_text.key,
-                    'language_default_id_str': country.language_default.id_str,
-                    'timezone_default_id_str': country.timezone_default.id_str,
-                    'currency_default_id_str': country.currency_default.id_str,
+                    'language_default': country.language_default.id_str,
+                    'timezone_default': country.timezone_default.id_str,
+                    'currency_default': country.currency_default.id_str,
                 }
                 for country in await CountryRepository().get_list()
-            ],
+            ]
         }
-        return countries

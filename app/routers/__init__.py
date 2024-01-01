@@ -37,6 +37,7 @@ from .meals import router as router_meals
 routers = [
     router_favicon,
     router_accounts,
+    router_services,
     router_sessions,
     router_notifications,
     router_languages,
@@ -47,9 +48,9 @@ routers = [
     router_permissions,
     router_articles,
     router_texts,
-    router_services,
-    router_products,
-    router_exercises,
-    router_trainings,
     router_meals,
+    router_products,
+    router_trainings,
+    router_exercises,
+
 ]

@@ -27,6 +27,7 @@ from .category_parameter_account import CategoryParameterAccount
 from .exercise import Exercise
 from .language import Language
 from .meal import Meal
+from .meal_product import MealProduct
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
 from .permission import Permission
@@ -93,4 +94,5 @@ models = (
     TrainingExercise,
 
     Meal,
+    MealProduct,
 )

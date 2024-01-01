@@ -15,11 +15,11 @@
 #
 
 
-from app.db.models import Article, Session
+from app.db.models import Product, Session
 from app.repositories import ArticleRepository, ProductRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException, ProductTypes
+from app.utils import ApiException, ProductTypes, Units
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 
@@ -32,6 +32,10 @@ class InvalidProductType(ApiException):
     pass
 
 
+class InvalidUnit(ApiException):
+    pass
+
+
 class ProductService(BaseService):
 
     @session_required(permissions=['products'])
@@ -40,9 +44,11 @@ class ProductService(BaseService):
             session: Session,
             name: str,
             type_: str,
+            unit: str,
             article_id: int = None,
     ):
         await self.check_product_type(type_=type_)
+        await self.check_unit(unit=unit)
         name_text_key = f'product_{await create_id_str()}'
         name_text = await TextService().create(
             session=session,
@@ -55,6 +61,7 @@ class ProductService(BaseService):
             'creator': f'session_{session.id}',
             'name_text_id': name_text.id,
             'type': type_,
+            'unit': unit,
         }
 
         if article_id:
@@ -70,6 +77,7 @@ class ProductService(BaseService):
         product = await ProductRepository().create(
             name_text=name_text,
             type_=type_,
+            unit=unit,
             article=article,
         )
 
@@ -87,6 +95,7 @@ class ProductService(BaseService):
             session: Session,
             id_: int,
             type_: str = None,
+            unit: str = None,
             article_id: int = None,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
@@ -95,13 +104,20 @@ class ProductService(BaseService):
             'updater': f'session_{session.id}',
             'id': id_,
         }
-        if not type_ and not article_id:
-            raise NoRequiredParameters('One of the following parameters must be filled in: type_, article')
+        if not type_ and not unit and not article_id:
+            raise NoRequiredParameters('One of the following parameters must be filled in: type, unit, article')
         if type_:
             await self.check_product_type(type_=type_)
             action_parameters.update(
                 {
                     'type': type_,
+                }
+            )
+        if unit:
+            await self.check_unit(unit=unit)
+            action_parameters.update(
+                {
+                    'unit': unit,
                 }
             )
         if article_id:
@@ -114,7 +130,7 @@ class ProductService(BaseService):
         else:
             article = None
 
-        await ProductRepository().update(product=product, type_=type_, article=article)
+        await ProductRepository().update(product=product, type_=type_, unit=unit, article=article)
 
         await self.create_action(
             model=product,
@@ -161,11 +177,13 @@ class ProductService(BaseService):
 
     @staticmethod
     async def get(id_: int):
-        product = await ProductRepository().get_by_id(id_=id_)
+        product: Product = await ProductRepository().get_by_id(id_=id_)
         return {
             'product': {
+                'id': product.id,
                 'name_text': product.name_text.key,
                 'type': product.type,
+                'unit': product.unit,
             }
         }
 
@@ -177,6 +195,7 @@ class ProductService(BaseService):
                     'id': product.id,
                     'name_text': product.name_text.key,
                     'type': product.type,
+                    'unit': product.unit,
                 } for product in await ProductRepository().get_list()
             ]
         }
@@ -186,3 +205,9 @@ class ProductService(BaseService):
         all_ = ProductTypes().all()
         if type_ not in all_:
             raise InvalidProductType(f'Invalid product type. Available: {all_}')
+
+    @staticmethod
+    async def check_unit(unit: str):
+        all_ = Units().all()
+        if unit not in all_:
+            raise InvalidUnit(f'Invalid unit. Available: {all_}')

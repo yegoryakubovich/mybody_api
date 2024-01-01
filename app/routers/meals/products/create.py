@@ -17,26 +17,28 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import ArticleTranslationService
-from app.utils import Router, Response
+from app.services import MealProductService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/delete',
+    prefix='/create',
 )
 
 
-class ArticleTranslationDeleteSchema(BaseModel):
+class MealProductCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
-    language: str = Field(max_length=32)
+    meal_id: int = Field()
+    product_id: int = Field()
+    value: int = Field()
 
 
 @router.post()
-async def route(schema: ArticleTranslationDeleteSchema):
-    result = await ArticleTranslationService().delete(
+async def route(schema: MealProductCreateSchema):
+    result = await MealProductService().create(
         token=schema.token,
-        article_id=schema.article_id,
-        language_id_str=schema.language,
+        meal_id=schema.meal_id,
+        product_id=schema.product_id,
+        value=schema.value,
     )
     return Response(**result)

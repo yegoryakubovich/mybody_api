@@ -21,6 +21,7 @@ from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
 from .exercise import ExerciseRepository
 from .meal import MealRepository
+from .meal_product import MealProductRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
     NotificationServiceRequestRepository
@@ -91,4 +92,5 @@ __all__ = [
     'TrainingExerciseRepository',
 
     'MealRepository',
+    'MealProductRepository',
 ]

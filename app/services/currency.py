@@ -17,7 +17,6 @@
 
 from app.db.models import Session
 from app.repositories import CurrencyRepository
-from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 

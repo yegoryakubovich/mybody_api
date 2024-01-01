@@ -23,6 +23,7 @@ from .router import Router
 from .response import Response, ResponseState
 from . import crypto
 from . import client
+from .units import Units
 from .use_schema import use_schema
 from .validation_error import validation_error
 
@@ -31,6 +32,7 @@ __all__ = [
     'ApiException',
     'ProductTypes',
     'ExerciseTypes',
+    'Units',
     'Middleware',
     'Router',
     'Response',

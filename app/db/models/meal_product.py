@@ -15,28 +15,19 @@
 #
 
 
-from pydantic import BaseModel, Field
+from peewee import BooleanField, IntegerField, PrimaryKeyField, ForeignKeyField
 
-from app.services import ArticleTranslationService
-from app.utils import Router, Response
-
-
-router = Router(
-    prefix='/delete',
-)
+from .meal import Meal
+from .product import Product
+from .base import BaseModel
 
 
-class ArticleTranslationDeleteSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
-    language: str = Field(max_length=32)
+class MealProduct(BaseModel):
+    id = PrimaryKeyField()
+    meal = ForeignKeyField(model=Meal)
+    product = ForeignKeyField(model=Product)
+    value = IntegerField()
+    is_deleted = BooleanField(default=False)
 
-
-@router.post()
-async def route(schema: ArticleTranslationDeleteSchema):
-    result = await ArticleTranslationService().delete(
-        token=schema.token,
-        article_id=schema.article_id,
-        language_id_str=schema.language,
-    )
-    return Response(**result)
+    class Meta:
+        db_table = 'meals_products'

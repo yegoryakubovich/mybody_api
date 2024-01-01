@@ -15,28 +15,25 @@
 #
 
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import ArticleTranslationService
-from app.utils import Router, Response
+from app.services import MealProductService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/delete',
+    prefix='/list/get'
 )
 
 
-class ArticleTranslationDeleteSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    article_id: int = Field()
-    language: str = Field(max_length=32)
+class MealProductGetListSchema(BaseModel):
+    meal_id: int = Field()
 
 
-@router.post()
-async def route(schema: ArticleTranslationDeleteSchema):
-    result = await ArticleTranslationService().delete(
-        token=schema.token,
-        article_id=schema.article_id,
-        language_id_str=schema.language,
+@router.get()
+async def route(schema: MealProductGetListSchema = Depends()):
+    result = await MealProductService().get_list(
+        meal_id=schema.meal_id,
     )
     return Response(**result)

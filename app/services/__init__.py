@@ -21,6 +21,7 @@ from .article import ArticleService
 from .article_translation import ArticleTranslationService
 from .exercise import ExerciseService
 from .meal import MealService
+from .meal_product import MealProductService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
@@ -82,4 +83,5 @@ __all__ = [
     'TrainingExerciseService',
 
     'MealService',
+    'MealProductService',
 ]

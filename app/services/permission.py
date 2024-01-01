@@ -18,7 +18,7 @@
 from .base import BaseService
 from .text import TextService
 from app.repositories import PermissionRepository
-from ..db.models import Permission, Session, Text
+from ..db.models import Permission, Session
 from ..utils.decorators import session_required
 
 

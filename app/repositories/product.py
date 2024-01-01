@@ -33,18 +33,22 @@ class ProductRepository(BaseRepository):
     async def create(
             name_text: Text,
             type_: str,
+            unit: str,
             article: Article = None,
     ):
         return Product.create(
             name_text=name_text,
             type=type_,
+            unit=unit,
             article=article,
         )
 
     @staticmethod
-    async def update(product: Product, type_: str = None, article: Article = None):
+    async def update(product: Product, type_: str = None, unit: str = None, article: Article = None):
         if type_:
             product.type = type_
+        if unit:
+            product.unit = unit
         if article:
             product.article = Article
         product.save()

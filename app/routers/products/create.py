@@ -29,6 +29,7 @@ class ProductCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     name: str = Field(min_length=2, max_length=1024)
     type: str = Field(min_length=2, max_length=16)
+    unit: str = Field(min_length=2, max_length=4)
     article_id: int = Field(default=None)
 
 
@@ -38,6 +39,7 @@ async def route(schema: ProductCreateSchema):
         token=schema.token,
         name=schema.name,
         type_=schema.type,
+        unit=schema.unit,
         article_id=schema.article_id,
     )
     return Response(**result)
