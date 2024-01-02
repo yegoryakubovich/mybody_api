@@ -30,18 +30,6 @@ class ServiceCostRepository(BaseRepository):
         ).execute()
 
     @staticmethod
-    async def create(
-            service: Service,
-            currency: Currency,
-            cost: float,
-    ):
-        return ServiceCost.create(
-            service=service,
-            currency=currency,
-            cost=cost,
-        )
-
-    @staticmethod
     async def update(
             service_cost: ServiceCost,
             cost: float,

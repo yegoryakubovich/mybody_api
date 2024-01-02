@@ -25,18 +25,6 @@ class TrainingRepository(BaseRepository):
     model = Training
 
     @staticmethod
-    async def create(
-            account_service: AccountService,
-            date_: date,
-            article: Article = None,
-    ):
-        return Training.create(
-            account_service=account_service,
-            date=date_,
-            article=article,
-        )
-
-    @staticmethod
     async def update(
             training: Training,
             date_: date = None,

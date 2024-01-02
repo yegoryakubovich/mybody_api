@@ -32,12 +32,6 @@ class NotificationServiceName(str, Enum):
 class NotificationServiceRepository(BaseRepository):
     model = NotificationService
 
-    async def create(
-            self,
-            notification_service_request: NotificationServiceRequest,
-    ):
-        pass
-
     @staticmethod
     async def exist_service(name: str, value: str) -> bool:
         try:

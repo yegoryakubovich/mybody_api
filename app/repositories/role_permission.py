@@ -23,16 +23,6 @@ class RolePermissionRepository(BaseRepository):
     model = RolePermission
 
     @staticmethod
-    async def create(
-            role: Role,
-            permission: Permission,
-    ) -> RolePermission:
-        return RolePermission.create(
-            role=role,
-            permission=permission,
-        )
-
-    @staticmethod
     async def get_permissions_by_role(role: Role, only_id_str=False) -> list[str]:
         return [
             role_permission.permission.id_str if only_id_str else role_permission.permission

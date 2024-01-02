@@ -28,18 +28,6 @@ class ServiceRepository(BaseRepository):
     model = Service
 
     @staticmethod
-    async def create(
-            id_str: str,
-            name_text: Text,
-            questions: str = None,
-    ):
-        return Service.create(
-            id_str=id_str,
-            name_text=name_text,
-            questions=questions,
-        )
-
-    @staticmethod
     async def update(
             service: Service,
             name: str = None,

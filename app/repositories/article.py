@@ -21,11 +21,3 @@ from .base import BaseRepository
 
 class ArticleRepository(BaseRepository):
     model = Article
-
-    @staticmethod
-    async def create(
-            name_text: Text,
-    ) -> Article:
-        return Article.create(
-            name_text=name_text,
-        )

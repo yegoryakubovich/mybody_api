@@ -39,22 +39,6 @@ class AccountServiceRepository(BaseRepository):
     model = AccountService
 
     @staticmethod
-    async def create(
-            account: Account,
-            service: Service,
-            state: str,
-            questions: str = None,
-            answers: str = None,
-    ):
-        return AccountService.create(
-            account=account,
-            service=service,
-            questions=questions,
-            answers=answers,
-            state=state,
-        )
-
-    @staticmethod
     async def update(
             account_service: AccountService,
             answers: str = None,

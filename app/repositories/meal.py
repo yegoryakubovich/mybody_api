@@ -25,18 +25,6 @@ class MealRepository(BaseRepository):
     model = Meal
 
     @staticmethod
-    async def create(
-            account_service: AccountService,
-            date_: date,
-            type_: str,
-    ):
-        return Meal.create(
-            account_service=account_service,
-            date=date_,
-            type=type_,
-        )
-
-    @staticmethod
     async def update(
             meal: Meal,
             date_: date = None,

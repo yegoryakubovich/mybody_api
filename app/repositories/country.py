@@ -23,22 +23,6 @@ class CountryRepository(BaseRepository):
     model = Country
 
     @staticmethod
-    async def create(
-            id_str: str,
-            name_text: Text,
-            language_default: Language,
-            timezone_default: Timezone,
-            currency_default: Currency,
-    ):
-        return Country.create(
-            id_str=id_str,
-            name_text=name_text,
-            language_default=language_default,
-            timezone_default=timezone_default,
-            currency_default=currency_default,
-        )
-
-    @staticmethod
     async def update(
             country: Country,
             language_default: Language = None,

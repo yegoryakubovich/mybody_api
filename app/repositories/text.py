@@ -37,6 +37,7 @@ class NoRequiredParameters(ApiException):
 class TextRepository(BaseRepository):
     model = Text
 
+    # FIXME
     async def create(self, key: str, value_default: str):
         try:
             await self.get_by_key(key=key)

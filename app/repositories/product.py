@@ -30,20 +30,6 @@ class ProductRepository(BaseRepository):
         ).execute()
 
     @staticmethod
-    async def create(
-            name_text: Text,
-            type_: str,
-            unit: str,
-            article: Article = None,
-    ):
-        return Product.create(
-            name_text=name_text,
-            type=type_,
-            unit=unit,
-            article=article,
-        )
-
-    @staticmethod
     async def update(product: Product, type_: str = None, unit: str = None, article: Article = None):
         if type_:
             product.type = type_

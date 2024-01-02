@@ -21,11 +21,3 @@ from .base import BaseRepository
 
 class CurrencyRepository(BaseRepository):
     model = Currency
-
-    @staticmethod
-    async def create(
-            id_str: str,
-    ) -> Currency:
-        return Currency.create(
-            id_str=id_str,
-        )

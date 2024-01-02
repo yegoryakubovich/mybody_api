@@ -31,33 +31,6 @@ class AccountRepository(BaseRepository):
     model = Account
 
     @staticmethod
-    async def create(
-            username: str,
-            password_salt: str,
-            password_hash: str,
-            firstname: str,
-            lastname: str,
-            country: Country,
-            language: Language,
-            timezone: Timezone,
-            currency: Currency,
-            surname: str = None,
-    ) -> Account:
-        account = Account.create(
-            username=username,
-            password_salt=password_salt,
-            password_hash=password_hash,
-            firstname=firstname,
-            lastname=lastname,
-            surname=surname,
-            country=country,
-            language=language,
-            timezone=timezone,
-            currency=currency,
-        )
-        return account
-
-    @staticmethod
     async def get_by_username(username: str) -> Account:
         try:
             return Account.get(Account.username == username)

@@ -25,14 +25,6 @@ class RoleRepository(BaseRepository):
     model = Role
 
     @staticmethod
-    async def create(
-            name_text: Text,
-    ) -> Role:
-        return Role.create(
-            name_text=name_text,
-        )
-
-    @staticmethod
     async def is_exist(id_str: str) -> bool:
         try:
             Role.get(Role.id_str == id_str)

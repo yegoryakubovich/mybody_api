@@ -21,13 +21,3 @@ from .base import BaseRepository
 
 class PermissionRepository(BaseRepository):
     model = Permission
-
-    @staticmethod
-    async def create(
-            id_str: str,
-            name_text: Text,
-    ) -> Permission:
-        return Permission.create(
-            id_str=id_str,
-            name_text=name_text,
-        )

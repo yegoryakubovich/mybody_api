@@ -33,6 +33,9 @@ class BaseRepository:
         if model:
             self.model = model
 
+    async def create(self, **kwargs):
+        return self.model.create(**kwargs)
+
     async def get_list(self) -> list[BaseModel]:
         return self.model.select().where(self.model.is_deleted == False).execute()
 

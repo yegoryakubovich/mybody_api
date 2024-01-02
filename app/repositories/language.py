@@ -21,13 +21,3 @@ from .base import BaseRepository
 
 class LanguageRepository(BaseRepository):
     model = Language
-
-    @staticmethod
-    async def create(
-            id_str: str,
-            name: str,
-    ) -> Language:
-        return Language.create(
-            id_str=id_str,
-            name=name,
-        )

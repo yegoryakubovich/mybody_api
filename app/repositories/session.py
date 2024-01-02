@@ -21,11 +21,3 @@ from app.db.models import Session, Account
 
 class SessionRepository(BaseRepository):
     model = Session
-
-    @staticmethod
-    async def create(account: Account, token_hash: str, token_salt: str) -> Session:
-        return Session.create(
-            account=account,
-            token_hash=token_hash,
-            token_salt=token_salt,
-        )

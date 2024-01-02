@@ -36,23 +36,3 @@ class VerificationRequisiteType(str, Enum):
 
 class NotificationServiceRequestRepository(BaseRepository):
     model = NotificationServiceRequest
-
-    @staticmethod
-    async def create(
-            account: Account,
-            name: str,
-            verification_salt: str,
-            verification_hash: str,
-            verification_expired_datetime: datetime,
-            verification_can_repeat_datetime: datetime,
-            state: NotificationServiceRequestState,
-    ) -> NotificationServiceRequest:
-        return NotificationServiceRequest.create(
-            account=account,
-            name=name,
-            verification_salt=verification_salt,
-            verification_hash=verification_hash,
-            verification_expired_datetime=verification_expired_datetime,
-            verification_can_repeat_datetime=verification_can_repeat_datetime,
-            state=state,
-        )

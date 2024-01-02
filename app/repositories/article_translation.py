@@ -46,16 +46,6 @@ class ArticleTranslationRepository(BaseRepository):
         ).execute()
 
     @staticmethod
-    async def create(
-            article: Article,
-            language: Language,
-    ) -> ArticleTranslation:
-        return ArticleTranslation.create(
-            article=article,
-            language=language,
-        )
-
-    @staticmethod
     async def is_exist(
             article: Article,
             language: Language,

@@ -23,18 +23,6 @@ class MealProductRepository(BaseRepository):
     model = MealProduct
 
     @staticmethod
-    async def create(
-            meal: Meal,
-            product: Product,
-            value: int,
-    ):
-        return MealProduct.create(
-            meal=meal,
-            product=product,
-            value=value,
-        )
-
-    @staticmethod
     async def update(
             meal_product: MealProduct,
             product: Product = None,

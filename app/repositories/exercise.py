@@ -23,16 +23,6 @@ class ExerciseRepository(BaseRepository):
     model = Exercise
 
     @staticmethod
-    async def create(
-            name_text: Text,
-            type_: str,
-    ):
-        return Exercise.create(
-            name_text=name_text,
-            type=type_,
-        )
-
-    @staticmethod
     async def update(
             exercise: Exercise,
             type_: str,

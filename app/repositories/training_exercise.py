@@ -23,22 +23,6 @@ class TrainingExerciseRepository(BaseRepository):
     model = TrainingExercise
 
     @staticmethod
-    async def create(
-            training: Training,
-            exercise: Exercise,
-            priority: int,
-            value: int,
-            rest: int,
-    ):
-        return TrainingExercise.create(
-            training=training,
-            exercise=exercise,
-            priority=priority,
-            value=value,
-            rest=rest,
-        )
-
-    @staticmethod
     async def update(
             training_exercise: TrainingExercise,
             exercise: Exercise = None,
