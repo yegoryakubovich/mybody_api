@@ -48,6 +48,7 @@ class TextRepository(BaseRepository):
                 value_default=value_default,
             )
 
+    # FIXME
     @staticmethod
     async def update(text: Text, value_default: str = None, new_key: str = None):
         if value_default:

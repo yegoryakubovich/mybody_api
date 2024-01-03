@@ -38,7 +38,7 @@ class AccountRepository(BaseRepository):
             raise AccountWithUsernameDoeNotExist(f'Account @{username} does not exist')
 
     @staticmethod
-    async def is_exist(username: str) -> bool:
+    async def is_exist_by_username(username: str) -> bool:
         try:
             Account.get(Account.username == username)
             return True

@@ -23,18 +23,6 @@ class MealProductRepository(BaseRepository):
     model = MealProduct
 
     @staticmethod
-    async def update(
-            meal_product: MealProduct,
-            product: Product = None,
-            value: int = None,
-    ):
-        if product:
-            meal_product.product = product
-        if value:
-            meal_product.value = value
-        meal_product.save()
-
-    @staticmethod
     async def get_list_by_meal(meal: Meal) -> list[MealProduct]:
         return MealProduct().select().where(
             (MealProduct.meal == meal) &

@@ -62,8 +62,3 @@ class TextTranslationRepository(BaseRepository):
                 language=language,
                 value=value,
             )
-
-    @staticmethod
-    async def update(text_translation: TextTranslation, value: str):
-        text_translation.value = value
-        text_translation.save()

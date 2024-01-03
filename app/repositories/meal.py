@@ -15,23 +15,9 @@
 #
 
 
-from datetime import date
-
-from app.db.models import Meal, AccountService
+from app.db.models import Meal
 from app.repositories.base import BaseRepository
 
 
 class MealRepository(BaseRepository):
     model = Meal
-
-    @staticmethod
-    async def update(
-            meal: Meal,
-            date_: date = None,
-            type_: str = None,
-    ):
-        if date_:
-            meal.date = date_
-        if type_:
-            meal.type = type_
-        meal.save()

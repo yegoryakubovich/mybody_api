@@ -28,11 +28,3 @@ class ServiceCostRepository(BaseRepository):
             (ServiceCost.service == service) &
             (ServiceCost.is_deleted == False)
         ).execute()
-
-    @staticmethod
-    async def update(
-            service_cost: ServiceCost,
-            cost: float,
-    ):
-        service_cost.cost = cost
-        service_cost.save()

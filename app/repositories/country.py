@@ -21,18 +21,3 @@ from .base import BaseRepository
 
 class CountryRepository(BaseRepository):
     model = Country
-
-    @staticmethod
-    async def update(
-            country: Country,
-            language_default: Language = None,
-            timezone_default: Timezone = None,
-            currency_default: Currency = None,
-    ):
-        if language_default:
-            country.language_default = language_default
-        if timezone_default:
-            country.timezone_default = timezone_default
-        if currency_default:
-            country.currency_default = currency_default
-        country.save()

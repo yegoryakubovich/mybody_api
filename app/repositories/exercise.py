@@ -21,11 +21,3 @@ from .base import BaseRepository
 
 class ExerciseRepository(BaseRepository):
     model = Exercise
-
-    @staticmethod
-    async def update(
-            exercise: Exercise,
-            type_: str,
-    ):
-        exercise.type = type_
-        exercise.save()

@@ -51,7 +51,7 @@ class AccountService(BaseService):
             currency_id_str: str,
             surname: str = None,
     ) -> dict:
-        if await AccountRepository.is_exist(username=username):
+        if await AccountRepository.is_exist_by_username(username=username):
             raise AccountUsernameExist(f'Account with username "{username}" already exist')
 
         # Generate salt and password hash
@@ -110,7 +110,7 @@ class AccountService(BaseService):
     async def check_username(
             username: str,
     ):
-        if await AccountRepository.is_exist(username=username):
+        if await AccountRepository.is_exist_by_username(username=username):
             raise AccountUsernameExist(f'Account with username "{username}" already exist')
         return {}
 

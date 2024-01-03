@@ -27,6 +27,7 @@ class NoRequiredParameters(ApiException):
 class ServiceRepository(BaseRepository):
     model = Service
 
+    # FIXME
     @staticmethod
     async def update(
             service: Service,

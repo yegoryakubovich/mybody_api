@@ -23,15 +23,3 @@ from .base import BaseRepository
 
 class TrainingRepository(BaseRepository):
     model = Training
-
-    @staticmethod
-    async def update(
-            training: Training,
-            date_: date = None,
-            article: Article = None,
-    ):
-        if date_:
-            training.date = date_
-        if article:
-            training.article = article
-        training.save()

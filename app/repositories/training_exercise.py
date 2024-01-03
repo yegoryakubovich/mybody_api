@@ -23,24 +23,6 @@ class TrainingExerciseRepository(BaseRepository):
     model = TrainingExercise
 
     @staticmethod
-    async def update(
-            training_exercise: TrainingExercise,
-            exercise: Exercise = None,
-            priority: int = None,
-            value: int = None,
-            rest: int = None,
-    ):
-        if exercise:
-            training_exercise.exercise = exercise
-        if priority:
-            training_exercise.priority = priority
-        if value:
-            training_exercise.value = value
-        if rest:
-            training_exercise.rest = rest
-        training_exercise.save()
-
-    @staticmethod
     async def get_list_by_training(training: Training) -> list[TrainingExercise]:
         return TrainingExercise().select().where(
             (TrainingExercise.training == training) &

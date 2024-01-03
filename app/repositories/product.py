@@ -28,13 +28,3 @@ class ProductRepository(BaseRepository):
             (Product.type == type_) &
             (Product.is_deleted == False)
         ).execute()
-
-    @staticmethod
-    async def update(product: Product, type_: str = None, unit: str = None, article: Article = None):
-        if type_:
-            product.type = type_
-        if unit:
-            product.unit = unit
-        if article:
-            product.article = article
-        product.save()

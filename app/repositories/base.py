@@ -33,6 +33,13 @@ class BaseRepository:
         if model:
             self.model = model
 
+    async def is_exist(self, id_: str) -> bool:
+        try:
+            self.model.get(self.model.id == id_)
+            return True
+        except DoesNotExist:
+            return False
+
     async def create(self, **kwargs):
         return self.model.create(**kwargs)
 
@@ -58,6 +65,13 @@ class BaseRepository:
             return self.model
         except DoesNotExist:
             raise ModelDoesNotExist(f'{self.model.__name__} "{id_str}" does not exist')
+
+    async def update(self, model, **kwargs):
+        for key, value in kwargs.items():
+            if key[-1] == '_':
+                key = key[:-1]
+            exec(f'model.{key} = value')
+        model.save()
 
     @staticmethod
     async def delete(model: BaseModel) -> BaseModel:
