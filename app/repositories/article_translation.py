@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class ArticleTranslationRepository(BaseRepository):
         ).execute()
 
     @staticmethod
-    async def is_exist(
+    async def is_exist_by_article_and_language(
             article: Article,
             language: Language,
     ) -> bool:

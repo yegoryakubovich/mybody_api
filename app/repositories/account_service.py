@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from datetime import datetime
 
-from .base import BaseRepository
+
 from app.utils import ApiException
-from ..db.models import Account, AccountService, Service
+from .base import BaseRepository
+from ..db.models import AccountService
 
 
 class AccountServiceDoesNotExist(ApiException):

@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from app.db.models import Country, Session
 from app.repositories import CountryRepository, CurrencyRepository, LanguageRepository, TimezoneRepository
 from app.services.text import TextService
@@ -121,7 +123,7 @@ class CountryService(BaseService):
             currency_default = None
 
         await CountryRepository().update(
-            country=country,
+            model=country,
             language_default=language_default,
             timezone_default=timezone_default,
             currency_default=currency_default,

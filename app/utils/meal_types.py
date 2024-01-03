@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 
 class MealTypes:
     BREAKFAST = 'breakfast'
-    TIFFIN = 'tiffin'
+    SNACK_1 = 'snack_1'
     LUNCH = 'lunch'
-    AFTERNOON_MEAL = 'afternoon meal'
+    SNACK_2 = 'snack_2'
     DINNER = 'dinner'
 
     def all(self):
-        return [self.BREAKFAST, self.TIFFIN, self.LUNCH, self.AFTERNOON_MEAL, self.DINNER]
+        return [self.BREAKFAST, self.SNACK_1, self.LUNCH, self.SNACK_2, self.DINNER]

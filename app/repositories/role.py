@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,19 +15,9 @@
 #
 
 
-from peewee import DoesNotExist
-
-from app.db.models import Role, Text
+from app.db.models import Role
 from .base import BaseRepository
 
 
 class RoleRepository(BaseRepository):
     model = Role
-
-    @staticmethod
-    async def is_exist(id_str: str) -> bool:
-        try:
-            Role.get(Role.id_str == id_str)
-            return True
-        except DoesNotExist:
-            return False

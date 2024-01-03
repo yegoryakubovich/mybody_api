@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from datetime import datetime
 from json import JSONDecodeError, loads
 
@@ -114,7 +116,7 @@ class AccountServiceService(BaseService):
         if datetime_to:
             datetime_to = datetime.strptime(datetime_to, '')  # FIXME format
         await AccountServiceRepository().update(
-            account_service=account_service,
+            model=account_service,
             answers=answers,
             state=state,
             datetime_from=datetime_from,

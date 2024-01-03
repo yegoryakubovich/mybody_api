@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -130,7 +130,12 @@ class ProductService(BaseService):
         else:
             article = None
 
-        await ProductRepository().update(product=product, type_=type_, unit=unit, article=article)
+        await ProductRepository().update(
+            model=product,
+            type_=type_,
+            unit=unit,
+            article=article,
+        )
 
         await self.create_action(
             model=product,

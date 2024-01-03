@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from math import ceil
 
 from app.db.models import Account
@@ -68,7 +70,7 @@ class AccountService(BaseService):
         ]
 
         # Create account
-        account = await AccountRepository.create(
+        account = await AccountRepository().create(
             username=username,
             password_salt=password_salt,
             password_hash=password_hash,

@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ class ExerciseService(BaseService):
     ):
         await self.check_exercise_type(type_=type_)
         exercise = await ExerciseRepository().get_by_id(id_=id_)
-        await ExerciseRepository().update(exercise=exercise, type_=type_)
+        await ExerciseRepository().update(model=exercise, type_=type_)
 
         await self.create_action(
             model=exercise,

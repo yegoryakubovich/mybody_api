@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,6 +36,13 @@ class BaseRepository:
     async def is_exist(self, id_: str) -> bool:
         try:
             self.model.get(self.model.id == id_)
+            return True
+        except DoesNotExist:
+            return False
+
+    async def is_exist_by_id_str(self, id_str: str) -> bool:
+        try:
+            self.model.get(self.model.id_str == id_str)
             return True
         except DoesNotExist:
             return False

@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ class TrainingExerciseService(BaseService):
         exercise = await ExerciseRepository().get_by_id(id_=exercise_id)
 
         await TrainingExerciseRepository().update(
-            training_exercise=training_exercise,
+            model=training_exercise,
             exercise=exercise,
             priority=priority,
             value=value,

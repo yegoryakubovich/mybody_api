@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import Account, Country, Language, Timezone, Currency, NotificationService
+from app.db.models import Account, NotificationService
+from app.utils import ApiException
 from config import ITEMS_PER_PAGE
 from .base import BaseRepository
-from app.utils import ApiException
 
 
 class AccountWithUsernameDoeNotExist(ApiException):

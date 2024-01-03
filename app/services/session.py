@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class SessionService(BaseService):
         token_hash = await create_hash_by_string_and_salt(string=token, salt=token_salt)
 
         # Create session and action
-        session = await SessionRepository.create(
+        session = await SessionRepository().create(
             account=account,
             token_hash=token_hash,
             token_salt=token_salt,

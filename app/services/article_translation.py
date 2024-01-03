@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ class ArticleTranslationService(BaseService):
         article = await ArticleRepository().get_by_id(id_=article_id)
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
 
-        if await ArticleTranslationRepository().is_exist(
+        if await ArticleTranslationRepository().is_exist_by_article_and_language(
             article=article,
             language=language,
         ):
@@ -49,7 +49,7 @@ class ArticleTranslationService(BaseService):
             )
 
         # Create article translation
-        article_translation = await ArticleTranslationRepository.create(
+        article_translation = await ArticleTranslationRepository().create(
             article=article,
             language=language,
         )

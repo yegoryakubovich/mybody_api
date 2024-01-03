@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ class NotificationServiceRequestService(BaseService):
         state = NotificationServiceRequestState.WAITING
 
         # Create request and action
-        notification_service_request = await NotificationServiceRequestRepository.create(
+        notification_service_request = await NotificationServiceRequestRepository().create(
             account=account,
             name=name,
             verification_salt=verification_salt,

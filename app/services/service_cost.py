@@ -1,5 +1,5 @@
 #
-# (c) 2023, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
+# (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class ServiceCostService(BaseService):
         service_cost = await ServiceCostRepository().get_by_id(id_=id_)
 
         await ServiceCostRepository().update(
-            service_cost=service_cost,
+            model=service_cost,
             cost=cost,
         )
 
