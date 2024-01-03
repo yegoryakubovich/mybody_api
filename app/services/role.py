@@ -16,7 +16,7 @@
 
 
 from app.db.models import Role, Session
-from app.repositories import RoleRepository
+from app.repositories import RolePermissionRepository, RoleRepository
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils import ApiException
@@ -92,6 +92,7 @@ class RoleService(BaseService):
             'role': {
                 'id': role.id,
                 'name_text': role.name_text.key,
+                'permissions': await RolePermissionRepository().get_permissions_by_role(role=role, only_id_str=True)
             }
         }
 
@@ -102,6 +103,7 @@ class RoleService(BaseService):
                 {
                     'id': role.id,
                     'name_text': role.name_text.key,
+                    'permissions': await RolePermissionRepository().get_permissions_by_role(role=role, only_id_str=True)
                 } for role in await RoleRepository().get_list()
             ]
         }

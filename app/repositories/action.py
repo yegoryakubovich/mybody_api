@@ -16,7 +16,12 @@
 
 
 from app.db.models import Action, ActionParameter
+from .base import BaseRepository
 
 
-class ActionRepository:
+class ActionRepository(BaseRepository):
     model = Action
+
+    @staticmethod
+    async def create_parameter(action: Action, key: str, value: str) -> ActionParameter:
+        return ActionParameter.create(action=action, key=key, value=value)

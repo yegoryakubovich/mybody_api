@@ -15,16 +15,9 @@
 #
 
 
-from app.services import RolePermissionService
-from app.utils import Router, Response
+from .base import BaseRepository
+from ..db.models import MealReport
 
 
-router = Router(
-    prefix='/list/get',
-)
-
-
-@router.get()
-async def route(role_id: int):
-    result = await RolePermissionService().get_list(role_id=role_id)
-    return Response(**result)
+class MealReportRepository(BaseRepository):
+    model = MealReport

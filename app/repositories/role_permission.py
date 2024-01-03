@@ -23,7 +23,7 @@ class RolePermissionRepository(BaseRepository):
     model = RolePermission
 
     @staticmethod
-    async def get_permissions_by_role(role: Role, only_id_str=False) -> list[str]:
+    async def get_permissions_by_role(role: Role, only_id_str=False) -> list[str or RolePermission]:
         return [
             role_permission.permission.id_str if only_id_str else role_permission.permission
             for role_permission in RolePermission.select().where(
@@ -31,3 +31,10 @@ class RolePermissionRepository(BaseRepository):
                 (RolePermission.is_deleted == False)
             )
         ]
+
+    @staticmethod
+    async def get_list_by_role(role: Role) -> list[RolePermission]:
+        return RolePermission.select().where(
+                (RolePermission.role == role) &
+                (RolePermission.is_deleted == False)
+            )

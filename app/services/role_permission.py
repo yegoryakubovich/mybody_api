@@ -84,13 +84,15 @@ class RolePermissionService(BaseService):
         }
 
     @staticmethod
-    async def get_list():
+    async def get_list(
+            role_id: int,
+    ):
+        role = await RoleRepository().get_by_id(id_=role_id)
         return {
-            'roles_permissions': [
+            'role_permissions': [
                 {
                     'id': role_permission.id,
-                    'role': role_permission.role.id,
                     'permission': role_permission.permission.id_str,
-                } for role_permission in await RolePermissionRepository().get_list()
+                } for role_permission in await RolePermissionRepository().get_list_by_role(role=role)
             ]
         }

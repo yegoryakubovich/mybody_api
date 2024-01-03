@@ -36,5 +36,5 @@ class ProductRepository(BaseRepository):
         if unit:
             product.unit = unit
         if article:
-            product.article = Article
+            product.article = article
         product.save()

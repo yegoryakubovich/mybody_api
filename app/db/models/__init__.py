@@ -15,8 +15,10 @@
 #
 
 
+from .account import Account
 from .account_parameter import AccountParameter
-from .account_roles import AccountRole
+from .account_role import AccountRole
+from .account_service import AccountService
 from .action import Action
 from .action_parameter import ActionParameter
 from .article import Article
@@ -25,9 +27,13 @@ from .billing import Billing
 from .category_article import CategoryArticle
 from .category_parameter_account import CategoryParameterAccount
 from .exercise import Exercise
+from .image import Image
 from .language import Language
 from .meal import Meal
 from .meal_product import MealProduct
+from .meal_report import MealReport
+from .meal_report_image import MealReportImage
+from .meal_report_product import MealReportProduct
 from .notification_services import NotificationService
 from .notification_services_requests import NotificationServiceRequest
 from .permission import Permission
@@ -40,11 +46,9 @@ from .country import Country
 from .parameter_account import ParameterAccount
 from .role import Role
 from .service import Service
-from .account_service import AccountService
 from .service_cost import ServiceCost
 from .timezone import Timezone
 from .currency import Currency
-from .account import Account
 from .session import Session
 from .training import Training
 from .training_exercise import TrainingExercise
@@ -56,6 +60,7 @@ models = (
 
     Language,
     Text,
+    Image,
     TextTranslation,
     TextPack,
     Country,
@@ -95,4 +100,7 @@ models = (
 
     Meal,
     MealProduct,
+    MealReport,
+    MealReportProduct,
+    MealReportImage,
 )

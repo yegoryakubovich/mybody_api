@@ -31,11 +31,11 @@ class ActionService:
         if not parameters:
             parameters = {}
 
-        action = await ActionRepository.create(model=model, model_id=model_id, action=action)
+        action = await ActionRepository().create(model=model, model_id=model_id, action=action)
 
         params_str = ''
         for key, value in parameters.items():
-            await ActionRepository.create_parameter(action=action, key=key, value=value)
+            await ActionRepository().create_parameter(action=action, key=key, value=value)
             if not value:
                 value = 'none'
             params_str += f'{key.upper()} = {str(value).upper()}\n'

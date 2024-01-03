@@ -171,6 +171,8 @@ class ProductService(BaseService):
                 {
                     'id': product.id,
                     'name_text': product.name_text.key,
+                    'unit': product.unit,
+                    'article': product.article.id if product.article else None,
                 } for product in await ProductRepository().get_list_by_type(type_=type_)
             ]
         }
@@ -184,6 +186,7 @@ class ProductService(BaseService):
                 'name_text': product.name_text.key,
                 'type': product.type,
                 'unit': product.unit,
+                'article': product.article.id if product.article else None,
             }
         }
 
@@ -196,6 +199,7 @@ class ProductService(BaseService):
                     'name_text': product.name_text.key,
                     'type': product.type,
                     'unit': product.unit,
+                    'article': product.article.id if product.article else None,
                 } for product in await ProductRepository().get_list()
             ]
         }

@@ -15,16 +15,15 @@
 #
 
 
-from app.services import RolePermissionService
-from app.utils import Router, Response
+from peewee import BooleanField, CharField, PrimaryKeyField
+
+from .base import BaseModel
 
 
-router = Router(
-    prefix='/list/get',
-)
+class Image(BaseModel):
+    id = PrimaryKeyField()
+    id_str = CharField()
+    is_deleted = BooleanField(default=False)
 
-
-@router.get()
-async def route(role_id: int):
-    result = await RolePermissionService().get_list(role_id=role_id)
-    return Response(**result)
+    class Meta:
+        db_table = 'images'

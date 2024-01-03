@@ -96,7 +96,7 @@ class TextService(BaseService):
         )
         if return_model:
             return text
-        return {'id': text.id}
+        return {'key': text.key}
 
     @session_required(permissions=['texts'])
     async def update(
