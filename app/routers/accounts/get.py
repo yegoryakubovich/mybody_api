@@ -34,7 +34,7 @@ class AccountGetSchema(BaseModel):
 
 
 @router.post()
-async def route(schema: AccountGetSchema = Depends()):
+async def route(schema: AccountGetSchema):
     result = await AccountService().get(
         token=schema.token,
         id_=schema.id,
