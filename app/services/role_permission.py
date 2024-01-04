@@ -23,7 +23,7 @@ from ..utils.decorators import session_required
 
 class RolePermissionService(BaseService):
     @session_required(permissions=['roles'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             role_id: int,
@@ -44,13 +44,14 @@ class RolePermissionService(BaseService):
                 'creator': f'session_{session.id}',
                 'role': role_id,
                 'permission': permission_id_str,
+                'by_admin': True,
             }
         )
 
         return {'id': role_permission.id}
 
     @session_required(permissions=['roles'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -64,7 +65,7 @@ class RolePermissionService(BaseService):
             action='delete',
             parameters={
                 'delete': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 

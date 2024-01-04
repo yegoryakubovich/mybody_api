@@ -16,41 +16,12 @@
 
 
 from .favicon import router as router_favicon
-from .accounts import router as router_accounts
-from .sessions import router as router_sessions
-from .notifications import router as router_notifications
-from .languages import router as router_languages
-from .countries import router as router_countries
-from .currencies import router as router_currencies
-from .timezones import router as router_timezones
-from .roles import router as router_roles
-from .permissions import router as router_permissions
-from .articles import router as router_articles
-from .texts import router as router_texts
-from .services import router as router_services
-from .products import router as router_products
-from .exercises import router as router_exercises
-from .trainings import router as router_trainings
-from .meals import router as router_meals
+from .client import router as router_client
+from .admin import router as router_admin
 
 
 routers = [
     router_favicon,
-    router_accounts,
-    router_services,
-    router_sessions,
-    router_notifications,
-    router_languages,
-    router_countries,
-    router_currencies,
-    router_timezones,
-    router_roles,
-    router_permissions,
-    router_articles,
-    router_texts,
-    router_meals,
-    router_products,
-    router_trainings,
-    router_exercises,
-
+    router_client,
+    router_admin,
 ]

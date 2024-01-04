@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class CurrencyService(BaseService):
     @session_required(permissions=['currencies'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -38,13 +38,14 @@ class CurrencyService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'id_str': id_str,
+                'by_admin': True,
             }
         )
 
         return {'id_str': currency.id_str}
 
     @session_required(permissions=['currencies'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -58,6 +59,7 @@ class CurrencyService(BaseService):
             parameters={
                 'deleter': f'session_{session.id}',
                 'id_str': id_str,
+                'by_admin': True,
             }
         )
 

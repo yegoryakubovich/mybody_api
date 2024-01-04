@@ -117,7 +117,7 @@ class AccountService(BaseService):
         return {}
 
     @session_required(return_model=False, permissions=['accounts'])
-    async def get(self, id_: int) -> dict:
+    async def get_by_admin(self, id_: int) -> dict:
         account = await AccountRepository().get_by_id(id_=id_)
         permissions = await AccountRoleService.get_permissions(account=account)
 
@@ -156,7 +156,7 @@ class AccountService(BaseService):
         }
 
     @session_required(return_model=False, permissions=['accounts'])
-    async def search(self, id_, username: str, page: int) -> dict:
+    async def search_by_admin(self, id_, username: str, page: int) -> dict:
         accounts, results = await AccountRepository.search(id_=id_, username=username, page=page)
 
         accounts = [

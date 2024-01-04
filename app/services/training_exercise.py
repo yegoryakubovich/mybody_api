@@ -26,9 +26,13 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class NotEnoughPermissions(ApiException):
+    pass
+
+
 class TrainingExerciseService(BaseService):
     @session_required(permissions=['trainings'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             training_id: int,
@@ -57,13 +61,14 @@ class TrainingExerciseService(BaseService):
                 'priority': priority,
                 'value': value,
                 'rest': rest,
+                'by_admin': True,
             }
         )
 
         return {'id': training_exercise.id}
 
     @session_required(permissions=['trainings'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -77,7 +82,7 @@ class TrainingExerciseService(BaseService):
 
         action_parameters = {
                 'updater': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
         }
         if not priority and not value and not rest and not exercise_id:
             raise NoRequiredParameters('One of the following parameters must be filled in: exercise_id, priority,'
@@ -126,7 +131,7 @@ class TrainingExerciseService(BaseService):
         return {}
 
     @session_required(permissions=['trainings'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -139,15 +144,23 @@ class TrainingExerciseService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 
         return {}
 
     @staticmethod
-    async def get(id_: int):
+    async def _get(
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
         training_exercise = await TrainingExerciseRepository().get_by_id(id_=id_)
+
+        if training_exercise.training.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
         return {
             'training_exercise': {
                     'id': training_exercise.id,
@@ -158,11 +171,40 @@ class TrainingExerciseService(BaseService):
             }
         }
 
+    @session_required()
+    async def get(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required(permissions=['trainings'])
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
     @staticmethod
-    async def get_list(
+    async def _get_list(
+            session: Session,
             training_id: int,
+            by_admin: bool = False,
     ):
         training = await TrainingRepository().get_by_id(id_=training_id)
+
+        if training.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
         return {
             'training_exercises': [
                 {
@@ -174,3 +216,26 @@ class TrainingExerciseService(BaseService):
                 } for training_exercise in await TrainingExerciseRepository().get_list_by_training(training=training)
             ]
         }
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+            training_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            training_id=training_id,
+        )
+
+    @session_required()
+    async def get_list_by_admin(
+            self,
+            session: Session,
+            training_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            training_id=training_id,
+            by_admin=True,
+        )

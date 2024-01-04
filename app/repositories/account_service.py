@@ -17,7 +17,7 @@
 
 from app.utils import ApiException
 from .base import BaseRepository
-from ..db.models import AccountService
+from ..db.models import Account, AccountService
 
 
 class AccountServiceDoesNotExist(ApiException):
@@ -37,3 +37,11 @@ class AccountServiceStates:
 
 class AccountServiceRepository(BaseRepository):
     model = AccountService
+
+    @staticmethod
+    async def get_list_by_account(account: Account) -> list[AccountService]:
+        return AccountService.select().where(
+            (AccountService.account == account) &
+            (AccountService.is_deleted == False)
+        )
+

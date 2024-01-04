@@ -31,9 +31,13 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class NotEnoughPermissions(ApiException):
+    pass
+
+
 class MealProductService(BaseService):
     @session_required(permissions=['meals'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             meal_id: int,
@@ -57,13 +61,14 @@ class MealProductService(BaseService):
                 'meal': meal_id,
                 'product': product_id,
                 'value': value,
+                'by_admin': True,
             }
         )
 
         return {'id': meal.id}
 
     @session_required(permissions=['meals'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -74,7 +79,7 @@ class MealProductService(BaseService):
 
         action_parameters = {
                 'updater': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
 
         if not product_id and not value:
@@ -110,7 +115,7 @@ class MealProductService(BaseService):
         return {}
 
     @session_required(permissions=['meals'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -123,15 +128,21 @@ class MealProductService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 
         return {}
 
     @staticmethod
-    async def get(id_: int):
+    async def _get(
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
         meal_product: MealProduct = await MealProductRepository().get_by_id(id_=id_)
+        if session.account != meal_product.meal.account_service.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
         return {
             'meal_product': {
                 'id': meal_product.id,
@@ -141,9 +152,38 @@ class MealProductService(BaseService):
             }
         }
 
+    @session_required()
+    async def get(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required(permissions=['meals'])
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
     @staticmethod
-    async def get_list(meal_id: int):
+    async def _get_list(
+            session: Session,
+            meal_id: int,
+            by_admin: bool = False,
+    ):
         meal: Meal = await MealRepository().get_by_id(id_=meal_id)
+        if session.account != meal.account_service.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
         return {
             'meal_products': [
                 {
@@ -154,3 +194,27 @@ class MealProductService(BaseService):
                 } for meal_product in await MealProductRepository().get_list_by_meal(meal=meal)
             ]
         }
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+            meal_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            meal_id=meal_id,
+        )
+
+    @session_required()
+    async def get_list_by_admin(
+            self,
+            session: Session,
+            meal_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            meal_id=meal_id,
+            by_admin=True,
+        )
+

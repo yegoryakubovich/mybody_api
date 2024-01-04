@@ -24,13 +24,13 @@ from ..utils.decorators import session_required
 
 class PermissionService(BaseService):
     @session_required(permissions=['permissions'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             id_str: str,
             name: str,
     ):
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=f'permission_{id_str}',
             value_default=name,
@@ -49,13 +49,14 @@ class PermissionService(BaseService):
                 'creator': f'session_{session.id}',
                 'id_str': id_str,
                 'name_text': name_text.key,
+                'by_admin': True,
             }
         )
 
         return {'id': permission.id}
 
     @session_required(permissions=['permissions'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -64,7 +65,7 @@ class PermissionService(BaseService):
 
         await PermissionRepository().delete(model=permission)
 
-        await TextService().delete(
+        await TextService().delete_by_admin(
             session=session,
             key=permission.name_text.key,
         )
@@ -75,6 +76,7 @@ class PermissionService(BaseService):
             parameters={
                 'deleter': f'session_{session.id}',
                 'id_str': id_str,
+                'by_admin': True,
             }
         )
 

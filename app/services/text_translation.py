@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class TextTranslationService(BaseService):
     @session_required(permissions=['texts'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             text_key: str,
@@ -46,6 +46,7 @@ class TextTranslationService(BaseService):
                 'text_key': text_key,
                 'language': language,
                 'value': value,
+                'by_admin': True,
             },
         )
         if return_model:
@@ -55,7 +56,7 @@ class TextTranslationService(BaseService):
         }
 
     @session_required(permissions=['texts'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             text_key: str,
@@ -78,13 +79,14 @@ class TextTranslationService(BaseService):
                 'text_key': text_key,
                 'language': language,
                 'value': value,
+                'by_admin': True,
             },
         )
 
         return {}
 
     @session_required(permissions=['texts'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             text_key: str,
@@ -103,6 +105,7 @@ class TextTranslationService(BaseService):
                 'deleter': f'session_{session.id}',
                 'text_key': text_key,
                 'language': language,
+                'by_admin': True,
             },
         )
 

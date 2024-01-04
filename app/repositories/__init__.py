@@ -20,6 +20,7 @@ from .account_service import AccountServiceRepository, AccountServiceStates
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
 from .exercise import ExerciseRepository
+from .image import ImageRepository
 from .meal import MealRepository
 from .meal_product import MealProductRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
@@ -58,6 +59,7 @@ __all__ = [
     'LanguageRepository',
     'TimezoneRepository',
     'CurrencyRepository',
+    'ImageRepository',
 
     'TextRepository',
     'TextTranslationRepository',

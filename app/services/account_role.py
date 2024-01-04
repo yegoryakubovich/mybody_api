@@ -26,7 +26,6 @@ class AccountMissingRole(ApiException):
 
 
 class AccountRoleService(BaseService):
-
     @staticmethod
     async def get_permissions(account: Account):
         permissions = await AccountRoleRepository.get_account_permissions(

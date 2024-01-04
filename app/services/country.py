@@ -29,7 +29,7 @@ class NoRequiredParameters(ApiException):
 
 class CountryService(BaseService):
     @session_required(permissions=['countries'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -38,7 +38,7 @@ class CountryService(BaseService):
             timezone: str,
             currency: str,
     ):
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=f'country_{id_str}',
             value_default=name,
@@ -61,19 +61,19 @@ class CountryService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'id': country.id,
                 'id_str': id_str,
                 'name': name,
                 'language': language,
                 'timezone': timezone,
                 'currency': currency,
+                'by_admin': True,
             }
         )
 
         return {'id_str': country.id_str}
 
     @session_required(permissions=['countries'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -85,8 +85,8 @@ class CountryService(BaseService):
 
         action_parameters = {
             'updater': f'session_{session.id}',
-            'id': country.id,
             'id_str': id_str,
+            'by_admin': True,
         }
 
         if not language and not timezone and not currency:
@@ -138,14 +138,14 @@ class CountryService(BaseService):
         return {}
 
     @session_required(permissions=['countries'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_str: str,
     ):
         country: Country = await CountryRepository().get_by_id_str(id_str=id_str)
 
-        await TextService().delete(session=session, key=f'country_{id_str}')
+        await TextService().delete_by_admin(session=session, key=f'country_{id_str}')
         await CountryRepository().delete(model=country)
 
         await self.create_action(
@@ -153,8 +153,8 @@ class CountryService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': country.id,
                 'id_str': id_str,
+                'by_admin': True,
             }
         )
 

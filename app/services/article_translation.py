@@ -30,7 +30,7 @@ class ArticleTranslationExist(ApiException):
 
 class ArticleTranslationService(BaseService):
     @session_required(permissions=['articles'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             article_id: int,
@@ -67,6 +67,7 @@ class ArticleTranslationService(BaseService):
                 'creator': f'session_{session.id}',
                 'name_text_translation': name_text_translation.id,
                 'name': name,
+                'by_admin': True,
             },
         )
 
@@ -77,7 +78,7 @@ class ArticleTranslationService(BaseService):
         return {'id': article_translation.id}
 
     @session_required(permissions=['articles'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             article_id: int,
@@ -97,6 +98,7 @@ class ArticleTranslationService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
+                'by_admin': True,
             },
         )
 

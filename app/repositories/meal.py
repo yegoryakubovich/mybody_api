@@ -15,9 +15,28 @@
 #
 
 
-from app.db.models import Meal
+from datetime import date
+
+from app.db.models import AccountService, Meal
 from app.repositories.base import BaseRepository
 
 
 class MealRepository(BaseRepository):
     model = Meal
+
+    @staticmethod
+    async def get_list_by_account_service(
+            account_service: AccountService,
+            date_: date = None,
+    ) -> list[Meal]:
+        if date:
+            return Meal.select().where(
+                (Meal.account_service == account_service) &
+                (Meal.date == date_) &
+                (Meal.is_deleted == False)
+            ).execute()
+        else:
+            return Meal.select().where(
+                (Meal.account_service == account_service) &
+                (Meal.is_deleted == False)
+            ).execute()

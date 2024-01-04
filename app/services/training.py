@@ -28,9 +28,13 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class NotEnoughPermissions(ApiException):
+    pass
+
+
 class TrainingService(BaseService):
     @session_required(permissions=['trainings'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             account_service_id: int,
@@ -40,9 +44,10 @@ class TrainingService(BaseService):
         account_service_id = await AccountServiceRepository().get_by_id(id_=account_service_id)
 
         action_parameters = {
-                'creator': f'session_{session.id}',
-                'account_service': account_service_id,
-                'date': date_,
+            'creator': f'session_{session.id}',
+            'account_service': account_service_id,
+            'date': date_,
+            'by_admin': True,
         }
 
         if article_id:
@@ -70,7 +75,7 @@ class TrainingService(BaseService):
         return {'id': training.id}
 
     @session_required(permissions=['trainings'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -81,7 +86,7 @@ class TrainingService(BaseService):
 
         action_parameters = {
             'updater': f'session_{session.id}',
-            'id': id_,
+            'by_admin': True,
         }
 
         if date_:
@@ -117,7 +122,7 @@ class TrainingService(BaseService):
         return {}
 
     @session_required(permissions=['trainings'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -130,15 +135,23 @@ class TrainingService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 
         return {}
 
     @staticmethod
-    async def get(id_: int):
+    async def _get(
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
         training: Training = await TrainingRepository().get_by_id(id_=id_)
+
+        if training.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
         return {
             'training': {
                 'id': training.id,
@@ -147,15 +160,61 @@ class TrainingService(BaseService):
             }
         }
 
-    @staticmethod
-    async def get_list():
+    @session_required(permissions=['trainings'])
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
+    @session_required()
+    async def get(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        await self._get(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+            account_service_id: int,
+    ):
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service)
+
+        if account_service.account != session.account:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
         return {
             'trainings': [
                 {
                     'id': training.id,
                     'account_service': training.account_service.id,
                     'date': str(training.date),
-                } for training in await TrainingRepository().get_list()
+                } for training in trainings
+            ]
+        }
+
+    @session_required(permissions=['trainings'], return_model=False)
+    async def get_list_by_admin(self):
+        trainings = await TrainingRepository().get_list()
+        return {
+            'trainings': [
+                {
+                    'id': training.id,
+                    'account_service': training.account_service.id,
+                    'date': str(training.date),
+                } for training in trainings
             ]
         }
 

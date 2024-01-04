@@ -22,17 +22,21 @@ from app.db.models import Account, AccountService, Service, Session
 from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
 from app.services.base import BaseService
 from app.utils import ApiException
-from app.utils.decorators import session_required
+from app.utils.decorators.session_required import session_required
 
 
 class InvalidAnswerList(ApiException):
     pass
 
 
+class NotEnoughPermissions(ApiException):
+    pass
+
+
 class AccountServiceService(BaseService):
 
     async def check_answers(self, questions: str, answers: str):
-        if not await self._is_valid_answers(questions=questions, answers=answers):
+        if not await self._is_valid_answers(questions_sections=questions, answers=answers):
             raise InvalidAnswerList('Invalid answer list')
 
     async def _create(
@@ -48,6 +52,7 @@ class AccountServiceService(BaseService):
             'account_id': account.id,
             'service': service.id_str,
             'state': state,
+            'by_admin': True,
         }
         if service.questions:
             action_parameters.update(
@@ -74,7 +79,7 @@ class AccountServiceService(BaseService):
         return account_service
 
     @session_required(permissions=['accounts'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             account_id: int,
@@ -87,7 +92,7 @@ class AccountServiceService(BaseService):
         return {'id': account_service.id}
 
     @session_required(permissions=['accounts'])
-    async def create_additional(
+    async def create_additional_by_admin(
             self,
             session: Session,
             service_id_str: str,
@@ -99,7 +104,7 @@ class AccountServiceService(BaseService):
         return {'id': account_service.id}
 
     @session_required(permissions=['accounts'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -125,7 +130,6 @@ class AccountServiceService(BaseService):
 
         action_parameters = {
             'updater': f'session_{session.id}',
-            'id': id_,
         }
         if answers:
             action_parameters.update(
@@ -148,7 +152,7 @@ class AccountServiceService(BaseService):
         return {}
 
     @session_required(permissions=['accounts'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -162,17 +166,19 @@ class AccountServiceService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
             },
         )
         return {}
 
-    @session_required(return_model=False)
-    async def get(
-            self,
+    @staticmethod
+    async def _get(
+            session: Session,
             id_: int,
+            by_admin: bool = False,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
+        if account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
         return {
             'account_service': {
                 'id': account_service.id,
@@ -184,11 +190,32 @@ class AccountServiceService(BaseService):
             }
         }
 
-    @session_required(return_model=False)
-    async def get_list(
+    @session_required()
+    async def get(
             self,
+            session: Session,
+            id_: int,
     ):
-        response = {
+        return await self._get(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required(permissions=['accounts'])
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
+    @session_required(permissions=['accounts'], return_model=False)
+    async def get_list_by_admin(self):
+        return {
             'accounts_services': [
                 {
                     'id': account_service.id,
@@ -200,23 +227,45 @@ class AccountServiceService(BaseService):
                 } for account_service in await AccountServiceRepository().get_list()
             ]
         }
-        return response
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+    ):
+        return {
+            'account_services': [
+                {
+                    'id': account_service.id,
+                    'account': account_service.account.id,
+                    'service': account_service.service.id,
+                    'questions': account_service.questions,
+                    'answers': account_service.answers,
+                    'state': account_service.state,
+                } for account_service in await AccountServiceRepository().get_list_by_account(account=session.account)
+            ]
+        }
 
     @staticmethod
-    async def _is_valid_answers(questions: str, answers: str):
+    async def _is_valid_answers(questions_sections: str, answers: str):
         try:
-            questions = loads(questions)
-            answers = loads(answers)
-            if len(answers) != len(questions):
+            questions_sections = loads(questions_sections)
+            questions_count = []
+            for section in questions_sections:
+                questions_count.append(len(section['questions']))
+            answers: list = loads(answers)
+            if len(answers) != sum(questions_count):
                 return False
-            for i in range(len(answers)):
-                if questions[i]['type'] == 'dropdown':
-                    if answers[i] not in questions[i]['values']:
+            for i in range(len(questions_count)):
+                for j in range(questions_count[i]):
+                    if questions_sections[i]['questions'][j]['type'] == 'dropdown':
+                        if answers[0] not in questions_sections[i]['questions'][j]['values']:
+                            return False
+                    if questions_sections[i]['questions'][j]['type'] == 'str' and type(answers[0]) != str:
                         return False
-                if questions[i]['type'] == 'str' and type(answers[i]) != str:
-                    return False
-                if questions[i]['type'] == 'int' and type(answers[i]) != int:
-                    return False
+                    if questions_sections[i]['questions'][j]['type'] == 'int' and type(answers[0]) != int:
+                        return False
+                    answers.pop(0)
             return True
         except JSONDecodeError:
             return False

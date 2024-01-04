@@ -35,4 +35,5 @@ TG_BOT_TOKEN = config_tg['bot_token']
 
 PATH_ARTICLES = 'assets/articles'
 PATH_TEXTS_PACKS = 'assets/texts_packs'
+PATH_IMAGES = 'assets/images'
 ITEMS_PER_PAGE = 10

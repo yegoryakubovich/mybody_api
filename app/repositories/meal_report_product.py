@@ -16,8 +16,15 @@
 
 
 from .base import BaseRepository
-from ..db.models import MealReportProduct
+from ..db.models import MealReport, MealReportProduct
 
 
 class MealReportProductRepository(BaseRepository):
     model = MealReportProduct
+
+    @staticmethod
+    async def get_list_by_meal_report(meal_report: MealReport) -> list[MealReportProduct]:
+        return MealReportProduct().select().where(
+            (MealReportProduct.meal_report == meal_report) &
+            (MealReportProduct.is_deleted == False)
+        ).execute()

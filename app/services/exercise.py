@@ -30,7 +30,7 @@ class InvalidExerciseType(ApiException):
 
 class ExerciseService(BaseService):
     @session_required(permissions=['exercises'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             name: str,
@@ -39,7 +39,7 @@ class ExerciseService(BaseService):
         await self.check_exercise_type(type_=type_)
 
         name_text_key = f'exercise_{await create_id_str()}'
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=name_text_key,
             value_default=name,
@@ -57,13 +57,14 @@ class ExerciseService(BaseService):
                 'creator': f'session_{session.id}',
                 'name_text_id': name_text.id,
                 'type': type_,
+                'by_admin': True,
             }
         )
 
         return {'id': exercise.id}
 
     @session_required(permissions=['exercises'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -78,29 +79,29 @@ class ExerciseService(BaseService):
             action='update',
             parameters={
                 'updater': f'session_{session.id}',
-                'id': id_,
                 'type': type_,
+                'by_admin': True,
             }
         )
 
         return {}
 
     @session_required(permissions=['exercises'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
     ):
         exercise = await ExerciseRepository().get_by_id(id_=id_)
         await ExerciseRepository().delete(model=exercise)
-        await TextService().delete(session=session, key=exercise.name_text.key)
+        await TextService().delete_by_admin(session=session, key=exercise.name_text.key)
 
         await self.create_action(
             model=exercise,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 

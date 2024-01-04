@@ -34,9 +34,13 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class NotEnoughPermissions(ApiException):
+    pass
+
+
 class MealService(BaseService):
     @session_required(permissions=['meals'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             account_service_id: int,
@@ -61,25 +65,27 @@ class MealService(BaseService):
                 'account_service': account_service_id,
                 'date': date_,
                 'type': type_,
+                'by_admin': True,
             }
         )
 
         return {'id': meal.id}
 
     @session_required(permissions=['meals'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
             date_: str = None,
             type_: str = None,
+
     ):
         meal = await MealRepository().get_by_id(id_=id_)
 
         action_parameters = {
                 'updater': f'session_{session.id}',
-                'id': id_,
-            }
+                'by_admin': True,
+        }
 
         if not date_ and not type_:
             raise NoRequiredParameters('One of the following parameters must be filled in: date, type')
@@ -113,7 +119,7 @@ class MealService(BaseService):
         return {}
 
     @session_required(permissions=['meals'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -126,15 +132,23 @@ class MealService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 
         return {}
 
     @staticmethod
-    async def get(id_: int):
+    async def _get(
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
         meal: Meal = await MealRepository().get_by_id(id_=id_)
+
+        if meal.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
         return {
             'meal': {
                 'id': meal.id,
@@ -144,8 +158,31 @@ class MealService(BaseService):
             }
         }
 
-    @staticmethod
-    async def get_list():
+    @session_required()
+    async def get(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required()
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
+    @session_required(permissions=['meals'], return_model=False)
+    async def get_list_by_admin(self):
         return {
             'meals': [
                 {
@@ -154,6 +191,32 @@ class MealService(BaseService):
                     'date': str(meal.date),
                     'type': meal.type,
                 } for meal in await MealRepository().get_list()
+            ]
+        }
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: str = None,
+    ):
+        if date_:
+            date_ = datetime.strptime(date_, '%d.%m.%y').date()
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        meals = await MealRepository().get_list_by_account_service(account_service=account_service, date_=date_)
+
+        if account_service.account != session.account:
+            raise NotEnoughPermissions('Not enough permissions to execute')
+
+        return {
+            'meals': [
+                {
+                    'id': meal.id,
+                    'account_service': meal.account_service.id,
+                    'date': str(meal.date),
+                    'type': meal.type,
+                } for meal in meals
             ]
         }
 

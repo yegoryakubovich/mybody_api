@@ -49,7 +49,7 @@ class TextPackService(BaseService):
         }
 
     @session_required(permissions=['texts'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             language_id_str: str,
@@ -61,6 +61,7 @@ class TextPackService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
+                'by_admin': True,
             },
         )
         return {
@@ -68,7 +69,7 @@ class TextPackService(BaseService):
         }
 
     @session_required(permissions=['texts'])
-    async def delete(self, session: Session, id_: int):
+    async def delete_by_admin(self, session: Session, id_: int):
         text_pack = await TextPackRepository().get_by_id(id_=id_)
         await TextPackRepository().delete(model=text_pack)
         await self.create_action(
@@ -76,6 +77,7 @@ class TextPackService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
+                'by_admin': True,
             },
         )
         return {}

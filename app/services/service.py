@@ -30,32 +30,33 @@ class InvalidQuestionList(ApiException):
 
 
 class ServiceService(BaseService):
-    async def check_questions(self, questions: str):
-        if not await self._is_valid_questions(questions=questions):
+    async def check_questions(self, questions_sections: str):
+        if not await self._is_valid_questions(questions_sections=questions_sections):
             raise InvalidQuestionList('Invalid question list')
 
     @session_required(permissions=['services'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             id_str: str,
             name: str,
-            questions: str = None,
+            questions_sections: str = None,
     ) -> dict:
         action_parameters = {
             'creator': f'session_{session.id}',
             'id_str': id_str,
             'name': name,
+            'by_admin': True,
         }
-        if questions:
+        if questions_sections:
             action_parameters.update(
                 {
-                    'questions': questions,
+                    'questions': questions_sections,
                 }
             )
-            await self.check_questions(questions=questions)
+            await self.check_questions(questions_sections=questions_sections)
         name_text_key = f'service_{id_str}'
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=name_text_key,
             value_default=name,
@@ -64,7 +65,7 @@ class ServiceService(BaseService):
         service = await ServiceRepository().create(
             id_str=id_str,
             name_text=name_text,
-            questions=questions,
+            questions=questions_sections,
         )
 
         await self.create_action(
@@ -78,7 +79,7 @@ class ServiceService(BaseService):
         }
 
     @session_required(permissions=['services'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -89,6 +90,7 @@ class ServiceService(BaseService):
         action_parameters = {
             'updater': f'session_{session.id}',
             'id_str': id_str,
+            'by_admin': True,
         }
         if name:
             text: Text = await TextRepository().get_by_key(key=f'service_{id_str}')
@@ -103,7 +105,7 @@ class ServiceService(BaseService):
                 }
             )
         if questions:
-            await self.check_questions(questions=questions)
+            await self.check_questions(questions_sections=questions)
 
             action_parameters.update(
                 {
@@ -126,14 +128,14 @@ class ServiceService(BaseService):
         return {}
 
     @session_required(permissions=['services'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_str: str,
     ) -> dict:
         service: Service = await ServiceRepository().get_by_id_str(id_str=id_str)
         await ServiceRepository().delete(model=service)
-        await TextService().delete(
+        await TextService().delete_by_admin(
             session=session,
             key=f'service_{service.id_str}',
         )
@@ -176,26 +178,30 @@ class ServiceService(BaseService):
         return services
 
     @staticmethod
-    async def _is_valid_questions(questions: str):
+    async def _is_valid_questions(questions_sections: str):
         try:
-            questions = loads(questions)
-            if len(questions) == 0:
+            questions_sections = loads(questions_sections)
+            if len(questions_sections) == 0:
                 return False
-            for question in questions:
-                if not question['name'] or type(question['name']) != str:
+            for section in questions_sections:
+                if not section['name']:
                     return False
-                if not question['type']:
-                    return False
-                if question['type'] not in ['dropdown', 'str', 'int']:
-                    return False
-                if question['type'] == 'dropdown':
-                    if not question['values']:
+                questions = section['questions']
+                for question in questions:
+                    if not question['name'] or type(question['name']) != str:
                         return False
-                    if type(question['values']) is not list:
+                    if not question['type']:
                         return False
-                    for value in question['values']:
-                        if type(value) != str:
+                    if question['type'] not in ['dropdown', 'str', 'int']:
+                        return False
+                    if question['type'] == 'dropdown':
+                        if not question['values']:
                             return False
+                        if type(question['values']) is not list:
+                            return False
+                        for value in question['values']:
+                            if type(value) != str:
+                                return False
             return True
         except JSONDecodeError:
             return False

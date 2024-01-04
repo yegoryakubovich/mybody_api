@@ -33,14 +33,14 @@ class SessionRequired(ApiException):
 
 class ArticleService(BaseService):
     @session_required(permissions=['articles'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             name: str,
     ) -> dict:
         # Create text
         name_text_key = f'article_{await create_id_str()}'
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=name_text_key,
             value_default=name,
@@ -59,6 +59,7 @@ class ArticleService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'name_text_id': name_text.id,
+                'by_admin': True,
             },
         )
 
@@ -69,7 +70,7 @@ class ArticleService(BaseService):
         return {'id': article.id}
 
     @session_required(permissions=['articles'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -87,13 +88,14 @@ class ArticleService(BaseService):
             parameters={
                 'updater': f'session_{session.id}',
                 'is_hide': is_hide,
+                'by_admin': True,
             },
         )
 
         return {}
 
     @session_required(permissions=['articles'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
@@ -107,13 +109,14 @@ class ArticleService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
+                'by_admin': True,
             },
         )
 
         return {}
 
     @session_required(permissions=['articles'])
-    async def update_md(
+    async def update_md_by_admin(
             self,
             session: Session,
             id_: int,
@@ -134,6 +137,7 @@ class ArticleService(BaseService):
             parameters={
                 'updater': f'session_{session.id}',
                 'language': language.id_str if language else None,
+                'by_admin': True,
             },
         )
 

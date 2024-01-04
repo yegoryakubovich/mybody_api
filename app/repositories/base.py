@@ -77,7 +77,8 @@ class BaseRepository:
         for key, value in kwargs.items():
             if key[-1] == '_':
                 key = key[:-1]
-            exec(f'model.{key} = value')
+            if value:
+                exec(f'model.{key} = value')
         model.save()
 
     @staticmethod

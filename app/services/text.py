@@ -74,7 +74,7 @@ class TextService(BaseService):
         }
 
     @session_required(permissions=['texts'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             key: str,
@@ -92,6 +92,7 @@ class TextService(BaseService):
                 'creator': f'session_{session.id}',
                 'key': key,
                 'value_default': value_default,
+                'by_admin': True,
             },
         )
         if return_model:
@@ -99,7 +100,7 @@ class TextService(BaseService):
         return {'key': text.key}
 
     @session_required(permissions=['texts'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             key: str,
@@ -116,7 +117,7 @@ class TextService(BaseService):
         action_parameters = {
             'updater': f'session_{session.id}',
             'key': key,
-
+            'by_admin': True,
         }
         if value_default:
             action_parameters.update(
@@ -140,7 +141,7 @@ class TextService(BaseService):
         return {}
 
     @session_required(permissions=['texts'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             key: str,
@@ -155,6 +156,7 @@ class TextService(BaseService):
             parameters={
                 'deleter': f'session_{session.id}',
                 'key': key,
+                'by_admin': True,
             },
         )
 

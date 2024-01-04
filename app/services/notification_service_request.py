@@ -54,7 +54,7 @@ class VerificationRequisite:
 
 
 class NotificationServiceRequestService(BaseService):
-    @session_required
+    @session_required()
     async def create(
             self,
             session: Session,

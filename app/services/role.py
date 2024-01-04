@@ -30,12 +30,12 @@ class RoleAlreadyExist(ApiException):
 
 class RoleService(BaseService):
     @session_required(permissions=['roles'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             name: str,
     ):
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=f'role_{await create_id_str()}',
             value_default=name,
@@ -52,20 +52,21 @@ class RoleService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'name_text': name_text.key,
+                'by_admin': True,
             }
         )
 
         return {'id': role.id}
 
     @session_required(permissions=['roles'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
     ):
         role = await RoleRepository().get_by_id(id_=id_)
 
-        await TextService().delete(
+        await TextService().delete_by_admin(
             session=session,
             key=role.name_text.key,
         )
@@ -77,7 +78,7 @@ class RoleService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             }
         )
 

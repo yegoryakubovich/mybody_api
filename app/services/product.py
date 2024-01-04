@@ -39,7 +39,7 @@ class InvalidUnit(ApiException):
 class ProductService(BaseService):
 
     @session_required(permissions=['products'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             name: str,
@@ -50,7 +50,7 @@ class ProductService(BaseService):
         await self.check_product_type(type_=type_)
         await self.check_unit(unit=unit)
         name_text_key = f'product_{await create_id_str()}'
-        name_text = await TextService().create(
+        name_text = await TextService().create_by_admin(
             session=session,
             key=name_text_key,
             value_default=name,
@@ -62,6 +62,7 @@ class ProductService(BaseService):
             'name_text_id': name_text.id,
             'type': type_,
             'unit': unit,
+            'by_admin': True,
         }
 
         if article_id:
@@ -90,7 +91,7 @@ class ProductService(BaseService):
         return {'id': product.id}
 
     @session_required(permissions=['products'])
-    async def update(
+    async def update_by_admin(
             self,
             session: Session,
             id_: int,
@@ -102,7 +103,7 @@ class ProductService(BaseService):
 
         action_parameters = {
             'updater': f'session_{session.id}',
-            'id': id_,
+            'by_admin': True,
         }
         if not type_ and not unit and not article_id:
             raise NoRequiredParameters('One of the following parameters must be filled in: type, unit, article')
@@ -146,14 +147,14 @@ class ProductService(BaseService):
         return {}
 
     @session_required(permissions=['products'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_: int,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
         await ProductRepository().delete(model=product)
-        await TextService().delete(
+        await TextService().delete_by_admin(
             session=session,
             key=product.name_text.key,
         )
@@ -163,7 +164,7 @@ class ProductService(BaseService):
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
-                'id': id_,
+                'by_admin': True,
             },
         )
 

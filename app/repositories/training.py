@@ -14,10 +14,29 @@
 # limitations under the License.
 #
 
+from datetime import date
 
 from app.db.models import Training
 from .base import BaseRepository
+from app.db.models import AccountService
 
 
 class TrainingRepository(BaseRepository):
     model = Training
+
+    @staticmethod
+    async def get_list_by_account_service(
+            account_service: AccountService,
+            date_: date = None,
+    ) -> list[Training]:
+        if date:
+            return Training.select().where(
+                (Training.account_service == account_service) &
+                (Training.date == date_) &
+                (Training.is_deleted == False)
+            ).execute()
+        else:
+            return Training.select().where(
+                (Training.account_service == account_service) &
+                (Training.is_deleted == False)
+            ).execute()

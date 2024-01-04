@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class LanguageService(BaseService):
     @session_required(permissions=['languages'])
-    async def create(
+    async def create_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -41,13 +41,14 @@ class LanguageService(BaseService):
                 'creator': f'session_{session.id}',
                 'id_str': language.id_str,
                 'name': language.name,
+                'by_admin': True,
             },
             with_client=True,
         )
         return {'id_str': language.id_str}
 
     @session_required(permissions=['languages'])
-    async def delete(
+    async def delete_by_admin(
             self,
             session: Session,
             id_str: str,
@@ -62,6 +63,7 @@ class LanguageService(BaseService):
             parameters={
                 'deleter': f'session_{session.id}',
                 'id_str': id_str,
+                'by_admin': True,
             }
         )
 
