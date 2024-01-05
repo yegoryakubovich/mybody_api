@@ -35,5 +35,7 @@ class AccountRoleCheckPermissionService(BaseService):
         return permissions
 
     async def check_permission(self, account: Account, id_str: str):
+        if account.id == 0:
+            return
         if id_str not in await self.get_permissions(account=account):
             raise AccountMissingRole(f'Account has no "{id_str}" permission')
