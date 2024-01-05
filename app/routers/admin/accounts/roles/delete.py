@@ -15,20 +15,26 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .services import router as router_services
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import AccountRoleService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/delete',
 )
+
+
+class AccountRoleDeleteByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: AccountRoleDeleteByAdminSchema):
+    result = await AccountRoleService().delete_by_admin(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

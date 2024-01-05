@@ -15,26 +15,25 @@
 #
 
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import TimezoneService
-from app.utils import Router, Response
+from app.services import AccountRoleService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/delete',
+    prefix='/list/get',
 )
 
 
-class TimezoneDeleteSchema(BaseModel):
+class AccountRoleGetListByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=1, max_length=16)
 
 
-@router.post()
-async def route(schema: TimezoneDeleteSchema):
-    result = await TimezoneService().delete_by_admin(
+@router.get()
+async def route(schema: AccountRoleGetListByAdminSchema = Depends()):
+    result = await AccountRoleService().get_list_by_admin(
         token=schema.token,
-        id_str=schema.id_str,
     )
     return Response(**result)

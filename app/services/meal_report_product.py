@@ -34,6 +34,7 @@ class MealReportProductService(BaseService):
             session: Session,
             meal_report_id: int,
             product_id: int,
+            value: int,
             by_admin: bool = False,
     ):
         meal_report = await MealReportRepository().get_by_id(id_=meal_report_id)
@@ -74,11 +75,13 @@ class MealReportProductService(BaseService):
             session: Session,
             meal_report_id: int,
             product_id: int,
+            value: int,
     ):
         meal_report_product = await self._create(
             meal_report_id=meal_report_id,
             product_id=product_id,
             session=session,
+            value=value
         )
 
         return {'id': meal_report_product.id}
@@ -89,11 +92,13 @@ class MealReportProductService(BaseService):
             session: Session,
             meal_report_id: int,
             product_id: int,
+            value: int,
     ):
         meal_report_product = await self._create(
             meal_report_id=meal_report_id,
             product_id=product_id,
             session=session,
+            value=value,
             by_admin=True,
         )
 
@@ -157,7 +162,7 @@ class MealReportProductService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['meals'])
     async def get_list(
             self,
             meal_report_id: int,
@@ -169,6 +174,7 @@ class MealReportProductService(BaseService):
                 {
                     'id': meal_report_product.id,
                     'product': meal_report_product.product,
+                    'value': meal_report_product.value,
                 } for meal_report_product in meal_report_products
             ]
         }

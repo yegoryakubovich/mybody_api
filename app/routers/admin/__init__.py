@@ -29,6 +29,7 @@ from .products import router as router_products
 from .exercises import router as router_exercises
 from .trainings import router as router_trainings
 from .meals import router as router_meals
+from .images import router as router_images
 from ...utils import Router
 
 
@@ -45,6 +46,7 @@ router = Router(
         router_permissions,
         router_articles,
         router_texts,
+        router_images,
         router_meals,
         router_products,
         router_trainings,

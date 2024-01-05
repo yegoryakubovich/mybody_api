@@ -13,11 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from peewee import DoesNotExist
 
 from .base import BaseRepository
-from ..db.models import MealReport
+from ..db.models import Meal, MealReport
 
 
 class MealReportRepository(BaseRepository):
     model = MealReport
+
+    @staticmethod
+    async def is_exist_by_meal(meal: Meal):
+        try:
+            MealReport.get((MealReport.meal == meal) & (MealReport.is_deleted == False))
+            return True
+        except DoesNotExist:
+            return False

@@ -91,8 +91,8 @@ class AccountServiceService(BaseService):
         account_service = await self._create(session=session, account=account, service=service, answers=answers)
         return {'id': account_service.id}
 
-    @session_required(permissions=['accounts'])
-    async def create_additional_by_admin(
+    @session_required()
+    async def create_additional(
             self,
             session: Session,
             service_id_str: str,

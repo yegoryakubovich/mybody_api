@@ -15,20 +15,23 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .services import router as router_services
+from fastapi import Depends
+from pydantic import BaseModel, Field
+from starlette.responses import FileResponse
+
 from app.utils import Router
+from config import PATH_IMAGES
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/get',
 )
+
+
+class ImageGetSchema(BaseModel):
+    id_str: str = Field()
+
+
+@router.get()
+async def route(schema: ImageGetSchema = Depends()):
+    return FileResponse(path=f'{PATH_IMAGES}/{schema.id_str}.jpg')

@@ -15,20 +15,28 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .services import router as router_services
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import AccountRoleService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/create',
 )
+
+
+class AccountRoleCreateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_id: int = Field()
+    role_id: int = Field()
+
+
+@router.post()
+async def route(schema: AccountRoleCreateByAdminSchema):
+    result = await AccountRoleService().create_by_admin(
+        token=schema.token,
+        account_id=schema.account_id,
+        role_id=schema.role_id,
+    )
+    return Response(**result)

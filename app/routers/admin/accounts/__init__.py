@@ -18,6 +18,7 @@
 from .get import router as router_get
 from .search import router as router_search
 from .services import router as router_services
+from .roles import router as router_roles
 from app.utils import Router
 
 
@@ -27,6 +28,7 @@ router = Router(
         router_get,
         router_search,
         router_services,
+        router_roles,
     ],
     tags=['Accounts'],
 )

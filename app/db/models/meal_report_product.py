@@ -15,7 +15,7 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField
+from peewee import BooleanField, IntegerField, PrimaryKeyField, ForeignKeyField
 
 from .meal_report import MealReport
 from .product import Product
@@ -26,6 +26,7 @@ class MealReportProduct(BaseModel):
     id = PrimaryKeyField()
     meal_report = ForeignKeyField(model=MealReport)
     product = ForeignKeyField(model=Product)
+    value = IntegerField()
     is_deleted = BooleanField(default=False)
 
     class Meta:

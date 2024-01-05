@@ -84,8 +84,12 @@ class ImageService(BaseService):
             self,
             session: Session,
             file: UploadFile = File(...),
+            return_model: bool = False,
     ):
         image = await self._create(file=file, session=session)
+
+        if return_model:
+            return image
 
         return {'id_str': image.id_str}
 
@@ -94,18 +98,34 @@ class ImageService(BaseService):
             self,
             session: Session,
             file: UploadFile = File(...),
+            return_model: bool = False,
     ):
         image = await self._create(file=file, session=session)
 
+        if return_model:
+            return image
+
         return {'id_str': image.id_str}
 
-    @session_required(permissions=['images'])
-    async def delete_by_admin(
+    async def _delete(
             self,
             session: Session,
             id_str: str,
+            by_admin: bool = False,
     ):
         image = await ImageRepository().get_by_id_str(id_str=id_str)
+
+        action_parameters = {
+            'deleter': f'session_{session.id}',
+            'id_str': id_str,
+        }
+
+        if by_admin:
+            action_parameters.update(
+                {
+                    'by_admin': True,
+                }
+            )
 
         await ImageRepository().delete(model=image)
 
@@ -114,17 +134,30 @@ class ImageService(BaseService):
         await self.create_action(
             model=image,
             action='delete',
-            parameters={
-                'deleter': f'session_{session.id}',
-                'id_str': id_str,
-                'by_admin': True,
-            },
+            parameters=action_parameters,
         )
 
         return {}
 
-    # @staticmethod  # FIXME
-    # async def get_path(
-    #         id_str: str,
-    # ):
-    #     return f'{PATH_IMAGES}/{id_str}.jpg'
+    @session_required()
+    async def delete(
+            self,
+            session: Session,
+            id_str: str,
+    ):
+        return await self._delete(
+            session=session,
+            id_str=id_str,
+        )
+
+    @session_required(permissions=['images'])
+    async def delete_by_admin(
+            self,
+            session: Session,
+            id_str: str,
+    ):
+        return await self._delete(
+            session=session,
+            id_str=id_str,
+            by_admin=True,
+        )

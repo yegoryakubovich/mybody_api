@@ -15,20 +15,24 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .services import router as router_services
-from app.utils import Router
+from fastapi import UploadFile
+
+from app.services import ImageService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/create',
 )
+
+
+@router.post()
+async def route(
+        token: str,
+        file: UploadFile,
+):
+    result = await ImageService().create_by_admin(
+        token=token,
+        file=file,
+    )
+    return Response(**result)

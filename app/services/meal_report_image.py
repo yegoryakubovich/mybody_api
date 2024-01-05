@@ -16,12 +16,10 @@
 
 
 from config import PATH_IMAGES
+from . import ImageService
 from .base import BaseService
 from ..db.models import MealReportImage, Session
-from ..repositories import ImageRepository
-from ..repositories.meal_report import MealReportRepository
-from ..repositories.meal_report_image import MealReportImageRepository
-from ..repositories.meal_report_product import MealReportProductRepository
+from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
 from ..utils import ApiException
 from ..utils.decorators import session_required
 
@@ -124,7 +122,18 @@ class MealReportImageService(BaseService):
             if meal_report_image.meal_report.meal.account_service.account != session.account:
                 raise NotEnoughPermissions('Not enough permissions to execute')
 
-        await MealReportProductRepository().delete(model=meal_report_image)
+        await MealReportImageRepository().delete(model=meal_report_image)
+
+        if by_admin:
+            await ImageService().delete_by_admin(
+                session=session,
+                id_str=meal_report_image.image.id_str,
+            )
+        else:
+            await ImageService().delete(
+                session=session,
+                id_str=meal_report_image.image.id_str,
+            )
 
         await self.create_action(
             model=meal_report_image,
@@ -159,7 +168,7 @@ class MealReportImageService(BaseService):
 
         return {}
 
-    @session_required()
+    @session_required(permissions=['meals'])
     async def get_list(
             self,
             meal_report_id: int,

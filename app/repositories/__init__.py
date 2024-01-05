@@ -23,6 +23,9 @@ from .exercise import ExerciseRepository
 from .image import ImageRepository
 from .meal import MealRepository
 from .meal_product import MealProductRepository
+from .meal_report import MealReportRepository
+from .meal_report_image import MealReportImageRepository
+from .meal_report_product import MealReportProductRepository
 from .notification_service import NotificationServiceName, NotificationServiceRepository
 from .notification_service_request import NotificationServiceRequestState, VerificationRequisiteType, \
     NotificationServiceRequestRepository
@@ -96,4 +99,7 @@ __all__ = [
 
     'MealRepository',
     'MealProductRepository',
+    'MealReportRepository',
+    'MealReportImageRepository',
+    'MealReportProductRepository',
 ]

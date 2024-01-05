@@ -16,6 +16,7 @@
 
 
 from .account_role import AccountRoleService
+from .account_role_check_premission import AccountRoleCheckPermissionService
 from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
@@ -75,6 +76,7 @@ __all__ = [
     'RoleService',
     'AccountRoleService',
     'RolePermissionService',
+    'AccountRoleCheckPermissionService',
     'PermissionService',
 
     'ArticleService',

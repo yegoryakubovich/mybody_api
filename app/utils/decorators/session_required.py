@@ -15,7 +15,7 @@
 #
 
 
-from app.services.account_role import AccountRoleService
+from app.services.account_role_check_premission import AccountRoleCheckPermissionService
 from app.services.session_get_by_token import SessionGetByTokenService
 from app.utils.exception import ApiException
 
@@ -55,7 +55,7 @@ def session_required(
 
             # Check permissions
             for permission in permissions or []:
-                await AccountRoleService().check_permission(account=session.account, id_str=permission)
+                await AccountRoleCheckPermissionService().check_permission(account=session.account, id_str=permission)
 
             return await function(*args, **kwargs)
         return wrapper

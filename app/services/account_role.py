@@ -15,8 +15,8 @@
 #
 
 
-from app.db.models import Account
-from app.repositories import AccountRoleRepository
+from app.db.models import AccountRole, Session
+from app.repositories import AccountRepository, AccountRoleRepository, RoleRepository
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.decorators import session_required
@@ -27,20 +27,64 @@ class AccountMissingPermission(ApiException):
 
 
 class AccountRoleService(BaseService):
-    @session_required(permissions=['roles'], can_root=True)
-    async def create_by_admin(self):
-        pass
 
-    @staticmethod
-    async def get_permissions(account: Account):
-        permissions = await AccountRoleRepository.get_account_permissions(
+    @session_required(permissions=['accounts'])
+    async def create_by_admin(
+            self,
+            session: Session,
+            account_id: int,
+            role_id: int,
+    ):
+        account = await AccountRepository().get_by_id(id_=account_id)
+        role = await RoleRepository().get_by_id(id_=role_id)
+        account_role = await AccountRoleRepository().create(
             account=account,
-            only_id_str=True,
+            role=role,
         )
-        return permissions
 
-    async def check_permission(self, account: Account, id_str: str):
-        if account.id == 0:
-            return
-        if id_str not in await self.get_permissions(account=account):
-            raise AccountMissingPermission(f'Account has no "{id_str}" permission')
+        await self.create_action(
+            model=account_role,
+            action='create',
+            parameters={
+                'creator': f'session_{session.id}',
+                'account': account.id,
+                'role': role.id,
+                'by_admin': True,
+            }
+        )
+
+        return {'id': account_role.id}
+
+    @session_required(permissions=['accounts'])
+    async def delete_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        account_role = await AccountRoleRepository().get_by_id(id_=id_)
+        await AccountRoleRepository().delete(model=account_role)
+
+        await self.create_action(
+            model=account_role,
+            action='delete',
+            parameters={
+                'deleter': f'session_{session.id}',
+                'by_admin': True,
+            }
+        )
+
+        return {}
+
+    @session_required(permissions=['accounts'], return_model=False)
+    async def get_list_by_admin(self):
+        accounts_roles: list[AccountRole] = await AccountRoleRepository().get_list()
+        return {
+            'accounts_roles': [
+                {
+                    'id': account_role.id,
+                    'account': account_role.account.id,
+                    'username': account_role.account.username,
+                    'role': account_role.role.id,
+                } for account_role in accounts_roles
+            ]
+        }
