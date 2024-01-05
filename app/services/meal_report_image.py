@@ -42,7 +42,7 @@ class MealReportImageService(BaseService):
         action_parameters = {
                 'creator': f'session_{session.id}',
                 'meal_report': meal_report_id,
-                'image': image_id_str,
+                'images': image_id_str,
         }
 
         if by_admin:
@@ -169,7 +169,7 @@ class MealReportImageService(BaseService):
         return {}
 
     @session_required(permissions=['meals'])
-    async def get_list(
+    async def get_list_by_admin(
             self,
             meal_report_id: int,
     ):

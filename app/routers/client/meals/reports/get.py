@@ -15,20 +15,26 @@
 #
 
 
-from app.utils import Router
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .products import router as router_products
-from .reports import router as router_reports
+from pydantic import BaseModel, Field
+
+from app.services.meal_report import MealReportService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/meals',
-    tags=['Meals'],
-    routes_included=[
-        router_get,
-        router_get_list,
-        router_products,
-        router_reports,
-    ]
+    prefix='/get',
 )
+
+
+class MealReportGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.get()
+async def route(schema: MealReportGetSchema):
+    result = await MealReportService().get(
+        token=schema.token,
+        id_=schema.id
+    )
+    return Response(**result)

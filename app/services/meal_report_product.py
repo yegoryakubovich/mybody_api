@@ -163,7 +163,7 @@ class MealReportProductService(BaseService):
         return {}
 
     @session_required(permissions=['meals'])
-    async def get_list(
+    async def get_list_by_admin(
             self,
             meal_report_id: int,
     ):

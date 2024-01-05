@@ -59,8 +59,8 @@ class ImageService(BaseService):
                 }
             )
 
-        if file.content_type != 'image/jpeg':
-            raise InvalidFileType('Invalid file type. Available: image/jpeg')
+        if file.content_type != 'images/jpeg':
+            raise InvalidFileType('Invalid file type. Available: images/jpeg')
 
         if len(file_content) >= 16777216:
             raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')

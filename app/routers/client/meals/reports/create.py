@@ -13,22 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from fastapi import UploadFile
 
-
-from app.utils import Router
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .products import router as router_products
-from .reports import router as router_reports
+from app.services.meal_report import MealReportService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/meals',
-    tags=['Meals'],
-    routes_included=[
-        router_get,
-        router_get_list,
-        router_products,
-        router_reports,
-    ]
+    prefix='/create',
 )
+
+
+@router.post()
+async def route(
+        token: str,
+        meal_id: int,
+        comment: str,
+        images: list[UploadFile],
+        products: dict,
+):
+    result = await MealReportService().create(
+        token=token,
+        meal_id=meal_id,
+        comment=comment,
+        images=images,
+        products=products,
+    )
+    return Response(**result)

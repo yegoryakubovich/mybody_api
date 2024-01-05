@@ -20,7 +20,7 @@ from .get import router as router_get
 
 router = Router(
     prefix='/images',
-    tags=['images'],
+    tags=['Images'],
     routes_included=[
         router_get,
     ]

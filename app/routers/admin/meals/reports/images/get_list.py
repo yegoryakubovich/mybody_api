@@ -15,20 +15,28 @@
 #
 
 
-from app.utils import Router
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .products import router as router_products
-from .reports import router as router_reports
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import MealReportImageService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/meals',
-    tags=['Meals'],
-    routes_included=[
-        router_get,
-        router_get_list,
-        router_products,
-        router_reports,
-    ]
+    prefix='/list/get'
 )
+
+
+class MealReportImageGetListByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    meal_report_id: int = Field()
+
+
+@router.get()
+async def route(schema: MealReportImageGetListByAdminSchema = Depends()):
+    result = await MealReportImageService().get_list_by_admin(
+        token=schema.token,
+        meal_report_id=schema.meal_report_id,
+    )
+    return Response(**result)
+
