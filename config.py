@@ -23,6 +23,7 @@ config.read('config.ini')
 
 config_db = config['db']
 config_tg = config['tg']
+config_settings = config['settings']
 
 MYSQL_HOST = config_db['host']
 MYSQL_PORT = int(config_db['port'])
@@ -32,6 +33,8 @@ MYSQL_NAME = config_db['name']
 
 TG_BOT_USERNAME = config_tg['bot_username']
 TG_BOT_TOKEN = config_tg['bot_token']
+
+ROOT_TOKEN = config_settings['root_token']
 
 PATH_ARTICLES = 'assets/articles'
 PATH_TEXTS_PACKS = 'assets/texts_packs'

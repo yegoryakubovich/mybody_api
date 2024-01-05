@@ -17,6 +17,11 @@
 
 from app.services.account_role import AccountRoleService
 from app.services.session_get_by_token import SessionGetByTokenService
+from app.utils.exception import ApiException
+
+
+class MethodNotSupportedRoot(ApiException):
+    pass
 
 
 def session_required(
@@ -24,6 +29,7 @@ def session_required(
         return_account: bool = False,
         permissions: list[str] = None,
         can_guest: bool = False,
+        can_root: bool = False,
 ):
     def inner(function):
         async def wrapper(*args, **kwargs):
@@ -35,12 +41,19 @@ def session_required(
             if not session and not can_guest or (token and can_guest):
                 session = await SessionGetByTokenService().execute(token=token)
 
+                # Check support root
+                if session.id == 0 and not can_root:
+                    raise MethodNotSupportedRoot('Method not supported root user')
+
+
+            # Return model
             if return_model:
                 if return_account:
                     kwargs['account'] = session.account
                 else:
                     kwargs['session'] = session
 
+            # Check permissions
             for permission in permissions or []:
                 await AccountRoleService().check_permission(account=session.account, id_str=permission)
 

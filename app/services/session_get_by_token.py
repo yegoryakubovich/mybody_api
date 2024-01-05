@@ -15,11 +15,14 @@
 #
 
 
+from addict import Dict
+
 from app.repositories import SessionRepository
 from app.db.models import Session
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_hash_by_string_and_salt
+from config import ROOT_TOKEN
 
 
 class WrongToken(ApiException):
@@ -32,13 +35,35 @@ class WrongTokenFormat(ApiException):
 
 class SessionGetByTokenService(BaseService):
     @staticmethod
-    async def execute(token: str) -> Session:
+    async def execute(token: str) -> Session | Dict:
         # Get session ID and token
         try:
             session_id_str, token = token.split(':')
         except ValueError:
             raise WrongTokenFormat('Token does not match format')
         session_id = int(session_id_str)
+
+        if session_id == 0:
+            if token == ROOT_TOKEN:
+                session_dict = {
+                    'id': 0,
+                    'account': {
+                        'id': 0,
+                        'username': 'root',
+                        'firstname': 'root',
+                        'lastname': 'root',
+                        'surname': None,
+                        'country_id': {'id_str': 'root'},
+                        'language_id': {'id_str': 'root'},
+                        'timezone_id': {'id_str': 'root'},
+                        'currency_id': {'id_str': 'root'},
+                        'is_deleted': False,
+                    },
+                    'is_deleted': False,
+                }
+                return Dict(**session_dict)
+            else:
+                raise WrongToken('Wrong root token')
 
         session: Session = await SessionRepository().get_by_id(id_=session_id)
         if session.token_hash == await create_hash_by_string_and_salt(

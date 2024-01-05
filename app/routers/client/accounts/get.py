@@ -15,17 +15,26 @@
 #
 
 
-from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from .base import BaseModel
-from .text import Text
+from app.services import AccountService
+from app.utils import Router
+from app.utils.response import Response
 
 
-class CategoryArticle(BaseModel):
-    id = PrimaryKeyField()
-    name_text = ForeignKeyField(model=Text)
-    is_hide = BooleanField(default=True)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/get',
+)
 
-    class Meta:
-        db_table = 'categories_articles'
+
+class AccountGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+
+
+@router.get()
+async def route(schema: AccountGetSchema = Depends()):
+    result = await AccountService().get(
+        token=schema.token,
+    )
+    return Response(**result)

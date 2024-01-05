@@ -16,7 +16,6 @@
 
 
 from .account import Account
-from .account_parameter import AccountParameter
 from .account_role import AccountRole
 from .account_service import AccountService
 from .action import Action
@@ -24,8 +23,6 @@ from .action_parameter import ActionParameter
 from .article import Article
 from .article_translation import ArticleTranslation
 from .billing import Billing
-from .category_article import CategoryArticle
-from .category_parameter_account import CategoryParameterAccount
 from .exercise import Exercise
 from .image import Image
 from .language import Language
@@ -43,7 +40,6 @@ from .text import Text
 from .text_translation import TextTranslation
 from .text_pack import TextPack
 from .country import Country
-from .parameter_account import ParameterAccount
 from .role import Role
 from .service import Service
 from .service_cost import ServiceCost
@@ -77,12 +73,7 @@ models = (
     AccountService,
     Billing,
 
-    # AccountParameter
-    CategoryParameterAccount,
-    ParameterAccount,
-    AccountParameter,
-
-    CategoryArticle,
+    # Articles
     Article,
     ArticleTranslation,
 

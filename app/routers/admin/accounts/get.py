@@ -15,7 +15,6 @@
 #
 
 
-from fastapi import Depends
 from pydantic import BaseModel, Field
 
 from app.services import AccountService

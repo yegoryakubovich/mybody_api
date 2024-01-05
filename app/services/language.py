@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class LanguageService(BaseService):
-    @session_required(permissions=['languages'])
+    @session_required(permissions=['languages'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

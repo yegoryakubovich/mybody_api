@@ -22,7 +22,7 @@ from ..utils.decorators import session_required
 
 
 class RolePermissionService(BaseService):
-    @session_required(permissions=['roles'])
+    @session_required(permissions=['roles'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

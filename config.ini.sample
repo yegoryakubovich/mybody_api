@@ -8,3 +8,6 @@ name = db_name
 [tg]
 bot_username = bot_username
 bot_token = XXXXX
+
+[settings]
+root_token = XXXXX

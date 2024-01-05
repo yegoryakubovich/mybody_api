@@ -13,10 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from config import PATH_IMAGES
 from .base import BaseService
-from ..db.models import MealReportImage, MealReportProduct, Session
-from ..repositories import ImageRepository, ProductRepository
+from ..db.models import MealReportImage, Session
+from ..repositories import ImageRepository
 from ..repositories.meal_report import MealReportRepository
 from ..repositories.meal_report_image import MealReportImageRepository
 from ..repositories.meal_report_product import MealReportProductRepository

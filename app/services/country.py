@@ -28,7 +28,7 @@ class NoRequiredParameters(ApiException):
 
 
 class CountryService(BaseService):
-    @session_required(permissions=['countries'])
+    @session_required(permissions=['countries'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

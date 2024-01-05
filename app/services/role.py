@@ -29,7 +29,7 @@ class RoleAlreadyExist(ApiException):
 
 
 class RoleService(BaseService):
-    @session_required(permissions=['roles'])
+    @session_required(permissions=['roles'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

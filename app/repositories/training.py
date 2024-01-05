@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+
 from datetime import date
 
 from app.db.models import Training
