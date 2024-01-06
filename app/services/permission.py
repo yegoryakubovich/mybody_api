@@ -19,7 +19,12 @@ from .base import BaseService
 from .text import TextService
 from app.repositories import PermissionRepository
 from ..db.models import Permission, Session
+from ..utils import ApiException
 from ..utils.decorators import session_required
+
+
+class PermissionAlreadyExist(ApiException):
+    pass
 
 
 class PermissionService(BaseService):
@@ -30,6 +35,9 @@ class PermissionService(BaseService):
             id_str: str,
             name: str,
     ):
+        if await PermissionRepository().is_exist_by_id_str(id_str=id_str):
+            raise PermissionAlreadyExist(f'Permission with id_str "{id_str}" already exist')
+
         name_text = await TextService().create_by_admin(
             session=session,
             key=f'permission_{id_str}',

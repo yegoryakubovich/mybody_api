@@ -18,7 +18,7 @@
 from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository, ModelDoesNotExist, \
     TextRepository
-from app.services import AccountRoleService
+from app.services import AccountRoleCheckPermissionService
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils import ApiException
@@ -213,7 +213,7 @@ class ArticleService(BaseService):
         if article.is_hide:
             if not session:
                 raise SessionRequired(f'To read this article enter a token')
-            await AccountRoleService().check_permission(account=session.account, id_str='read_articles')
+            await AccountRoleCheckPermissionService().check_permission(account=session.account, id_str='read_articles')
 
         # Can guest
         if not article.can_guest and not session:
@@ -231,8 +231,10 @@ class ArticleService(BaseService):
         with open(f'{PATH_ARTICLES}/{filename}.md', encoding='utf-8', mode='r') as md_file:
             md = md_file.read()
         return {
-            'can_guest': article.can_guest,
-            'language': language_id_str,
-            'name': name,
-            'md': md,
+            'article': {
+                'can_guest': article.can_guest,
+                'language': language_id_str,
+                'name': name,
+                'md': md,
+            }
         }
