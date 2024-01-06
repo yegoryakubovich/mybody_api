@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class TimezoneService(BaseService):
-    @session_required(permissions=['timezones'])
+    @session_required(permissions=['timezones'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,
