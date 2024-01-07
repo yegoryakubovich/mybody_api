@@ -20,7 +20,7 @@ from math import ceil
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
     CurrencyRepository, TextPackRepository
-from app.services import AccountRoleService
+from app.services import AccountRoleService, AccountRoleCheckPermissionService
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
@@ -119,7 +119,7 @@ class AccountService(BaseService):
     @session_required(return_model=False, permissions=['accounts'])
     async def get_by_admin(self, id_: int) -> dict:
         account = await AccountRepository().get_by_id(id_=id_)
-        permissions = await AccountRoleService.get_permissions(account=account)
+        permissions = await AccountRoleCheckPermissionService.get_permissions(account=account)
 
         return {
             'account': {
@@ -138,7 +138,7 @@ class AccountService(BaseService):
     @session_required(return_account=True)
     async def get(self, account: Account) -> dict:
         text_pack = await TextPackRepository.get_current(language=account.language)
-        permissions = await AccountRoleService.get_permissions(account=account)
+        permissions = await AccountRoleCheckPermissionService.get_permissions(account=account)
 
         return {
             'account': {

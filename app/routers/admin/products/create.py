@@ -30,7 +30,7 @@ class ProductCreateByAdminSchema(BaseModel):
     name: str = Field(min_length=2, max_length=1024)
     type: str = Field(min_length=2, max_length=16)
     unit: str = Field(min_length=2, max_length=4)
-    article_id: int = Field(default=None)
+    article_id: int | None = Field(default=None)
 
 
 @router.post()

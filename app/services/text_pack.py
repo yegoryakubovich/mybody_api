@@ -48,7 +48,7 @@ class TextPackService(BaseService):
             'text_pack': json,
         }
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

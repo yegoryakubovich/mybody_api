@@ -17,6 +17,7 @@
 
 from app.db.models import Session
 from app.repositories import LanguageRepository
+from app.services.text_pack import TextPackService
 from app.services.base import BaseService
 from app.utils import ApiException
 from app.utils.decorators import session_required
@@ -53,6 +54,8 @@ class LanguageService(BaseService):
             },
             with_client=True,
         )
+
+        await TextPackService().create_by_admin(session=session, language_id_str=language.id_str)
         return {'id_str': language.id_str}
 
     @session_required(permissions=['languages'])
