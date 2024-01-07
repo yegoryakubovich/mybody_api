@@ -29,6 +29,10 @@ class InvalidQuestionList(ApiException):
     pass
 
 
+class ServiceAlreadyExist(ApiException):
+    pass
+
+
 class ServiceService(BaseService):
     async def check_questions(self, questions_sections: str):
         if not await self._is_valid_questions(questions_sections=questions_sections):
@@ -42,6 +46,9 @@ class ServiceService(BaseService):
             name: str,
             questions_sections: str = None,
     ) -> dict:
+        if await ServiceRepository().is_exist_by_id_str(id_str=id_str):
+            raise ServiceAlreadyExist(f'Service with id_str "{id_str}" already exist')
+
         action_parameters = {
             'creator': f'session_{session.id}',
             'id_str': id_str,

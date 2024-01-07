@@ -27,6 +27,10 @@ class NoRequiredParameters(ApiException):
     pass
 
 
+class CountryAlreadyExist(ApiException):
+    pass
+
+
 class CountryService(BaseService):
     @session_required(permissions=['countries'], can_root=True)
     async def create_by_admin(
@@ -38,6 +42,9 @@ class CountryService(BaseService):
             timezone: str,
             currency: str,
     ):
+        if await CountryRepository().is_exist_by_id_str(id_str=id_str):
+            raise CountryAlreadyExist(f'Country with id_str "{id_str}" already exist')
+
         name_text = await TextService().create_by_admin(
             session=session,
             key=f'country_{id_str}',

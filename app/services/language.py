@@ -18,7 +18,12 @@
 from app.db.models import Session
 from app.repositories import LanguageRepository
 from app.services.base import BaseService
+from app.utils import ApiException
 from app.utils.decorators import session_required
+
+
+class LanguageAlreadyExist(ApiException):
+    pass
 
 
 class LanguageService(BaseService):
@@ -29,6 +34,9 @@ class LanguageService(BaseService):
             id_str: str,
             name: str,
     ):
+        if await LanguageRepository().is_exist_by_id_str(id_str=id_str):
+            raise LanguageAlreadyExist(f'Language with id_str "{id_str}" already exist')
+
         language = await LanguageRepository().create(
             id_str=id_str,
             name=name,
