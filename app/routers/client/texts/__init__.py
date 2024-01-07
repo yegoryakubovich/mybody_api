@@ -17,16 +17,12 @@
 
 from app.utils import Router
 
-from .get import router as router_get
-from .get_list import router as router_get_list
 from .packs import router as router_packs
 
 
 router = Router(
     prefix='/texts',
     routes_included=[
-        router_get,
-        router_get_list,
         router_packs,
     ],
     tags=['Texts'],

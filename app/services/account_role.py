@@ -28,7 +28,7 @@ class AccountMissingPermission(ApiException):
 
 class AccountRoleService(BaseService):
 
-    @session_required(permissions=['accounts'])
+    @session_required(permissions=['accounts'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

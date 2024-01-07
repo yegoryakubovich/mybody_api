@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class TextService(BaseService):
-    @session_required(return_model=False)
+    @session_required(return_model=False, permissions=['texts'])
     async def get(
             self,
             key: str,
@@ -45,7 +45,7 @@ class TextService(BaseService):
             },
         }
 
-    @session_required(return_model=False)
+    @session_required(return_model=False, permissions=['texts'], can_root=True)
     async def get_list(
             self,
     ) -> dict:
@@ -73,7 +73,7 @@ class TextService(BaseService):
             'texts': texts_list,
         }
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

@@ -19,7 +19,7 @@ from fastapi import UploadFile
 
 from . import ImageService, MealReportImageService, MealReportProductService
 from .base import BaseService
-from app.repositories import MealProductRepository, MealReportImageRepository, MealReportProductRepository, \
+from app.repositories import MealReportImageRepository, MealReportProductRepository, \
     MealReportRepository, \
     MealRepository
 from app.utils.decorators import session_required

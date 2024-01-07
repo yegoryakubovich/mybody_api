@@ -19,6 +19,7 @@ from .base import BaseService
 from .text import TextService
 from app.repositories import PermissionRepository
 from ..db.models import Permission, Session
+from ..utils.crypto import create_id_str
 from ..utils.decorators import session_required
 
 
@@ -32,7 +33,7 @@ class PermissionService(BaseService):
     ):
         name_text = await TextService().create_by_admin(
             session=session,
-            key=f'permission_{id_str}',
+            key=f'permission_{await create_id_str()}',
             value_default=name,
             return_model=True,
         )
