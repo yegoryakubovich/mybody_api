@@ -213,7 +213,7 @@ class ArticleService(BaseService):
         if article.is_hide:
             if not session:
                 raise SessionRequired(f'To read this article enter a token')
-            await AccountRoleCheckPermissionService().check_permission(account=session.account, id_str='read_articles')
+            await AccountRoleCheckPermissionService().check_permission(account=session.account, id_str='articles')
 
         # Can guest
         if not article.can_guest and not session:
