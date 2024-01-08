@@ -12,3 +12,4 @@ services:
       - "4000:80"
     volumes:
       - ./assets/articles:/app/assets/articles
+      - ./assets/texts_packs:/app/assets/texts_packs
