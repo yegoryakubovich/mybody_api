@@ -13,15 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+import random
+from json import JSONDecodeError, loads
 
 from fastapi import UploadFile
+from peewee import DoesNotExist
 
 from . import ImageService, MealReportImageService, MealReportProductService
 from .base import BaseService
 from app.repositories import MealReportImageRepository, MealReportProductRepository, \
     MealReportRepository, \
-    MealRepository
+    MealRepository, ProductRepository
 from app.utils.decorators import session_required
 from ..db.models import Meal, MealReport, Session
 from ..utils import ApiException
@@ -35,6 +37,18 @@ class NotEnoughPermissions(ApiException):
     pass
 
 
+class InvalidProductList(ApiException):
+    pass
+
+
+class InvalidFileType(ApiException):
+    pass
+
+
+class TooLargeFile(ApiException):
+    pass
+
+
 class MealReportService(BaseService):
 
     async def _create(
@@ -43,10 +57,13 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str,
             images: list[UploadFile],
-            products: list[dict],
+            products: str,
             by_admin: bool = False,
     ) -> MealReport:
         meal: Meal = await MealRepository().get_by_id(id_=meal_id)
+        products = await self.get_products_list(products=products)
+        for file in images:
+            await self.check_image(image=file)
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -126,7 +143,7 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str,
             images: list[UploadFile],
-            products: list[dict],
+            products: str,
     ):
         meal_report = await self._create(
             session=session,
@@ -145,7 +162,7 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str,
             images: list[UploadFile],
-            products: list[dict],
+            products: str,
     ):
         meal_report = await self._create(
             session=session,
@@ -290,3 +307,39 @@ class MealReportService(BaseService):
             id_=id_,
             by_admin=True,
         )
+
+    async def get_products_list(self, products: str):
+        if not await self._is_valid_products(products=products):
+            raise InvalidProductList('Invalid product list')
+        return loads(products)
+
+    @staticmethod
+    async def check_image(image: UploadFile):
+        file_content = await image.read()
+        if image.content_type != 'image/jpeg':
+            raise InvalidFileType('Invalid file type. Available: images/jpeg')
+        if len(file_content) >= 16777216:
+            raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')
+
+    @staticmethod
+    async def _is_valid_products(products: str):
+        try:
+            products = loads(products)
+            if len(products) == 0:
+                return False
+            for product in products:
+                if not product['id'] or type(product['id']) != int:
+                    return False
+                if not product['value'] or type(product['value']) != int:
+                    return False
+                await ProductRepository().get_by_id(id_=product['id'])
+            return True
+        except JSONDecodeError:
+            return False
+        except TypeError:
+            return False
+        except KeyError:
+            return False
+        except DoesNotExist:
+            return False
+

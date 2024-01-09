@@ -29,8 +29,8 @@ async def route(
         token: str,
         meal_id: int,
         comment: str,
+        products: str,
         images: list[UploadFile],
-        products: list[dict],
 ):
     result = await MealReportService().create_by_admin(
         token=token,

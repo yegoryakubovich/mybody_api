@@ -15,7 +15,7 @@
 #
 
 
-from datetime import datetime
+from datetime import datetime, date
 
 from app.db.models import Session
 from app.db.models.meal import Meal
@@ -44,17 +44,16 @@ class MealService(BaseService):
             self,
             session: Session,
             account_service_id: int,
-            date_: str,
+            date_: date,
             type_: str,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
-        date_ = datetime.strptime(date_, '%d.%m.%y').date()
         await self.check_meal_type(type_=type_)
 
         meal = await MealRepository().create(
             account_service=account_service,
-            date_=date_,
-            type_=type_,
+            date=date_,
+            type=type_,
         )
 
         await self.create_action(
@@ -76,7 +75,7 @@ class MealService(BaseService):
             self,
             session: Session,
             id_: int,
-            date_: str = None,
+            date_: date = None,
             type_: str = None,
 
     ):
@@ -95,7 +94,6 @@ class MealService(BaseService):
                     'date': date_,
                 }
             )
-            date_ = datetime.strptime(date_, '%d.%m.%y').date()
         if type_:
             await self.check_meal_type(type_=type_)
             action_parameters.update(
@@ -106,8 +104,8 @@ class MealService(BaseService):
 
         await MealRepository().update(
             model=meal,
-            date_=date_,
-            type_=type_,
+            date=date_,
+            type=type_,
         )
 
         await self.create_action(

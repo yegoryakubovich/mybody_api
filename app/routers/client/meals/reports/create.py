@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from fastapi import UploadFile
 
 from app.services.meal_report import MealReportService
 from app.utils import Response, Router
-
 
 router = Router(
     prefix='/create',
@@ -29,8 +30,8 @@ async def route(
         token: str,
         meal_id: int,
         comment: str,
+        products: str,
         images: list[UploadFile],
-        products: dict,
 ):
     result = await MealReportService().create(
         token=token,

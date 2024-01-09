@@ -15,6 +15,8 @@
 #
 
 
+from datetime import date as datetime_date
+
 from pydantic import BaseModel, Field
 
 from app.services import TrainingService
@@ -29,7 +31,7 @@ router = Router(
 class TrainingCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
-    date: str = Field()
+    date: datetime_date = Field()
     article_id: int = Field(default=None)
 
 

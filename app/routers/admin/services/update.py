@@ -39,6 +39,6 @@ async def route(schema: ServiceUpdateByAdminSchema):
         token=schema.token,
         id_str=schema.id_str,
         name=schema.name,
-        questions=schema.questions,
+        questions_sections=schema.questions,
     )
     return Response(**result)

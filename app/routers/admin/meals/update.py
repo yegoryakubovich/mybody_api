@@ -15,6 +15,8 @@
 #
 
 
+from datetime import date as datetime_date
+
 from pydantic import BaseModel, Field
 
 from app.services import MealService
@@ -29,7 +31,7 @@ router = Router(
 class MealUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    date: str = Field(default=None, max_length=8)
+    date: datetime_date = Field(default=None)
     type: str = Field(default=None, max_length=16)
 
 

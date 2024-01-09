@@ -34,9 +34,6 @@ class ServiceAlreadyExist(ApiException):
 
 
 class ServiceService(BaseService):
-    async def check_questions(self, questions_sections: str):
-        if not await self._is_valid_questions(questions_sections=questions_sections):
-            raise InvalidQuestionList('Invalid question list')
 
     @session_required(permissions=['services'])
     async def create_by_admin(
@@ -91,7 +88,7 @@ class ServiceService(BaseService):
             session: Session,
             id_str: str,
             name: str = None,
-            questions: str = None,
+            questions_sections: str = None,
     ) -> dict:
         service: Service = await ServiceRepository().get_by_id_str(id_str=id_str)
         action_parameters = {
@@ -111,19 +108,19 @@ class ServiceService(BaseService):
                     'name': name,
                 }
             )
-        if questions:
-            await self.check_questions(questions_sections=questions)
+        if questions_sections:
+            await self.check_questions(questions_sections=questions_sections)
 
             action_parameters.update(
                 {
-                    'questions': questions,
+                    'questions': questions_sections,
                 }
             )
 
         await ServiceRepository().update(
             service=service,
             name=name,
-            questions=questions,
+            questions=questions_sections,
         )
 
         await self.create_action(
@@ -184,6 +181,10 @@ class ServiceService(BaseService):
         }
         return services
 
+    async def check_questions(self, questions_sections: str):
+        if not await self._is_valid_questions(questions_sections=questions_sections):
+            raise InvalidQuestionList('Invalid question list')
+
     @staticmethod
     async def _is_valid_questions(questions_sections: str):
         try:
@@ -191,7 +192,7 @@ class ServiceService(BaseService):
             if len(questions_sections) == 0:
                 return False
             for section in questions_sections:
-                if not section['name']:
+                if not section['title']:
                     return False
                 questions = section['questions']
                 for question in questions:

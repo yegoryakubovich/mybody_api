@@ -15,7 +15,7 @@
 #
 
 
-from datetime import datetime
+from datetime import date
 
 from app.db.models import Session, Training
 from app.repositories import ArticleRepository, TrainingRepository, AccountServiceRepository
@@ -38,7 +38,7 @@ class TrainingService(BaseService):
             self,
             session: Session,
             account_service_id: int,
-            date_: str,
+            date_: date,
             article_id: int = None,
     ):
         account_service_id = await AccountServiceRepository().get_by_id(id_=account_service_id)
@@ -62,7 +62,7 @@ class TrainingService(BaseService):
 
         training = await TrainingRepository().create(
             account_service=account_service_id,
-            date_=datetime.strptime(date_, '%d.%m.%y').date(),
+            date=date_,
             article=article,
         )
 
@@ -79,7 +79,7 @@ class TrainingService(BaseService):
             self,
             session: Session,
             id_: int,
-            date_: str = None,
+            date_: date = None,
             article_id: int = None,
     ):
         training = await TrainingRepository().get_by_id(id_=id_)
@@ -95,7 +95,6 @@ class TrainingService(BaseService):
                     'date': date_,
                 }
             )
-            date_ = datetime.strptime(date_, '%d.%m.%y').date()
 
         if article_id:
             article = await ArticleRepository().get_by_id(id_=article_id)
@@ -109,7 +108,7 @@ class TrainingService(BaseService):
 
         await TrainingRepository().update(
             model=training,
-            date_=date_,
+            date=date_,
             article=article,
         )
 

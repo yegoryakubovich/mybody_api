@@ -23,17 +23,8 @@ from config import PATH_IMAGES
 from .base import BaseService
 from ..db.models import Image, Session
 from ..repositories import ImageRepository
-from ..utils import ApiException
 from ..utils.crypto import create_id_str
 from ..utils.decorators import session_required
-
-
-class InvalidFileType(ApiException):
-    pass
-
-
-class TooLargeFile(ApiException):
-    pass
 
 
 class ImageService(BaseService):
@@ -45,7 +36,6 @@ class ImageService(BaseService):
             by_admin: bool = False,
     ) -> Image:
         id_str = await create_id_str()
-        file_content = await file.read()
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -59,13 +49,8 @@ class ImageService(BaseService):
                 }
             )
 
-        if file.content_type != 'images/jpeg':
-            raise InvalidFileType('Invalid file type. Available: images/jpeg')
-
-        if len(file_content) >= 16777216:
-            raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')
-
         with open(f'{PATH_IMAGES}/{id_str}.jpg', mode='wb') as image:
+            file_content = await file.read()
             image.write(file_content)
             image.close()
 
@@ -83,7 +68,7 @@ class ImageService(BaseService):
     async def create(
             self,
             session: Session,
-            file: UploadFile = File(...),
+            file: UploadFile,
             return_model: bool = False,
     ):
         image = await self._create(file=file, session=session)
@@ -97,7 +82,7 @@ class ImageService(BaseService):
     async def create_by_admin(
             self,
             session: Session,
-            file: UploadFile = File(...),
+            file: UploadFile,
             return_model: bool = False,
     ):
         image = await self._create(file=file, session=session)

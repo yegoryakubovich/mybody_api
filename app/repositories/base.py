@@ -35,14 +35,14 @@ class BaseRepository:
 
     async def is_exist(self, id_: str) -> bool:
         try:
-            self.model.get(self.model.id == id_)
+            self.model.get((self.model.id == id_) & (self.model.is_deleted == False))
             return True
         except DoesNotExist:
             return False
 
     async def is_exist_by_id_str(self, id_str: str) -> bool:
         try:
-            self.model.get(self.model.id_str == id_str)
+            self.model.get((self.model.id_str == id_str) & (self.model.is_deleted == False))
             return True
         except DoesNotExist:
             return False
