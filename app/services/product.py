@@ -69,7 +69,7 @@ class ProductService(BaseService):
             article = await ArticleRepository().get_by_id(id_=article_id)
             action_parameters.update(
                 {
-                    'article': article_id,
+                    'article_id': article_id,
                 }
             )
         else:
@@ -125,7 +125,7 @@ class ProductService(BaseService):
             article = await ArticleRepository().get_by_id(id_=article_id)
             action_parameters.update(
                 {
-                    'article': article_id,
+                    'article_id': article_id,
                 }
             )
         else:

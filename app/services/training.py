@@ -45,7 +45,7 @@ class TrainingService(BaseService):
 
         action_parameters = {
             'creator': f'session_{session.id}',
-            'account_service': account_service_id,
+            'account_service_id': account_service_id,
             'date': date_,
             'by_admin': True,
         }
@@ -54,7 +54,7 @@ class TrainingService(BaseService):
             article = await ArticleRepository().get_by_id(id_=article_id)
             action_parameters.update(
                 {
-                    'article': article_id,
+                    'article_id': article_id,
                 }
             )
         else:
@@ -100,7 +100,7 @@ class TrainingService(BaseService):
             article = await ArticleRepository().get_by_id(id_=article_id)
             action_parameters.update(
                 {
-                    'article': article_id,
+                    'article_id': article_id,
                 }
             )
         else:

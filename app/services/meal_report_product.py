@@ -42,8 +42,8 @@ class MealReportProductService(BaseService):
 
         action_parameters = {
                 'creator': f'session_{session.id}',
-                'meal_report': meal_report_id,
-                'product': product_id,
+                'meal_report_id': meal_report_id,
+                'product_id': product_id,
         }
 
         if by_admin:

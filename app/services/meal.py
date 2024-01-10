@@ -61,7 +61,7 @@ class MealService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'account_service': account_service_id,
+                'account_service_id': account_service_id,
                 'date': date_,
                 'type': type_,
                 'by_admin': True,

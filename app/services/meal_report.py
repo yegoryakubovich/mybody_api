@@ -272,8 +272,8 @@ class MealReportService(BaseService):
         return {
             'products': [
                 {
-                    'id': meal_report_product.id,
-                    'product': meal_report_product.product.id,
+                    'meal_report_product_id': meal_report_product.id,
+                    'product_id': meal_report_product.product.id,
                     'value': meal_report_product.value,
                 } for meal_report_product in meal_report_products
             ],

@@ -65,7 +65,7 @@ class ArticleTranslationService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'name_text_translation': name_text_translation.id,
+                'name_text_translation_id': name_text_translation.id,
                 'name': name,
                 'by_admin': True,
             },

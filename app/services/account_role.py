@@ -47,8 +47,8 @@ class AccountRoleService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'account': account.id,
-                'role': role.id,
+                'account_id': account.id,
+                'role_id': role.id,
                 'by_admin': True,
             }
         )

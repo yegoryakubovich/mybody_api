@@ -42,7 +42,7 @@ class RolePermissionService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'role': role_id,
+                'role_id': role_id,
                 'permission': permission_id_str,
                 'by_admin': True,
             }

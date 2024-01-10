@@ -58,8 +58,8 @@ class MealProductService(BaseService):
             action='create',
             parameters={
                 'creator': f'session_{session.id}',
-                'meal': meal_id,
-                'product': product_id,
+                'meal_id': meal_id,
+                'product_id': product_id,
                 'value': value,
                 'by_admin': True,
             }
@@ -88,7 +88,7 @@ class MealProductService(BaseService):
             product = await ProductRepository().get_by_id(id_=product_id)
             action_parameters.update(
                 {
-                    'product': product_id,
+                    'product_id': product_id,
                 }
             )
         else:

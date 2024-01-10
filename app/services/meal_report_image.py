@@ -41,8 +41,8 @@ class MealReportImageService(BaseService):
 
         action_parameters = {
                 'creator': f'session_{session.id}',
-                'meal_report': meal_report_id,
-                'images': image_id_str,
+                'meal_report_id': meal_report_id,
+                'image': image_id_str,
         }
 
         if by_admin:
