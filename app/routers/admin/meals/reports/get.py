@@ -15,6 +15,7 @@
 #
 
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
 from app.services.meal_report import MealReportService
@@ -32,7 +33,7 @@ class MealReportGetByAdminSchema(BaseModel):
 
 
 @router.get()
-async def route(schema: MealReportGetByAdminSchema):
+async def route(schema: MealReportGetByAdminSchema = Depends()):
     result = await MealReportService().get_by_admin(
         token=schema.token,
         id_=schema.id

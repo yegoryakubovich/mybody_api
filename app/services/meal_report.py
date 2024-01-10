@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import random
+
+
 from json import JSONDecodeError, loads
 
 from fastapi import UploadFile
@@ -64,7 +65,6 @@ class MealReportService(BaseService):
         products = await self.get_products_list(products=products)
         for file in images:
             await self.check_image(image=file)
-
         action_parameters = {
             'creator': f'session_{session.id}',
             'meal': meal_id,
@@ -315,10 +315,9 @@ class MealReportService(BaseService):
 
     @staticmethod
     async def check_image(image: UploadFile):
-        file_content = await image.read()
         if image.content_type != 'image/jpeg':
             raise InvalidFileType('Invalid file type. Available: images/jpeg')
-        if len(file_content) >= 16777216:
+        if image.size >= 16777216:
             raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')
 
     @staticmethod
