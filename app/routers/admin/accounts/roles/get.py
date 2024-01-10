@@ -15,20 +15,27 @@
 #
 
 
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .create import router as router_create
-from .delete import router as router_delete
-from app.utils import Router
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import AccountRoleService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/roles',
-    routes_included=[
-        router_create,
-        router_delete,
-        router_get,
-        router_get_list,
-    ],
-    tags=['Accounts'],
+    prefix='/get',
 )
+
+
+class AccountRoleGetByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_id: int = Field()
+
+
+@router.get()
+async def route(schema: AccountRoleGetByAdminSchema = Depends()):
+    result = await AccountRoleService().get_by_admin(
+        token=schema.token,
+        account_id=schema.account_id,
+    )
+    return Response(**result)

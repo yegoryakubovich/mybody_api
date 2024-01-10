@@ -37,3 +37,9 @@ class AccountRoleRepository(BaseRepository):
             )
 
         return permissions
+
+    @staticmethod
+    async def get_by_account(account: Account) -> list[AccountRole]:
+        return AccountRole.select().where(
+                (AccountRole.account == account) &
+                (AccountRole.is_deleted == False)).execute()

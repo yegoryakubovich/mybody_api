@@ -88,3 +88,16 @@ class AccountRoleService(BaseService):
                 } for account_role in accounts_roles
             ]
         }
+
+    @session_required(permissions=['accounts'], return_model=False)
+    async def get_by_admin(self, account_id: int):
+        account = await AccountRepository().get_by_id(id_=account_id)
+        accounts_roles = await AccountRoleRepository().get_by_account(account=account)
+        return {
+            'accounts_roles': [
+                {
+                    'id': account_role.id,
+                    'role': account_role.role.id,
+                } for account_role in accounts_roles
+            ]
+        }
