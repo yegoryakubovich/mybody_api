@@ -15,30 +15,19 @@
 #
 
 
-from fastapi import UploadFile
-
-from app.services import MealReportService
-from app.utils import Response, Router
+from app.utils import Router
+from .create import router as router_create
+from .delete import router as router_delete
+from .get import router as router_get
+from .get_list import router as router_get_list
 
 
 router = Router(
-    prefix='/create',
+    prefix='/reports',
+    routes_included=[
+        router_create,
+        router_delete,
+        router_get,
+        router_get_list,
+    ]
 )
-
-
-@router.post()
-async def route(
-        token: str,
-        meal_id: int,
-        comment: str,
-        products: str,
-        images: list[UploadFile],
-):
-    result = await MealReportService().create_by_admin(
-        token=token,
-        meal_id=meal_id,
-        comment=comment,
-        images=images,
-        products=products,
-    )
-    return Response(**result)

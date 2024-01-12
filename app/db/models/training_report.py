@@ -15,30 +15,17 @@
 #
 
 
-from fastapi import UploadFile
+from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField
 
-from app.services import MealReportService
-from app.utils import Response, Router
-
-
-router = Router(
-    prefix='/create',
-)
+from .training import Training
+from .base import BaseModel
 
 
-@router.post()
-async def route(
-        token: str,
-        meal_id: int,
-        comment: str,
-        products: str,
-        images: list[UploadFile],
-):
-    result = await MealReportService().create_by_admin(
-        token=token,
-        meal_id=meal_id,
-        comment=comment,
-        images=images,
-        products=products,
-    )
-    return Response(**result)
+class TrainingReport(BaseModel):
+    id = PrimaryKeyField()
+    training = ForeignKeyField(model=Training)
+    comment = CharField(max_length=8192)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'trainings_reports'

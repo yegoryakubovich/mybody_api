@@ -59,6 +59,7 @@ class MealReportProductService(BaseService):
         meal_report_product = await MealReportProductRepository().create(
             meal_report=meal_report,
             product=product,
+            value=value,
         )
 
         await self.create_action(

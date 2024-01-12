@@ -15,30 +15,26 @@
 #
 
 
-from fastapi import UploadFile
+from pydantic import BaseModel, Field
 
-from app.services import MealReportService
+from app.services import TrainingReportService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/create',
+    prefix='/delete',
 )
 
 
+class TrainingReportDeleteSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
 @router.post()
-async def route(
-        token: str,
-        meal_id: int,
-        comment: str,
-        products: str,
-        images: list[UploadFile],
-):
-    result = await MealReportService().create_by_admin(
-        token=token,
-        meal_id=meal_id,
-        comment=comment,
-        images=images,
-        products=products,
+async def route(schema: TrainingReportDeleteSchema):
+    result = await TrainingReportService().delete(
+        token=schema.token,
+        id_=schema.id,
     )
     return Response(**result)

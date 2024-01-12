@@ -97,7 +97,8 @@ class CountryService(BaseService):
         }
 
         if not language and not timezone and not currency:
-            raise NoRequiredParameters('One of the following parameters must be filled in: language, timezone, currency')
+            raise NoRequiredParameters('One of the following parameters must be filled in: language, timezone, '
+                                       'currency')
 
         if language:
             language_default = await LanguageRepository().get_by_id_str(id_str=language)

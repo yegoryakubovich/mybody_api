@@ -15,9 +15,10 @@
 #
 
 
-from os import remove
+from os import path, remove
 
-from fastapi import File, UploadFile
+from fastapi import UploadFile
+from PIL import Image as ImagePillow
 
 from config import PATH_IMAGES
 from .base import BaseService
@@ -53,6 +54,15 @@ class ImageService(BaseService):
             file_content = await file.read()
             image.write(file_content)
             image.close()
+
+        while path.getsize(f'{PATH_IMAGES}/{id_str}.jpg') > 2097152:
+            image = ImagePillow.open(f'{PATH_IMAGES}/{id_str}.jpg')
+
+            width, height = image.size
+            new_size = (int(width // 1.5), int(height // 1.5))
+            resized_image = image.resize(new_size)
+
+            resized_image.save(f'{PATH_IMAGES}/{id_str}.jpg', optimize=True, quality=90)
 
         image = await ImageRepository().create(id_str=id_str)
 

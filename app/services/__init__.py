@@ -24,6 +24,7 @@ from .exercise import ExerciseService
 from .image import ImageService
 from .meal import MealService
 from .meal_product import MealProductService
+from .meal_report import MealReportService
 from .meal_report_image import MealReportImageService
 from .meal_report_product import MealReportProductService
 from .notification_service import NotificationServiceService
@@ -47,6 +48,7 @@ from .text import TextService
 from .text_pack import TextPackService
 from .training import TrainingService
 from .training_exercise import TrainingExerciseService
+from .training_report import TrainingReportService
 
 
 __all__ = [
@@ -87,9 +89,11 @@ __all__ = [
     'ExerciseService',
     'TrainingService',
     'TrainingExerciseService',
+    'TrainingReportService',
 
     'MealService',
     'MealProductService',
+    'MealReportService',
     'MealReportProductService',
     'MealReportImageService',
 ]

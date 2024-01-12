@@ -45,7 +45,6 @@ def session_required(
                 if session.id == 0 and not can_root:
                     raise MethodNotSupportedRoot('Method not supported root user')
 
-
             # Return model
             if return_model:
                 if return_account:

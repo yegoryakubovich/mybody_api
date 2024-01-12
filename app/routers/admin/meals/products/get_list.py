@@ -29,6 +29,7 @@ router = Router(
 
 class MealProductGetListByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
+    meal_id: int = Field()
 
 
 @router.get()

@@ -15,30 +15,27 @@
 #
 
 
-from fastapi import UploadFile
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from app.services import MealReportService
+from app.services import TrainingReportService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/create',
+    prefix='/get',
 )
 
 
-@router.post()
-async def route(
-        token: str,
-        meal_id: int,
-        comment: str,
-        products: str,
-        images: list[UploadFile],
-):
-    result = await MealReportService().create_by_admin(
-        token=token,
-        meal_id=meal_id,
-        comment=comment,
-        images=images,
-        products=products,
+class TrainingReportGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.get()
+async def route(schema: TrainingReportGetSchema = Depends()):
+    result = await TrainingReportService().get(
+        token=schema.token,
+        id_=schema.id,
     )
     return Response(**result)

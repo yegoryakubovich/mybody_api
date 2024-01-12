@@ -20,7 +20,9 @@ from json import JSONDecodeError, loads
 from fastapi import UploadFile
 from peewee import DoesNotExist
 
-from . import ImageService, MealReportImageService, MealReportProductService
+from .image import ImageService
+from .meal_report_image import MealReportImageService
+from .meal_report_product import MealReportProductService
 from .base import BaseService
 from app.repositories import MealReportImageRepository, MealReportProductRepository, \
     MealReportRepository, \
@@ -81,7 +83,7 @@ class MealReportService(BaseService):
                 raise NotEnoughPermissions('Not enough permissions to execute')
 
         if await MealReportRepository().is_exist_by_meal(meal=meal):
-            raise MealReportExist(f'Report for this meal already exist')
+            raise MealReportExist('Report for this meal already exist')
 
         meal_report: MealReport = await MealReportRepository().create(
             meal=meal,
@@ -315,8 +317,8 @@ class MealReportService(BaseService):
 
     @staticmethod
     async def check_image(image: UploadFile):
-        if image.content_type != 'image/jpeg':
-            raise InvalidFileType('Invalid file type. Available: images/jpeg')
+        if 'image' not in image.content_type:
+            raise InvalidFileType('Invalid file type. Please upload an image.')
         if image.size >= 16777216:
             raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')
 

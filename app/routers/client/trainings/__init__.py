@@ -19,6 +19,7 @@ from app.utils import Router
 from .get import router as router_get
 from .get_list import router as router_get_list
 from .exercises import router as router_exercises
+from .reports import router as router_reports
 
 
 router = Router(
@@ -27,6 +28,7 @@ router = Router(
         router_get,
         router_get_list,
         router_exercises,
+        router_reports,
     ],
     tags=['Trainings'],
 )

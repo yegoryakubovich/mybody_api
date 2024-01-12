@@ -17,7 +17,7 @@
 
 from fastapi import UploadFile
 
-from app.services.meal_report import MealReportService
+from app.services import MealReportService
 from app.utils import Response, Router
 
 router = Router(

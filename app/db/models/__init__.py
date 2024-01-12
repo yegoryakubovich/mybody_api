@@ -48,7 +48,7 @@ from .currency import Currency
 from .session import Session
 from .training import Training
 from .training_exercise import TrainingExercise
-
+from .training_report import TrainingReport
 
 models = (
     Action,
@@ -88,6 +88,7 @@ models = (
     Exercise,
     Training,
     TrainingExercise,
+    TrainingReport,
 
     Meal,
     MealProduct,
