@@ -78,7 +78,10 @@ class BaseRepository:
             if key[-1] == '_':
                 key = key[:-1]
             if value:
-                exec(f'model.{key} = value')
+                if type(value) == int and value == -1:
+                    exec(f'model.{key} = None')
+                else:
+                    exec(f'model.{key} = value')
         model.save()
 
     @staticmethod

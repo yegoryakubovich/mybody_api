@@ -30,6 +30,7 @@ class ExerciseCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     name: str = Field()
     type: str = Field()
+    article_id: int = Field(default=None)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: ExerciseCreateByAdminSchema):
         token=schema.token,
         name=schema.name,
         type_=schema.type,
+        article_id=schema.article_id,
     )
     return Response(**result)

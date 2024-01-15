@@ -16,7 +16,7 @@
 
 
 from app.db.models import Session
-from app.repositories import ExerciseRepository
+from app.repositories import ArticleRepository, ExerciseRepository
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils import ApiException, ExerciseTypes
@@ -35,6 +35,7 @@ class ExerciseService(BaseService):
             session: Session,
             name: str,
             type_: str,
+            article_id: int = None,
     ):
         await self.check_exercise_type(type_=type_)
 
@@ -45,20 +46,34 @@ class ExerciseService(BaseService):
             value_default=name,
             return_model=True,
         )
+
+        action_parameters = {
+            'creator': f'session_{session.id}',
+            'name_text_id': name_text.id,
+            'type': type_,
+            'by_admin': True,
+        }
+
+        if article_id:
+            article = await ArticleRepository().get_by_id(id_=article_id)
+            action_parameters.update(
+                {
+                    'article': article_id,
+                }
+            )
+        else:
+            article = None
+
         exercise = await ExerciseRepository().create(
             name_text=name_text,
-            type_=type_,
+            type=type_,
+            article=article,
         )
 
         await self.create_action(
             model=exercise,
             action='create',
-            parameters={
-                'creator': f'session_{session.id}',
-                'name_text_id': name_text.id,
-                'type': type_,
-                'by_admin': True,
-            }
+            parameters=action_parameters,
         )
 
         return {'id': exercise.id}
@@ -68,20 +83,52 @@ class ExerciseService(BaseService):
             self,
             session: Session,
             id_: int,
-            type_: str,
+            type_: str = None,
+            article_id: int = None,
     ):
-        await self.check_exercise_type(type_=type_)
         exercise = await ExerciseRepository().get_by_id(id_=id_)
-        await ExerciseRepository().update(model=exercise, type_=type_)
+
+        action_parameters = {
+            'updater': f'session_{session.id}',
+            'by_admin': True,
+        }
+
+        if article_id:
+            if article_id == -1:
+                article = -1
+                action_parameters.update(
+                    {
+                        'article': None,
+                    }
+                )
+            else:
+                article = await ArticleRepository().get_by_id(id_=article_id)
+                action_parameters.update(
+                    {
+                        'article': article_id,
+                    }
+                )
+        else:
+            article = None
+
+        if type_:
+            await self.check_exercise_type(type_=type_)
+            action_parameters.update(
+                {
+                    'type': type_,
+                }
+            )
+
+        await ExerciseRepository().update(
+            model=exercise,
+            type=type_,
+            article=article,
+        )
 
         await self.create_action(
             model=exercise,
             action='update',
-            parameters={
-                'updater': f'session_{session.id}',
-                'type': type_,
-                'by_admin': True,
-            }
+            parameters=action_parameters,
         )
 
         return {}

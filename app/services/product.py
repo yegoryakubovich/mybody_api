@@ -77,7 +77,7 @@ class ProductService(BaseService):
 
         product = await ProductRepository().create(
             name_text=name_text,
-            type_=type_,
+            type=type_,
             unit=unit,
             article=article,
         )
@@ -122,18 +122,26 @@ class ProductService(BaseService):
                 }
             )
         if article_id:
-            article = await ArticleRepository().get_by_id(id_=article_id)
-            action_parameters.update(
-                {
-                    'article_id': article_id,
-                }
-            )
+            if article_id == -1:
+                article = -1
+                action_parameters.update(
+                    {
+                        'article': None,
+                    }
+                )
+            else:
+                article = await ArticleRepository().get_by_id(id_=article_id)
+                action_parameters.update(
+                    {
+                        'article': article_id,
+                    }
+                )
         else:
             article = None
 
         await ProductRepository().update(
             model=product,
-            type_=type_,
+            type=type_,
             unit=unit,
             article=article,
         )

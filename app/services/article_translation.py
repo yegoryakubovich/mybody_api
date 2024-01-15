@@ -90,7 +90,9 @@ class ArticleTranslationService(BaseService):
             article=article,
             language=language,
         )
+        text_translation = await TextTranslationRepository().get(text=article.name_text, language=language)
         await ArticleTranslationRepository.delete(model=article_translation)
+        await TextTranslationRepository().delete(model=text_translation)
 
         # Create action
         await self.create_action(

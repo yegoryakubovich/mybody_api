@@ -17,6 +17,7 @@
 
 from peewee import BooleanField, CharField, PrimaryKeyField, ForeignKeyField
 
+from . import Article
 from .text import Text
 from .base import BaseModel
 
@@ -25,6 +26,7 @@ class Exercise(BaseModel):
     id = PrimaryKeyField()
     name_text = ForeignKeyField(model=Text)
     type = CharField()
+    article = ForeignKeyField(null=True, model=Article)
     is_deleted = BooleanField(default=False)
 
     class Meta:

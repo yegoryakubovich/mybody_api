@@ -29,7 +29,8 @@ router = Router(
 class ExerciseUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    type: str = Field()
+    type: str = Field(default=None)
+    article_id: int = Field(default=None)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: ExerciseUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         type_=schema.type,
+        article_id=schema.article_id,
     )
     return Response(**result)
