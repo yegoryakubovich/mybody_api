@@ -15,5 +15,9 @@
 #
 
 
-class ApiException(Exception):
-    pass
+from app.utils.exceptions.base import ApiException
+
+
+__all__ = [
+    'ApiException',
+]

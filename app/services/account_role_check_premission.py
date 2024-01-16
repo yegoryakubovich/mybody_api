@@ -18,7 +18,7 @@
 from app.db.models import Account
 from app.repositories import AccountRoleRepository
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 
 
 class AccountMissingRole(ApiException):

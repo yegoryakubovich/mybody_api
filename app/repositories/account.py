@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import Account, NotificationService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from config import ITEMS_PER_PAGE
 from .base import BaseRepository
 

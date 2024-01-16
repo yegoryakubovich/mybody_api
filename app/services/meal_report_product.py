@@ -20,7 +20,7 @@ from ..db.models import MealReportProduct, Session
 from ..repositories import ProductRepository
 from ..repositories.meal_report import MealReportRepository
 from ..repositories.meal_report_product import MealReportProductRepository
-from ..utils import ApiException
+from app.utils.exceptions import ApiException
 from ..utils.decorators import session_required
 
 

@@ -15,7 +15,7 @@
 #
 
 
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from .base import BaseRepository
 from ..db.models import Account, AccountService
 

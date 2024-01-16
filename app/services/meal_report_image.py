@@ -20,7 +20,7 @@ from . import ImageService
 from .base import BaseService
 from ..db.models import MealReportImage, Session
 from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
-from ..utils import ApiException
+from app.utils.exceptions import ApiException
 from ..utils.decorators import session_required
 
 

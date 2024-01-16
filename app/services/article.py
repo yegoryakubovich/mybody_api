@@ -21,7 +21,7 @@ from app.repositories import ArticleRepository, LanguageRepository, ArticleTrans
 from app.services import AccountRoleCheckPermissionService
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 from config import PATH_ARTICLES

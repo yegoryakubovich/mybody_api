@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 
 
 class ModelDoesNotExist(ApiException):

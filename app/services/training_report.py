@@ -18,7 +18,7 @@
 from .base import BaseService
 from ..db.models import Session, Training, Exercise, TrainingReport
 from ..repositories import TrainingReportRepository, TrainingRepository
-from ..utils import ApiException
+from app.utils.exceptions import ApiException
 from ..utils.decorators import session_required
 
 

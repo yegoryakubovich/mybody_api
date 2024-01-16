@@ -19,7 +19,7 @@ from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository
 from app.repositories.text_translation import TextTranslationRepository
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.decorators import session_required
 from config import PATH_ARTICLES
 

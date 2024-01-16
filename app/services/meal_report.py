@@ -29,7 +29,7 @@ from app.repositories import MealReportImageRepository, MealReportProductReposit
     MealRepository, ProductRepository
 from app.utils.decorators import session_required
 from ..db.models import Meal, MealReport, Session
-from ..utils import ApiException
+from app.utils.exceptions import ApiException
 
 
 class MealReportExist(ApiException):

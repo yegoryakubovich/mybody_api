@@ -22,7 +22,7 @@ from app.repositories import AccountRepository, CountryRepository, LanguageRepos
     CurrencyRepository, TextPackRepository
 from app.services import AccountRoleCheckPermissionService
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
 from config import ITEMS_PER_PAGE

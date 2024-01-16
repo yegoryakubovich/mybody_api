@@ -15,7 +15,7 @@
 #
 
 
-from .exception import ApiException
+from app.utils.exceptions.base import ApiException
 from .exercise_types import ExerciseTypes
 from .middleware import Middleware
 from .product_types import ProductTypes
@@ -41,4 +41,5 @@ __all__ = [
     'client',
     'use_schema',
     'validation_error',
+    'exceptions',
 ]

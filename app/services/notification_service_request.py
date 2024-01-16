@@ -26,7 +26,7 @@ from app.repositories import VerificationRequisiteType, NotificationServiceReque
 from app.repositories.account import AccountRepository
 from app.repositories.notification_service import NotificationServiceRepository, NotificationServiceName
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
 from config import TG_BOT_USERNAME

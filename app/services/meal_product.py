@@ -19,7 +19,7 @@ from app.db.models import MealProduct, Session
 from app.db.models.meal import Meal
 from app.repositories import MealProductRepository, MealRepository, ProductRepository
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.decorators import session_required
 
 

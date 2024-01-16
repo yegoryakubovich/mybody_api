@@ -19,7 +19,7 @@ from peewee import DoesNotExist
 
 from app.db.models import Text, Language, TextTranslation
 from .base import BaseRepository
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 
 
 class TextDoesNotExist(ApiException):

@@ -20,7 +20,7 @@ from .text import TextService
 from app.repositories import PermissionRepository
 from ..db.models import Permission, Session
 from ..utils.crypto import create_id_str
-from ..utils import ApiException
+from app.utils.exceptions import ApiException
 from ..utils.decorators import session_required
 
 

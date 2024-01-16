@@ -20,7 +20,7 @@ from addict import Dict
 from app.repositories import SessionRepository
 from app.db.models import Session
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.crypto import create_hash_by_string_and_salt
 from config import ROOT_TOKEN
 

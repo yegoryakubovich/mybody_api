@@ -18,7 +18,7 @@
 from app.db.models import AccountRole, Session
 from app.repositories import AccountRepository, AccountRoleRepository, RoleRepository
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.decorators import session_required
 
 

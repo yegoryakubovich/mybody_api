@@ -19,7 +19,7 @@ from app.db.models import Session
 from app.repositories import LanguageRepository
 from app.services.text_pack import TextPackService
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.decorators import session_required
 
 

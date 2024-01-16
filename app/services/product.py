@@ -19,7 +19,8 @@ from app.db.models import Product, Session
 from app.repositories import ArticleRepository, ProductRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException, ProductTypes, Units
+from app.utils import ProductTypes, Units
+from app.utils.exceptions import ApiException
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 

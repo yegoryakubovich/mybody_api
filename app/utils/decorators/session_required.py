@@ -17,7 +17,7 @@
 
 from app.services.account_role_check_premission import AccountRoleCheckPermissionService
 from app.services.session_get_by_token import SessionGetByTokenService
-from app.utils.exception import ApiException
+from app.utils.exceptions.base import ApiException
 
 
 class MethodNotSupportedRoot(ApiException):

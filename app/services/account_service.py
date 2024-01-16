@@ -21,7 +21,7 @@ from json import JSONDecodeError, loads
 from app.db.models import Account, AccountService, Service, Session
 from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
 from app.services.base import BaseService
-from app.utils import ApiException
+from app.utils.exceptions import ApiException
 from app.utils.decorators.session_required import session_required
 
 
