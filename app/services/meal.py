@@ -15,27 +15,24 @@
 #
 
 
-from datetime import datetime, date
+from datetime import date
 
 from app.db.models import Session
 from app.db.models.meal import Meal
 from app.repositories import AccountServiceRepository, MealProductRepository, MealRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
-from app.utils.meal_types import MealTypes
 
 
 class InvalidMealType(ApiException):
     pass
 
 
-class NoRequiredParameters(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
-    pass
+class MealTypes:
+    @staticmethod
+    def all():
+        return ['meal_1', 'meal_2', 'meal_3', 'meal_4', 'meal_5']
 
 
 class MealService(BaseService):
@@ -87,7 +84,11 @@ class MealService(BaseService):
         }
 
         if not date_ and not type_:
-            raise NoRequiredParameters('One of the following parameters must be filled in: date, type')
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['data', 'type']
+                }
+            )
         if date_:
             action_parameters.update(
                 {
@@ -145,7 +146,7 @@ class MealService(BaseService):
         meal: Meal = await MealRepository().get_by_id(id_=id_)
 
         if meal.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'meal': {
@@ -187,7 +188,7 @@ class MealService(BaseService):
         )
 
     @session_required(permissions=['meals'], return_model=False)
-    async def get_list_by_admin(self):
+    async def get_list_all_by_admin(self):
         return {
             'meals': [
                 {
@@ -211,15 +212,13 @@ class MealService(BaseService):
             self,
             session: Session,
             account_service_id: int,
-            date_: str = None,
+            date_: date = None,
     ):
-        if date_:
-            date_ = datetime.strptime(date_, '%d.%m.%y').date()
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         meals = await MealRepository().get_list_by_account_service(account_service=account_service, date_=date_)
 
         if account_service.account != session.account:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'meals': [

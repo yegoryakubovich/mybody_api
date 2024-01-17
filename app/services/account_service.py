@@ -21,23 +21,15 @@ from json import JSONDecodeError, loads
 from app.db.models import Account, AccountService, Service, Session
 from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import InvalidAccountServiceAnswerList, NotEnoughPermissions
 from app.utils.decorators.session_required import session_required
-
-
-class InvalidAnswerList(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
-    pass
 
 
 class AccountServiceService(BaseService):
 
     async def check_answers(self, questions: str, answers: str):
         if not await self._is_valid_answers(questions_sections=questions, answers=answers):
-            raise InvalidAnswerList('Invalid answer list')
+            raise InvalidAccountServiceAnswerList()
 
     async def _create(
             self,
@@ -178,7 +170,7 @@ class AccountServiceService(BaseService):
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
         if account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
         return {
             'account_service': {
                 'id': account_service.id,

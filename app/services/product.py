@@ -19,14 +19,10 @@ from app.db.models import Product, Session
 from app.repositories import ArticleRepository, ProductRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ProductTypes, Units
-from app.utils.exceptions import ApiException
+from app.utils import ApiException, Units
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
-
-
-class NoRequiredParameters(ApiException):
-    pass
+from app.utils.exceptions import NoRequiredParameters
 
 
 class InvalidProductType(ApiException):
@@ -35,6 +31,15 @@ class InvalidProductType(ApiException):
 
 class InvalidUnit(ApiException):
     pass
+
+
+class ProductTypes:
+    PROTEINS = 'proteins'
+    FATS = 'fats'
+    CARBOHYDRATES = 'carbohydrates'
+
+    def all(self):
+        return [self.PROTEINS, self.FATS, self.CARBOHYDRATES]
 
 
 class ProductService(BaseService):
@@ -107,7 +112,11 @@ class ProductService(BaseService):
             'by_admin': True,
         }
         if not type_ and not unit and not article_id:
-            raise NoRequiredParameters('One of the following parameters must be filled in: type, unit, article')
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['type', 'unit', 'article_id']
+                }
+            )
         if type_:
             await self.check_product_type(type_=type_)
             action_parameters.update(

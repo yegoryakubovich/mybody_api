@@ -19,15 +19,21 @@ from app.db.models import Session
 from app.repositories import ArticleRepository, ExerciseRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ExerciseTypes
-from app.utils.exceptions import ApiException
-
+from app.utils import ApiException
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 
 
 class InvalidExerciseType(ApiException):
     pass
+
+
+class ExerciseTypes:
+    TIME = 'time'
+    QUANTITY = 'quantity'
+
+    def all(self):
+        return [self.TIME, self.QUANTITY]
 
 
 class ExerciseService(BaseService):

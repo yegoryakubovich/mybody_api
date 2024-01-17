@@ -19,19 +19,11 @@ from app.db.models import MealProduct, Session
 from app.db.models.meal import Meal
 from app.repositories import MealProductRepository, MealRepository, ProductRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
 
 
 class InvalidMealType(ApiException):
-    pass
-
-
-class NoRequiredParameters(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
     pass
 
 
@@ -83,7 +75,11 @@ class MealProductService(BaseService):
             }
 
         if not product_id and not value:
-            raise NoRequiredParameters('One of the following parameters must be filled in: product_id, value')
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['product_id', 'value']
+                }
+            )
         if product_id:
             product = await ProductRepository().get_by_id(id_=product_id)
             action_parameters.update(
@@ -142,7 +138,7 @@ class MealProductService(BaseService):
     ):
         meal_product: MealProduct = await MealProductRepository().get_by_id(id_=id_)
         if session.account != meal_product.meal.account_service.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
         return {
             'meal_product': {
                 'id': meal_product.id,
@@ -183,7 +179,7 @@ class MealProductService(BaseService):
     ):
         meal: Meal = await MealRepository().get_by_id(id_=meal_id)
         if session.account != meal.account_service.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
         return {
             'meal_products': [
                 {

@@ -20,12 +20,8 @@ from ..db.models import MealReportProduct, Session
 from ..repositories import ProductRepository
 from ..repositories.meal_report import MealReportRepository
 from ..repositories.meal_report_product import MealReportProductRepository
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import NotEnoughPermissions
 from ..utils.decorators import session_required
-
-
-class NotEnoughPermissions(ApiException):
-    pass
 
 
 class MealReportProductService(BaseService):
@@ -54,7 +50,7 @@ class MealReportProductService(BaseService):
             )
         else:
             if meal_report.meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         meal_report_product = await MealReportProductRepository().create(
             meal_report=meal_report,
@@ -126,7 +122,7 @@ class MealReportProductService(BaseService):
             )
         else:
             if meal_report_product.meal_report.meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         await MealReportProductRepository().delete(model=meal_report_product)
 

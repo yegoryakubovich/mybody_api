@@ -18,15 +18,11 @@
 from .base import BaseService
 from ..db.models import Session, Training, Exercise, TrainingReport
 from ..repositories import TrainingReportRepository, TrainingRepository
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NotEnoughPermissions
 from ..utils.decorators import session_required
 
 
 class TrainingReportExist(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
     pass
 
 
@@ -53,7 +49,7 @@ class TrainingReportService(BaseService):
             )
         else:
             if training.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         if await TrainingReportRepository().is_exist_by_training(training=training):
             raise TrainingReportExist(f'Report for this training already exist')
@@ -92,7 +88,7 @@ class TrainingReportService(BaseService):
             )
         else:
             if training_report.training.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         await TrainingReportRepository().delete(model=training_report)
 
@@ -111,7 +107,7 @@ class TrainingReportService(BaseService):
         training_report: TrainingReport = await TrainingReportRepository().get_by_id(id_=id_)
         if not by_admin:
             if training_report.training.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         return {
             'training_report': {

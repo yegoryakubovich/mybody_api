@@ -20,16 +20,8 @@ from datetime import date
 from app.db.models import Session, Training
 from app.repositories import ArticleRepository, TrainingRepository, AccountServiceRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
-
-
-class NoRequiredParameters(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
-    pass
 
 
 class TrainingService(BaseService):
@@ -88,6 +80,13 @@ class TrainingService(BaseService):
             'updater': f'session_{session.id}',
             'by_admin': True,
         }
+
+        if not date_ and not article_id:
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['date', 'article_id'],
+                }
+            )
 
         if date_:
             action_parameters.update(
@@ -149,7 +148,7 @@ class TrainingService(BaseService):
         training: Training = await TrainingRepository().get_by_id(id_=id_)
 
         if training.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'training': {
@@ -192,7 +191,7 @@ class TrainingService(BaseService):
         trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service)
 
         if account_service.account != session.account:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'trainings': [

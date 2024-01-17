@@ -16,26 +16,8 @@
 
 
 from app.db.models import Service
-from app.utils.exceptions import ApiException
 from .base import BaseRepository
-
-
-class NoRequiredParameters(ApiException):
-    pass
 
 
 class ServiceRepository(BaseRepository):
     model = Service
-
-    # FIXME
-    @staticmethod
-    async def update(
-            service: Service,
-            name: str = None,
-            questions: str = None,
-    ):
-        if not name and not questions:
-            raise NoRequiredParameters('One of the following parameters must be filled in: name, questions')
-        if questions:
-            service.questions = questions
-        service.save()

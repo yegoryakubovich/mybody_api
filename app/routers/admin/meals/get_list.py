@@ -23,7 +23,7 @@ from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/list/get'
+    prefix='/list/get/all'
 )
 
 
@@ -33,5 +33,5 @@ class MealGetListByAdminSchema(BaseModel):
 
 @router.get()
 async def route(schema: MealGetListByAdminSchema = Depends()):
-    result = await MealService().get_list_by_admin(token=schema.token)
+    result = await MealService().get_list_all_by_admin(token=schema.token)
     return Response(**result)

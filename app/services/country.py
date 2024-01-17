@@ -20,11 +20,7 @@ from app.repositories import CountryRepository, CurrencyRepository, LanguageRepo
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import ApiException
-
-
-class NoRequiredParameters(ApiException):
-    pass
+from app.utils.exceptions import ApiException, NoRequiredParameters
 
 
 class CountryAlreadyExist(ApiException):
@@ -97,8 +93,11 @@ class CountryService(BaseService):
         }
 
         if not language and not timezone and not currency:
-            raise NoRequiredParameters('One of the following parameters must be filled in: language, timezone, '
-                                       'currency')
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['language', 'timezone', 'currency']
+                }
+            )
 
         if language:
             language_default = await LanguageRepository().get_by_id_str(id_str=language)

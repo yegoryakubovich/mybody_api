@@ -36,7 +36,13 @@ class ArticleTranslationRepository(BaseRepository):
                 (ArticleTranslation.is_deleted == False)
             )
         except DoesNotExist:
-            raise ModelDoesNotExist(f'Article (id {article.id}) has no translation into {language.id_str} language')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'ArticleTranslation',
+                    'id_type': 'article, language',
+                    'id_value': [article.id, language.id_str],
+                }
+            )
 
     @staticmethod
     async def get_list_by_article(article: Article) -> list[ArticleTranslation]:

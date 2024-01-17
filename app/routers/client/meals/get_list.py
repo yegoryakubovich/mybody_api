@@ -15,6 +15,9 @@
 #
 
 
+from datetime import date as date_datetime
+from typing import Optional
+
 from fastapi import Depends
 from pydantic import BaseModel, Field
 
@@ -30,7 +33,7 @@ router = Router(
 class MealGetListSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
-    date: str = Field(default=None)
+    date: Optional[date_datetime] = Field(default=None)
 
 
 @router.get()
@@ -38,6 +41,6 @@ async def route(schema: MealGetListSchema = Depends()):
     result = await MealService().get_list(
         token=schema.token,
         account_service_id=schema.account_service_id,
-        date=schema.date,
+        date_=schema.date,
     )
     return Response(**result)

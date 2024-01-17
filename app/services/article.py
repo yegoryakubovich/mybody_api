@@ -21,14 +21,10 @@ from app.repositories import ArticleRepository, LanguageRepository, ArticleTrans
 from app.services import AccountRoleCheckPermissionService
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ArticleSessionRequired
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 from config import PATH_ARTICLES
-
-
-class SessionRequired(ApiException):
-    pass
 
 
 class ArticleService(BaseService):
@@ -212,12 +208,12 @@ class ArticleService(BaseService):
         # Checks associated with a hidden article
         if article.is_hide:
             if not session:
-                raise SessionRequired(f'To read this article enter a token')
+                raise ArticleSessionRequired()
             await AccountRoleCheckPermissionService().check_permission(account=session.account, id_str='articles')
 
         # Can guest
         if not article.can_guest and not session:
-            raise SessionRequired(f'This article cannot be viewed by guests. Enter a token')
+            raise ArticleSessionRequired()
 
         if language:
             try:

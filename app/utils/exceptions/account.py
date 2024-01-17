@@ -15,12 +15,24 @@
 #
 
 
-class MealTypes:
-    BREAKFAST = 'breakfast'
-    SNACK_1 = 'snack_1'
-    LUNCH = 'lunch'
-    SNACK_2 = 'snack_2'
-    DINNER = 'dinner'
+from .base import ApiException
 
-    def all(self):
-        return [self.BREAKFAST, self.SNACK_1, self.LUNCH, self.SNACK_2, self.DINNER]
+
+class WrongPassword(ApiException):
+    code = 2000
+    message = 'Wrong password'
+
+
+class AccountUsernameExist(ApiException):
+    code = 2001
+    message = 'Account with username "{username}" already exist'
+
+
+class AccountMissingPermission(ApiException):
+    code = 2002
+    message = 'Account has no "{id_str}" permission'
+
+
+class InvalidAccountServiceAnswerList(ApiException):
+    code = 2003
+    message = 'Invalid answer list'

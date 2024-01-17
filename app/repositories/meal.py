@@ -29,7 +29,7 @@ class MealRepository(BaseRepository):
             account_service: AccountService,
             date_: date = None,
     ) -> list[Meal]:
-        if date:
+        if date_:
             return Meal.select().where(
                 (Meal.account_service == account_service) &
                 (Meal.date == date_) &

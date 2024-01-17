@@ -20,7 +20,7 @@ class ApiException(Exception):
     message: str
     kwargs: dict = {}
 
-    def __init__(self, message: str =None, kwargs: dict = None):
+    def __init__(self, message: str = None, kwargs: dict = None):
         if not kwargs:
             kwargs = {}
         self.kwargs = kwargs

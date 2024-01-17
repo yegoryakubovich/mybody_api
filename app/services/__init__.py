@@ -30,7 +30,7 @@ from .meal_report_product import MealReportProductService
 from .notification_service import NotificationServiceService
 from .notification_service_request import NotificationServiceRequestService
 from .action import ActionService
-from .account import AccountService, WrongPassword
+from .account import AccountService
 from .permission import PermissionService
 from .product import ProductService
 from .role import RoleService

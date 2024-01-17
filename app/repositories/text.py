@@ -26,38 +26,8 @@ class TextDoesNotExist(ApiException):
     pass
 
 
-class TextExist(ApiException):
-    pass
-
-
-class NoRequiredParameters(ApiException):
-    pass
-
-
 class TextRepository(BaseRepository):
     model = Text
-
-    # FIXME
-    async def create(self, key: str, value_default: str):
-        try:
-            await self.get_by_key(key=key)
-            raise TextExist(f'Text with key "{key}" already exist')
-        except TextDoesNotExist:
-            return Text.create(
-                key=key,
-                value_default=value_default,
-            )
-
-    # FIXME
-    @staticmethod
-    async def update(text: Text, value_default: str = None, new_key: str = None):
-        if value_default:
-            text.value_default = value_default
-        if new_key:
-            text.key = new_key
-        if not value_default and not new_key:
-            raise NoRequiredParameters('One of the following parameters must be filled in: value_default, new_key')
-        text.save()
 
     @staticmethod
     async def get_by_key(key: str) -> Text:

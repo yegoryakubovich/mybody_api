@@ -29,14 +29,10 @@ from app.repositories import MealReportImageRepository, MealReportProductReposit
     MealRepository, ProductRepository
 from app.utils.decorators import session_required
 from ..db.models import Meal, MealReport, Session
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NotEnoughPermissions
 
 
 class MealReportExist(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
     pass
 
 
@@ -80,7 +76,7 @@ class MealReportService(BaseService):
             )
         else:
             if meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         if await MealReportRepository().is_exist_by_meal(meal=meal):
             raise MealReportExist('Report for this meal already exist')
@@ -198,7 +194,7 @@ class MealReportService(BaseService):
             )
         else:
             if meal_report.meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         products = await MealReportProductRepository().get_list_by_meal_report(meal_report=meal_report)
         images = await MealReportImageRepository().get_list_by_meal_report(meal_report=meal_report)
@@ -266,7 +262,7 @@ class MealReportService(BaseService):
         meal_report: MealReport = await MealReportRepository().get_by_id(id_=id_)
 
         if meal_report.meal.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         meal_report_products = await MealReportProductRepository().get_list_by_meal_report(meal_report=meal_report)
         meal_report_images = await MealReportImageRepository().get_list_by_meal_report(meal_report=meal_report)

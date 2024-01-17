@@ -15,10 +15,14 @@
 #
 
 
-class ProductTypes:
-    PROTEINS = 'proteins'
-    FATS = 'fats'
-    CARBOHYDRATES = 'carbohydrates'
+from .base import ApiException
 
-    def all(self):
-        return [self.PROTEINS, self.FATS, self.CARBOHYDRATES]
+
+class ArticleSessionRequired(ApiException):
+    code = 3000
+    message = 'To read this article enter a token'
+
+
+class ArticleTranslationExist(ApiException):
+    code = 3001
+    message = 'The article (id {article_id}) already has a translation into {language_id_str} language'

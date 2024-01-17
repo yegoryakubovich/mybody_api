@@ -15,17 +15,8 @@
 #
 
 
-from app.utils.exceptions import ApiException
 from .base import BaseRepository
 from ..db.models import Account, AccountService
-
-
-class AccountServiceDoesNotExist(ApiException):
-    pass
-
-
-class NoRequiredParameters(ApiException):
-    pass
 
 
 class AccountServiceStates:

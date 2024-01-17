@@ -18,11 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
-from app.utils.exceptions import ApiException
-
-
-class ModelDoesNotExist(ApiException):
-    pass
+from app.utils.exceptions import ApiException, ModelDoesNotExist
 
 
 class BaseRepository:
@@ -61,7 +57,13 @@ class BaseRepository:
             )
             return model
         except DoesNotExist:
-            raise ModelDoesNotExist(f'{self.model.__name__}.{id_} does not exist')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': self.model.__name__,
+                    'id_type': 'id',
+                    'id_value': id_,
+                }
+            )
 
     async def get_by_id_str(self, id_str: str) -> BaseModel:
         try:
@@ -71,7 +73,13 @@ class BaseRepository:
             )
             return self.model
         except DoesNotExist:
-            raise ModelDoesNotExist(f'{self.model.__name__} "{id_str}" does not exist')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': self.model.__name__,
+                    'id_type': 'id_str',
+                    'id_value': id_str,
+                }
+            )
 
     async def update(self, model, **kwargs):
         for key, value in kwargs.items():

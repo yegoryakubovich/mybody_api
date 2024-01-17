@@ -18,16 +18,8 @@
 from .base import BaseService
 from ..db.models import Session, Training, Exercise
 from ..repositories import TrainingRepository, ExerciseRepository, TrainingExerciseRepository
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
 from ..utils.decorators import session_required
-
-
-class NoRequiredParameters(ApiException):
-    pass
-
-
-class NotEnoughPermissions(ApiException):
-    pass
 
 
 class TrainingExerciseService(BaseService):
@@ -85,8 +77,11 @@ class TrainingExerciseService(BaseService):
                 'by_admin': True,
         }
         if not priority and not value and not rest and not exercise_id:
-            raise NoRequiredParameters('One of the following parameters must be filled in: exercise_id, priority,'
-                                       ' value, rest')
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['exercise_id', 'priority', 'value', 'rest']
+                }
+            )
         if exercise_id:
             action_parameters.update(
                 {
@@ -159,7 +154,7 @@ class TrainingExerciseService(BaseService):
         training_exercise = await TrainingExerciseRepository().get_by_id(id_=id_)
 
         if training_exercise.training.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'training_exercise': {
@@ -203,7 +198,7 @@ class TrainingExerciseService(BaseService):
         training = await TrainingRepository().get_by_id(id_=training_id)
 
         if training.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions('Not enough permissions to execute')
+            raise NotEnoughPermissions()
 
         return {
             'training_exercises': [

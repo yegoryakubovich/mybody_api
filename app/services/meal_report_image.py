@@ -20,12 +20,8 @@ from . import ImageService
 from .base import BaseService
 from ..db.models import MealReportImage, Session
 from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import NotEnoughPermissions
 from ..utils.decorators import session_required
-
-
-class NotEnoughPermissions(ApiException):
-    pass
 
 
 class MealReportImageService(BaseService):
@@ -53,7 +49,7 @@ class MealReportImageService(BaseService):
             )
         else:
             if meal_report.meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         meal_report_image = await MealReportImageRepository().create(
             meal_report=meal_report,
@@ -120,7 +116,7 @@ class MealReportImageService(BaseService):
             )
         else:
             if meal_report_image.meal_report.meal.account_service.account != session.account:
-                raise NotEnoughPermissions('Not enough permissions to execute')
+                raise NotEnoughPermissions()
 
         await MealReportImageRepository().delete(model=meal_report_image)
 

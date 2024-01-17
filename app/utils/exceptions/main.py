@@ -15,3 +15,19 @@
 #
 
 
+from .base import ApiException
+
+
+class ModelDoesNotExist(ApiException):
+    code = 1000
+    message = '{model} with {id_type} "{id_value}" does not exist'
+
+
+class NotEnoughPermissions(ApiException):
+    code = 1001
+    message = 'Not enough permissions to execute'
+
+
+class NoRequiredParameters(ApiException):
+    code = 1002
+    message = 'One of the following parameters must be filled in: {parameters}'

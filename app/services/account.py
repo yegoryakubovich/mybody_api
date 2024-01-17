@@ -22,22 +22,10 @@ from app.repositories import AccountRepository, CountryRepository, LanguageRepos
     CurrencyRepository, TextPackRepository
 from app.services import AccountRoleCheckPermissionService
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
+from app.utils.exceptions import AccountUsernameExist, WrongPassword
 from config import ITEMS_PER_PAGE
-
-
-class WrongPassword(ApiException):
-    pass
-
-
-class AccountUsernameExist(ApiException):
-    pass
-
-
-class AccountMissingRole(ApiException):
-    pass
 
 
 class AccountService(BaseService):
@@ -54,7 +42,13 @@ class AccountService(BaseService):
             surname: str = None,
     ) -> dict:
         if await AccountRepository.is_exist_by_username(username=username):
-            raise AccountUsernameExist(f'Account with username "{username}" already exist')
+            raise AccountUsernameExist(
+                kwargs={
+                    'username': username,
+                }
+            )
+        if self.check_new_password():
+            pass
 
         # Generate salt and password hash
         password_salt = await create_salt()
@@ -113,7 +107,11 @@ class AccountService(BaseService):
             username: str,
     ):
         if await AccountRepository.is_exist_by_username(username=username):
-            raise AccountUsernameExist(f'Account with username "{username}" already exist')
+            raise AccountUsernameExist(
+                kwargs={
+                    'username': username,
+                }
+            )
         return {}
 
     @session_required(return_model=False, permissions=['accounts'])
@@ -190,4 +188,4 @@ class AccountService(BaseService):
         ):
             return True
         else:
-            raise WrongPassword('Wrong password')
+            raise WrongPassword()
