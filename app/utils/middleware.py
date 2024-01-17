@@ -34,9 +34,11 @@ class Middleware:
             except ApiException as e:
                 response = Response(
                     state=ResponseState.error,
-                    code=e.code,
-                    message=e.message,
-                    kwargs=e.kwargs,
+                    error={
+                        'code': e.code,
+                        'kwargs': e.kwargs,
+                        'message': e.message.format(**e.kwargs),
+                    }
                 )
             except ValidationError as e:
                 response = await validation_error(_=request, exception=loads(e.json()))
