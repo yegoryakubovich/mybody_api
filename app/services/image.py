@@ -29,7 +29,6 @@ from ..utils.decorators import session_required
 
 
 class ImageService(BaseService):
-
     async def _create(
             self,
             session: Session,

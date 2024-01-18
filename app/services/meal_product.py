@@ -19,12 +19,8 @@ from app.db.models import MealProduct, Session
 from app.db.models.meal import Meal
 from app.repositories import MealProductRepository, MealRepository, ProductRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
-
-
-class InvalidMealType(ApiException):
-    pass
 
 
 class MealProductService(BaseService):
@@ -213,4 +209,3 @@ class MealProductService(BaseService):
             meal_id=meal_id,
             by_admin=True,
         )
-

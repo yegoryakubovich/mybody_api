@@ -19,13 +19,8 @@ from app.db.models import Role, Session
 from app.repositories import RolePermissionRepository, RoleRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
-
-
-class RoleAlreadyExist(ApiException):
-    pass
 
 
 class RoleService(BaseService):

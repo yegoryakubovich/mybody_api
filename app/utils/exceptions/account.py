@@ -23,16 +23,11 @@ class WrongPassword(ApiException):
     message = 'Wrong password'
 
 
-class AccountUsernameExist(ApiException):
-    code = 2001
-    message = 'Account with username "{username}" already exist'
-
-
 class AccountMissingPermission(ApiException):
-    code = 2002
+    code = 2001
     message = 'Account has no "{id_str}" permission'
 
 
 class InvalidAccountServiceAnswerList(ApiException):
-    code = 2003
+    code = 2002
     message = 'Invalid answer list'

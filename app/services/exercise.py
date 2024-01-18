@@ -19,13 +19,9 @@ from app.db.models import Session
 from app.repositories import ArticleRepository, ExerciseRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
-
-
-class InvalidExerciseType(ApiException):
-    pass
+from app.utils.exceptions import InvalidExerciseType
 
 
 class ExerciseTypes:
@@ -189,4 +185,8 @@ class ExerciseService(BaseService):
     async def check_exercise_type(type_: str):
         all_ = ExerciseTypes().all()
         if type_ not in all_:
-            raise InvalidExerciseType(f'Invalid exercise type. Available: {all_}')
+            raise InvalidExerciseType(
+                kwargs={
+                    'all': all_,
+                },
+            )

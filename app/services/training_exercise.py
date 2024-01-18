@@ -18,7 +18,7 @@
 from .base import BaseService
 from ..db.models import Session, Training, Exercise
 from ..repositories import TrainingRepository, ExerciseRepository, TrainingExerciseRepository
-from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
 from ..utils.decorators import session_required
 
 

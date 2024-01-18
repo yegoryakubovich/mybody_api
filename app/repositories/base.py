@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
-from app.utils.exceptions import ApiException, ModelDoesNotExist
+from app.utils.exceptions import ModelDoesNotExist
 
 
 class BaseRepository:
@@ -62,7 +62,7 @@ class BaseRepository:
                     'model': self.model.__name__,
                     'id_type': 'id',
                     'id_value': id_,
-                }
+                },
             )
 
     async def get_by_id_str(self, id_str: str) -> BaseModel:
@@ -78,10 +78,11 @@ class BaseRepository:
                     'model': self.model.__name__,
                     'id_type': 'id_str',
                     'id_value': id_str,
-                }
+                },
             )
 
-    async def update(self, model, **kwargs):
+    @staticmethod
+    async def update(model, **kwargs):
         for key, value in kwargs.items():
             if key[-1] == '_':
                 key = key[:-1]

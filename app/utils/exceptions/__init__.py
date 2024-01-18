@@ -15,10 +15,14 @@
 #
 
 
-from .account import AccountMissingPermission, AccountUsernameExist, InvalidAccountServiceAnswerList, WrongPassword
-from .article import ArticleSessionRequired, ArticleTranslationExist
+from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, WrongPassword
+from .article import ArticleSessionRequired
 from .base import ApiException
-from .main import ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
+from .exercise import InvalidExerciseType
+from .image import InvalidFileType, TooLargeFile
+from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
+from .meal import InvalidMealType
+from .product import InvalidProductList, InvalidProductType, InvalidUnit
 
 
 __all__ = [
@@ -27,12 +31,22 @@ __all__ = [
     'ModelDoesNotExist',
     'NotEnoughPermissions',
     'NoRequiredParameters',
+    'ModelAlreadyExist',
 
     'WrongPassword',
-    'AccountUsernameExist',
     'AccountMissingPermission',
     'InvalidAccountServiceAnswerList',
 
     'ArticleSessionRequired',
-    'ArticleTranslationExist',
+
+    'InvalidExerciseType',
+
+    'InvalidProductType',
+    'InvalidUnit',
+    'InvalidProductList',
+
+    'InvalidMealType',
+
+    'InvalidFileType',
+    'TooLargeFile',
 ]

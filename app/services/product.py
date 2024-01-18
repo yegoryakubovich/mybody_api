@@ -19,18 +19,10 @@ from app.db.models import Product, Session
 from app.repositories import ArticleRepository, ProductRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils import ApiException, Units
+from app.utils import Units
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
-from app.utils.exceptions import NoRequiredParameters
-
-
-class InvalidProductType(ApiException):
-    pass
-
-
-class InvalidUnit(ApiException):
-    pass
+from app.utils.exceptions import InvalidProductType, InvalidUnit, NoRequiredParameters
 
 
 class ProductTypes:
@@ -232,10 +224,18 @@ class ProductService(BaseService):
     async def check_product_type(type_: str):
         all_ = ProductTypes().all()
         if type_ not in all_:
-            raise InvalidProductType(f'Invalid product type. Available: {all_}')
+            raise InvalidProductType(
+                kwargs={
+                    'all': all_,
+                },
+            )
 
     @staticmethod
     async def check_unit(unit: str):
         all_ = Units().all()
         if unit not in all_:
-            raise InvalidUnit(f'Invalid unit. Available: {all_}')
+            raise InvalidUnit(
+                kwargs={
+                    'all': all_,
+                },
+            )

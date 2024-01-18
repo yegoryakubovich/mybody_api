@@ -30,7 +30,7 @@ class TrainingRepository(BaseRepository):
             account_service: AccountService,
             date_: date = None,
     ) -> list[Training]:
-        if date:
+        if date_:
             return Training.select().where(
                 (Training.account_service == account_service) &
                 (Training.date == date_) &

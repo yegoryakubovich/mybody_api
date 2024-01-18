@@ -20,11 +20,7 @@ from app.repositories import CountryRepository, CurrencyRepository, LanguageRepo
 from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import ApiException, NoRequiredParameters
-
-
-class CountryAlreadyExist(ApiException):
-    pass
+from app.utils.exceptions import ModelAlreadyExist, NoRequiredParameters
 
 
 class CountryService(BaseService):
@@ -39,7 +35,13 @@ class CountryService(BaseService):
             currency: str,
     ):
         if await CountryRepository().is_exist_by_id_str(id_str=id_str):
-            raise CountryAlreadyExist(f'Country with id_str "{id_str}" already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Country',
+                    'id_type': 'id_str',
+                    'id_value': id_str,
+                }
+            )
 
         name_text = await TextService().create_by_admin(
             session=session,

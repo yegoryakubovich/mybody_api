@@ -15,9 +15,14 @@
 #
 
 
-from app.db.models import Service
-from .base import BaseRepository
+from .base import ApiException
 
 
-class ServiceRepository(BaseRepository):
-    model = Service
+class InvalidFileType(ApiException):
+    code = 7000
+    message = 'Invalid file type. Please upload an image'
+
+
+class TooLargeFile(ApiException):
+    code = 7001
+    message = 'Uploaded file is too large. Available size up to 16MB'

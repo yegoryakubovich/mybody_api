@@ -16,14 +16,10 @@
 
 
 from .base import BaseService
-from ..db.models import Session, Training, Exercise, TrainingReport
+from ..db.models import Session, Training, TrainingReport
 from ..repositories import TrainingReportRepository, TrainingRepository
-from app.utils.exceptions import ApiException, NotEnoughPermissions
+from app.utils.exceptions import ModelAlreadyExist, NotEnoughPermissions
 from ..utils.decorators import session_required
-
-
-class TrainingReportExist(ApiException):
-    pass
 
 
 class TrainingReportService(BaseService):
@@ -52,7 +48,13 @@ class TrainingReportService(BaseService):
                 raise NotEnoughPermissions()
 
         if await TrainingReportRepository().is_exist_by_training(training=training):
-            raise TrainingReportExist(f'Report for this training already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'TrainingReport',
+                    'id_type': 'Training',
+                    'id_value': training_id,
+                }
+            )
 
         training_report = await TrainingReportRepository().create(
             training=training,

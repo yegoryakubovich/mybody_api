@@ -19,15 +19,7 @@ from peewee import DoesNotExist
 
 from app.db.models import Text, Language, TextTranslation
 from .base import BaseRepository
-from app.utils.exceptions import ApiException
-
-
-class TextTranslationDoesNotExist(ApiException):
-    pass
-
-
-class TextTranslationExist(ApiException):
-    pass
+from app.utils.exceptions import ModelAlreadyExist, ModelDoesNotExist
 
 
 class TextTranslationRepository(BaseRepository):
@@ -42,7 +34,13 @@ class TextTranslationRepository(BaseRepository):
                 (TextTranslation.is_deleted == False)
             )
         except DoesNotExist:
-            raise TextTranslationDoesNotExist(f'Text translation with language "{language.id_str}" does not exist')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'TextTranslation',
+                    'id_type': 'language',
+                    'id_value': language.id_str,
+                },
+            )
 
     @staticmethod
     async def get_list_by_text(text: Text) -> list[TextTranslation]:
@@ -55,8 +53,14 @@ class TextTranslationRepository(BaseRepository):
     async def create(self, text: Text, language: Language, value: str) -> TextTranslation:
         try:
             await self.get(text=text, language=language)
-            raise TextTranslationExist(f'Text translation with language "{language.id_str}" already exist')
-        except TextTranslationDoesNotExist:
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'TextTranslation',
+                    'id_type': 'language',
+                    'id_value': language.id_str,
+                },
+            )
+        except ModelDoesNotExist:
             return TextTranslation.create(
                 text=text,
                 language=language,

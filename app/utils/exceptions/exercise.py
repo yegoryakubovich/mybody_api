@@ -15,9 +15,9 @@
 #
 
 
-from app.db.models import Service
-from .base import BaseRepository
+from .base import ApiException
 
 
-class ServiceRepository(BaseRepository):
-    model = Service
+class InvalidExerciseType(ApiException):
+    code = 4000
+    message = 'Invalid exercise type. Available: {all}'

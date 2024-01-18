@@ -41,7 +41,7 @@ class ArticleTranslationRepository(BaseRepository):
                     'model': 'ArticleTranslation',
                     'id_type': 'article, language',
                     'id_value': [article.id, language.id_str],
-                }
+                },
             )
 
     @staticmethod

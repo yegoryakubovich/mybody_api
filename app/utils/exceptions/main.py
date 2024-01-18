@@ -31,3 +31,8 @@ class NotEnoughPermissions(ApiException):
 class NoRequiredParameters(ApiException):
     code = 1002
     message = 'One of the following parameters must be filled in: {parameters}'
+
+
+class ModelAlreadyExist(ApiException):
+    code = 1003
+    message = '{model} with {id_type} "{id_value}" already exist'

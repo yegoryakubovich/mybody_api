@@ -109,7 +109,7 @@ class TextService(BaseService):
     ) -> dict:
         text = await TextRepository().get_by_key(key=key)
         await TextRepository().update(
-            text=text,
+            model=text,
             value_default=value_default,
             new_key=new_key,
         )

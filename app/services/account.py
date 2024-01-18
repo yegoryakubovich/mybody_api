@@ -24,7 +24,7 @@ from app.services import AccountRoleCheckPermissionService
 from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
-from app.utils.exceptions import AccountUsernameExist, WrongPassword
+from app.utils.exceptions import ModelAlreadyExist, WrongPassword
 from config import ITEMS_PER_PAGE
 
 
@@ -42,9 +42,11 @@ class AccountService(BaseService):
             surname: str = None,
     ) -> dict:
         if await AccountRepository.is_exist_by_username(username=username):
-            raise AccountUsernameExist(
+            raise ModelAlreadyExist(
                 kwargs={
-                    'username': username,
+                    'model': 'Account',
+                    'id_type': 'username',
+                    'id_value': username,
                 }
             )
         if self.check_new_password():
@@ -100,16 +102,17 @@ class AccountService(BaseService):
             password: str,
     ):
         await self._is_correct_password(account=account, password=password)
-        return True
 
     @staticmethod
     async def check_username(
             username: str,
     ):
         if await AccountRepository.is_exist_by_username(username=username):
-            raise AccountUsernameExist(
+            raise ModelAlreadyExist(
                 kwargs={
-                    'username': username,
+                    'model': 'Account',
+                    'id_type': 'username',
+                    'id_value': username,
                 }
             )
         return {}
@@ -189,3 +192,7 @@ class AccountService(BaseService):
             return True
         else:
             raise WrongPassword()
+
+    @staticmethod
+    async def check_new_password():
+        pass

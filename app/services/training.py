@@ -20,7 +20,7 @@ from datetime import date
 from app.db.models import Session, Training
 from app.repositories import ArticleRepository, TrainingRepository, AccountServiceRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
 
 
@@ -215,4 +215,3 @@ class TrainingService(BaseService):
                 } for training in trainings
             ]
         }
-

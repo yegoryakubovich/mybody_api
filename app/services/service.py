@@ -21,15 +21,11 @@ from app.db.models import Service, Session, Text
 from app.repositories import ServiceRepository, TextRepository
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ApiException, ModelAlreadyExist
 from app.utils.decorators import session_required
 
 
 class InvalidQuestionList(ApiException):
-    pass
-
-
-class ServiceAlreadyExist(ApiException):
     pass
 
 
@@ -44,7 +40,13 @@ class ServiceService(BaseService):
             questions_sections: str = None,
     ) -> dict:
         if await ServiceRepository().is_exist_by_id_str(id_str=id_str):
-            raise ServiceAlreadyExist(f'Service with id_str "{id_str}" already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Service',
+                    'id_type': 'id_str',
+                    'id_value': id_str,
+                }
+            )
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -98,8 +100,8 @@ class ServiceService(BaseService):
         }
         if name:
             text: Text = await TextRepository().get_by_key(key=f'service_{id_str}')
-            await TextRepository().update(
-                text=text,
+            await TextService().update_by_admin(
+                model=text,
                 value_default=name,
             )
 
@@ -118,7 +120,7 @@ class ServiceService(BaseService):
             )
 
         await ServiceRepository().update(
-            service=service,
+            model=service,
             name=name,
             questions=questions_sections,
         )

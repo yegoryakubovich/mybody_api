@@ -15,9 +15,9 @@
 #
 
 
-from app.db.models import Service
-from .base import BaseRepository
+from .base import ApiException
 
 
-class ServiceRepository(BaseRepository):
-    model = Service
+class InvalidMealType(ApiException):
+    code = 6000
+    message = 'Invalid meal type. Available: {all}'

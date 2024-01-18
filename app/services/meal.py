@@ -21,12 +21,8 @@ from app.db.models import Session
 from app.db.models.meal import Meal
 from app.repositories import AccountServiceRepository, MealProductRepository, MealRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException, NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
-
-
-class InvalidMealType(ApiException):
-    pass
 
 
 class MealTypes:
@@ -242,4 +238,8 @@ class MealService(BaseService):
     async def check_meal_type(type_: str):
         all_ = MealTypes().all()
         if type_ not in all_:
-            raise InvalidMealType(f'Invalid meal type. Available: {all_}')
+            raise InvalidMealType(
+                kwargs={
+                    'all': all_,
+                },
+            )

@@ -18,13 +18,9 @@
 from peewee import DoesNotExist
 
 from app.db.models import Account, NotificationService
-from app.utils.exceptions import ApiException
 from config import ITEMS_PER_PAGE
 from .base import BaseRepository
-
-
-class AccountWithUsernameDoeNotExist(ApiException):
-    pass
+from ..utils.exceptions import ModelDoesNotExist
 
 
 class AccountRepository(BaseRepository):
@@ -35,7 +31,13 @@ class AccountRepository(BaseRepository):
         try:
             return Account.get(Account.username == username)
         except DoesNotExist:
-            raise AccountWithUsernameDoeNotExist(f'Account @{username} does not exist')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'Account',
+                    'id_type': 'username',
+                    'id_value': username,
+                },
+            )
 
     @staticmethod
     async def is_exist_by_username(username: str) -> bool:

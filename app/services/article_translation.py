@@ -19,8 +19,8 @@ from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository
 from app.repositories.text_translation import TextTranslationRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ArticleTranslationExist
 from app.utils.decorators import session_required
+from app.utils.exceptions import ModelAlreadyExist
 from config import PATH_ARTICLES
 
 
@@ -40,10 +40,11 @@ class ArticleTranslationService(BaseService):
             article=article,
             language=language,
         ):
-            raise ArticleTranslationExist(
+            raise ModelAlreadyExist(
                 kwargs={
-                    'article_id': article_id,
-                    'language_id_str': language_id_str,
+                    'model': 'ArticleTranslation',
+                    'id_type': '["article_id", "language_id_str"]',
+                    'id_value': [article_id, language_id_str],
                 }
             )
 

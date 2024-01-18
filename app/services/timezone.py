@@ -18,12 +18,8 @@
 from app.db.models import Session
 from app.repositories import TimezoneRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ModelAlreadyExist
 from app.utils.decorators import session_required
-
-
-class TimezoneAlreadyExist(ApiException):
-    pass
 
 
 class TimezoneService(BaseService):
@@ -35,7 +31,13 @@ class TimezoneService(BaseService):
             deviation: int,
     ):
         if await TimezoneRepository().is_exist_by_id_str(id_str=id_str):
-            raise TimezoneAlreadyExist(f'Timezone with id_str "{id_str}" already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Timezone',
+                    'id_type': 'id_str',
+                    'id_value': id_str,
+                }
+            )
 
         timezone = await TimezoneRepository().create(
             id_str=id_str,

@@ -29,23 +29,8 @@ from app.repositories import MealReportImageRepository, MealReportProductReposit
     MealRepository, ProductRepository
 from app.utils.decorators import session_required
 from ..db.models import Meal, MealReport, Session
-from app.utils.exceptions import ApiException, NotEnoughPermissions
-
-
-class MealReportExist(ApiException):
-    pass
-
-
-class InvalidProductList(ApiException):
-    pass
-
-
-class InvalidFileType(ApiException):
-    pass
-
-
-class TooLargeFile(ApiException):
-    pass
+from app.utils.exceptions import InvalidFileType, InvalidProductList, ModelAlreadyExist, NotEnoughPermissions, \
+    TooLargeFile
 
 
 class MealReportService(BaseService):
@@ -79,7 +64,13 @@ class MealReportService(BaseService):
                 raise NotEnoughPermissions()
 
         if await MealReportRepository().is_exist_by_meal(meal=meal):
-            raise MealReportExist('Report for this meal already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'MealReport',
+                    'id_type': 'Meal',
+                    'id_value': meal_id,
+                }
+            )
 
         meal_report: MealReport = await MealReportRepository().create(
             meal=meal,
@@ -308,15 +299,15 @@ class MealReportService(BaseService):
 
     async def get_products_list(self, products: str):
         if not await self._is_valid_products(products=products):
-            raise InvalidProductList('Invalid product list')
+            raise InvalidProductList()
         return loads(products)
 
     @staticmethod
     async def check_image(image: UploadFile):
         if 'image' not in image.content_type:
-            raise InvalidFileType('Invalid file type. Please upload an image.')
+            raise InvalidFileType()
         if image.size >= 16777216:
-            raise TooLargeFile('Uploaded file is too large. Available size up to 16MB')
+            raise TooLargeFile()
 
     @staticmethod
     async def _is_valid_products(products: str):

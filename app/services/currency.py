@@ -18,12 +18,8 @@
 from app.db.models import Session
 from app.repositories import CurrencyRepository
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
+from app.utils.exceptions import ModelAlreadyExist
 from app.utils.decorators import session_required
-
-
-class CurrencyAlreadyExist(ApiException):
-    pass
 
 
 class CurrencyService(BaseService):
@@ -34,7 +30,13 @@ class CurrencyService(BaseService):
             id_str: str,
     ):
         if await CurrencyRepository().is_exist_by_id_str(id_str=id_str):
-            raise CurrencyAlreadyExist(f'Currency with id_str "{id_str}" already exist')
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Currency',
+                    'id_type': 'id_str',
+                    'id_value': id_str,
+                }
+            )
 
         currency = await CurrencyRepository().create(
             id_str=id_str,
