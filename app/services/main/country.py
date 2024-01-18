@@ -17,7 +17,7 @@
 
 from app.db.models import Country, Session
 from app.repositories import CountryRepository, CurrencyRepository, LanguageRepository, TimezoneRepository
-from app.services.text import TextService
+from app.services.main.text import TextService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 from app.utils.exceptions import ModelAlreadyExist, NoRequiredParameters

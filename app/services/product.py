@@ -17,7 +17,7 @@
 
 from app.db.models import Product, Session
 from app.repositories import ArticleRepository, ProductRepository
-from app.services.text import TextService
+from app.services.main.text import TextService
 from app.services.base import BaseService
 from app.utils import Units
 from app.utils.crypto import create_id_str

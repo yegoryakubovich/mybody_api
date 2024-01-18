@@ -15,85 +15,20 @@
 #
 
 
-from .account_role import AccountRoleService
-from .account_role_check_premission import AccountRoleCheckPermissionService
+from .main import *
 from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
 from .exercise import ExerciseService
-from .image import ImageService
 from .meal import MealService
 from .meal_product import MealProductService
 from .meal_report import MealReportService
 from .meal_report_image import MealReportImageService
 from .meal_report_product import MealReportProductService
-from .notification_service import NotificationServiceService
-from .notification_service_request import NotificationServiceRequestService
-from .action import ActionService
-from .account import AccountService
-from .permission import PermissionService
 from .product import ProductService
-from .role import RoleService
-from .role_permission import RolePermissionService
 from .service import ServiceService
 from .service_cost import ServiceCostService
-from .session import SessionService
-from .country import CountryService
-from .language import LanguageService
-from .session_get_by_token import SessionGetByTokenService
-from .text_translation import TextTranslationService
-from .timezone import TimezoneService
-from .currency import CurrencyService
-from .text import TextService
-from .text_pack import TextPackService
+from app.services.main.country import CountryService
 from .training import TrainingService
 from .training_exercise import TrainingExerciseService
 from .training_report import TrainingReportService
-
-
-__all__ = [
-    'ActionService',
-    'AccountService',
-    'AccountServiceService',
-
-    'SessionService',
-    'SessionGetByTokenService',
-
-    'CountryService',
-    'LanguageService',
-    'TimezoneService',
-    'CurrencyService',
-    'ImageService',
-
-    'ServiceService',
-    'ServiceCostService',
-
-    'TextService',
-    'TextTranslationService',
-    'TextPackService',
-
-    'NotificationServiceService',
-    'NotificationServiceRequestService',
-
-    'RoleService',
-    'AccountRoleService',
-    'RolePermissionService',
-    'AccountRoleCheckPermissionService',
-    'PermissionService',
-
-    'ArticleService',
-    'ArticleTranslationService',
-
-    'ProductService',
-
-    'ExerciseService',
-    'TrainingService',
-    'TrainingExerciseService',
-    'TrainingReportService',
-
-    'MealService',
-    'MealProductService',
-    'MealReportService',
-    'MealReportProductService',
-    'MealReportImageService',
-]

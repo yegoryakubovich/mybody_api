@@ -15,9 +15,9 @@
 #
 
 
-from app.db.models import Currency
-from .base import BaseRepository
+from app.db.models import Country
+from app.repositories.base import BaseRepository
 
 
-class CurrencyRepository(BaseRepository):
-    model = Currency
+class CountryRepository(BaseRepository):
+    model = Country

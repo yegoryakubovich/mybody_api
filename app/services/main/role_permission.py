@@ -15,10 +15,10 @@
 #
 
 
-from .base import BaseService
+from app.services.base import BaseService
 from app.repositories import RolePermissionRepository, RoleRepository, PermissionRepository
-from ..db.models import RolePermission, Session
-from ..utils.decorators import session_required
+from app.db.models import RolePermission, Session
+from app.utils.decorators import session_required
 
 
 class RolePermissionService(BaseService):

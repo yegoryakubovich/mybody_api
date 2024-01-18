@@ -20,7 +20,7 @@ from json import JSONDecodeError, loads
 from fastapi import UploadFile
 from peewee import DoesNotExist
 
-from .image import ImageService
+from app.services.main.image import ImageService
 from .meal_report_image import MealReportImageService
 from .meal_report_product import MealReportProductService
 from .base import BaseService

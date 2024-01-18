@@ -15,13 +15,9 @@
 #
 
 
-from app.repositories import NotificationServiceName
-from app.services.base import BaseService
+from app.db.models import Timezone
+from app.repositories.base import BaseRepository
 
 
-class NotificationServiceService(BaseService):
-    @staticmethod
-    async def get() -> dict:
-        return {
-            'notification_services': [service for service in NotificationServiceName],
-        }
+class TimezoneRepository(BaseRepository):
+    model = Timezone

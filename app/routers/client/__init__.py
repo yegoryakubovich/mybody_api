@@ -32,7 +32,7 @@ from .exercises import router as router_exercises
 from .trainings import router as router_trainings
 from .meals import router as router_meals
 from .images import router as router_images
-from ...utils import Router
+from app.utils import Router
 
 
 router = Router(

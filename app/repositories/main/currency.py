@@ -15,9 +15,9 @@
 #
 
 
-from app.db.models import Role
-from .base import BaseRepository
+from app.db.models import Currency
+from app.repositories.base import BaseRepository
 
 
-class RoleRepository(BaseRepository):
-    model = Role
+class CurrencyRepository(BaseRepository):
+    model = Currency

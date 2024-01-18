@@ -31,8 +31,6 @@ from .meal_product import MealProduct
 from .meal_report import MealReport
 from .meal_report_image import MealReportImage
 from .meal_report_product import MealReportProduct
-from .notification_services import NotificationService
-from .notification_services_requests import NotificationServiceRequest
 from .permission import Permission
 from .product import Product
 from .role_permission import RolePermission
@@ -50,6 +48,7 @@ from .training import Training
 from .training_exercise import TrainingExercise
 from .training_report import TrainingReport
 
+
 models = (
     Action,
     ActionParameter,
@@ -64,9 +63,6 @@ models = (
     Currency,
     Account,
     Session,
-
-    NotificationService,
-    NotificationServiceRequest,
 
     Service,
     ServiceCost,

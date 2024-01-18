@@ -17,7 +17,7 @@
 
 from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository
-from app.repositories.text_translation import TextTranslationRepository
+from app.repositories import TextTranslationRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 from app.utils.exceptions import ModelAlreadyExist

@@ -21,7 +21,7 @@ from peewee import DoesNotExist
 
 from app.db.models import Language, TextPack, Text
 from .text import TextRepository
-from .base import BaseRepository
+from app.repositories.base import BaseRepository
 from config import PATH_TEXTS_PACKS
 
 

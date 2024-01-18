@@ -21,11 +21,11 @@ from fastapi import UploadFile
 from PIL import Image as ImagePillow
 
 from config import PATH_IMAGES
-from .base import BaseService
-from ..db.models import Image, Session
-from ..repositories import ImageRepository
-from ..utils.crypto import create_id_str
-from ..utils.decorators import session_required
+from app.services.base import BaseService
+from app.db.models import Image, Session
+from app.repositories import ImageRepository
+from app.utils.crypto import create_id_str
+from app.utils.decorators import session_required
 
 
 class ImageService(BaseService):

@@ -19,7 +19,7 @@ from json import JSONDecodeError, loads
 
 from app.db.models import Service, Session, Text
 from app.repositories import ServiceRepository, TextRepository
-from app.services.text import TextService
+from app.services.main.text import TextService
 from app.services.base import BaseService
 from app.utils.exceptions import ApiException, ModelAlreadyExist
 from app.utils.decorators import session_required

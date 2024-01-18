@@ -19,7 +19,7 @@ from app.db.models import Session, Article
 from app.repositories import ArticleRepository, LanguageRepository, ArticleTranslationRepository, ModelDoesNotExist, \
     TextRepository
 from app.services import AccountRoleCheckPermissionService
-from app.services.text import TextService
+from app.services.main.text import TextService
 from app.services.base import BaseService
 from app.utils.exceptions import ArticleSessionRequired
 from app.utils.crypto import create_id_str

@@ -17,7 +17,7 @@
 
 from app.db.models import AccountRole, Account, Permission
 from .role_permission import RolePermissionRepository
-from .base import BaseRepository
+from app.repositories.base import BaseRepository
 
 
 class AccountRoleRepository(BaseRepository):

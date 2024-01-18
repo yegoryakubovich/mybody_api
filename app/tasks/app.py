@@ -15,27 +15,8 @@
 #
 
 
-from enum import Enum
-
-from peewee import DoesNotExist
-
-from app.db.models import NotificationService
-from .base import BaseRepository
+from celery.app import Celery
 
 
-class NotificationServiceName(str, Enum):
-    TELEGRAM = 'telegram'
-    EMAIL = 'email'
-    PHONE = 'phone'
-
-
-class NotificationServiceRepository(BaseRepository):
-    model = NotificationService
-
-    @staticmethod
-    async def exist_service(name: str, value: str) -> bool:
-        try:
-            NotificationService.get((NotificationService.name == name) & (NotificationService.value == value))
-            return True
-        except DoesNotExist:
-            return False
+redis_url = 'redis://localhost:6379'
+app = Celery(__name__, broker=redis_url, backend=redis_url)

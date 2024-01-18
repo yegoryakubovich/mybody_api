@@ -15,18 +15,9 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
-
-from .account import Account
-from .base import BaseModel
+from app.db.models import Permission
+from app.repositories.base import BaseRepository
 
 
-class NotificationService(BaseModel):
-    id = PrimaryKeyField()
-    account = ForeignKeyField(model=Account, backref='notification_services')
-    name = CharField(max_length=32)
-    value = CharField(max_length=256)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'notification_services'
+class PermissionRepository(BaseRepository):
+    model = Permission

@@ -18,7 +18,7 @@
 from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services.meal_report import MealReportService
+from app.services import MealReportService
 from app.utils import Response, Router
 
 

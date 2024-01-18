@@ -15,9 +15,13 @@
 #
 
 
-from app.db.models import Language
-from .base import BaseRepository
+from app.db.models import Action, ActionParameter
+from app.repositories.base import BaseRepository
 
 
-class LanguageRepository(BaseRepository):
-    model = Language
+class ActionRepository(BaseRepository):
+    model = Action
+
+    @staticmethod
+    async def create_parameter(action: Action, key: str, value: str) -> ActionParameter:
+        return ActionParameter.create(action=action, key=key, value=value)

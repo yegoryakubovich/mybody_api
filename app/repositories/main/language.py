@@ -15,23 +15,9 @@
 #
 
 
-from enum import Enum
-
-from app.db.models import NotificationServiceRequest
-from .base import BaseRepository
+from app.db.models import Language
+from app.repositories.base import BaseRepository
 
 
-class NotificationServiceRequestState(str, Enum):
-    WAITING = 'waiting'
-    SUCCESSFUL = 'successful'
-    DENIED = 'denied'
-    EXPIRED = 'expired'
-
-
-class VerificationRequisiteType(str, Enum):
-    CODE = 'code'
-    URL = 'url'
-
-
-class NotificationServiceRequestRepository(BaseRepository):
-    model = NotificationServiceRequest
+class LanguageRepository(BaseRepository):
+    model = Language

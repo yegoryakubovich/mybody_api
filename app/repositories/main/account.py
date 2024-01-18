@@ -19,8 +19,8 @@ from peewee import DoesNotExist
 
 from app.db.models import Account, NotificationService
 from config import ITEMS_PER_PAGE
-from .base import BaseRepository
-from ..utils.exceptions import ModelDoesNotExist
+from app.repositories.base import BaseRepository
+from app.utils.exceptions import ModelDoesNotExist
 
 
 class AccountRepository(BaseRepository):

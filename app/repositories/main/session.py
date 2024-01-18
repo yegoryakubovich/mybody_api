@@ -16,7 +16,7 @@
 
 
 from app.db.models import Session
-from .base import BaseRepository
+from app.repositories.base import BaseRepository
 
 
 class SessionRepository(BaseRepository):
