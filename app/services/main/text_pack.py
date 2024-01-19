@@ -68,6 +68,15 @@ class TextPackService(BaseService):
             'id': text_pack.id,
         }
 
+    @session_required(permissions=['texts'], can_root=True)
+    async def create_all_by_admin(
+            self,
+            session: Session,
+    ):
+        languages = await LanguageRepository().get_list()
+        for language in languages:
+            await self.create_by_admin(session=session, language=language.id_str)
+
     @session_required(permissions=['texts'])
     async def delete_by_admin(self, session: Session, id_: int):
         text_pack = await TextPackRepository().get_by_id(id_=id_)

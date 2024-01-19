@@ -17,6 +17,7 @@
 
 from app.db.models import Session, Text
 from app.repositories import TextRepository, TextTranslationRepository
+from app.services import TextPackService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 
@@ -95,6 +96,7 @@ class TextService(BaseService):
                 'by_admin': True,
             },
         )
+        await TextPackService().create_all_by_admin(session=session)
         if return_model:
             return text
         return {'key': text.key}
@@ -137,6 +139,7 @@ class TextService(BaseService):
             action='update',
             parameters=action_parameters,
         )
+        await TextPackService().create_all_by_admin(session=session)
 
         return {}
 
@@ -159,5 +162,6 @@ class TextService(BaseService):
                 'by_admin': True,
             },
         )
+        await TextPackService().create_all_by_admin(session=session)
 
         return {}
