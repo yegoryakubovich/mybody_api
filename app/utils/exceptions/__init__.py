@@ -15,7 +15,8 @@
 #
 
 
-from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, WrongPassword
+from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, InvalidPassword, InvalidUsername, \
+    WrongPassword
 from .article import ArticleSessionRequired
 from .base import ApiException
 from .exercise import InvalidExerciseType
@@ -36,6 +37,8 @@ __all__ = [
     'WrongPassword',
     'AccountMissingPermission',
     'InvalidAccountServiceAnswerList',
+    'InvalidPassword',
+    'InvalidUsername',
 
     'ArticleSessionRequired',
 

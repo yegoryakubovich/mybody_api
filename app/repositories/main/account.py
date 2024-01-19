@@ -17,7 +17,7 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import Account, NotificationService
+from app.db.models import Account
 from config import ITEMS_PER_PAGE
 from app.repositories.base import BaseRepository
 from app.utils.exceptions import ModelDoesNotExist
@@ -47,13 +47,14 @@ class AccountRepository(BaseRepository):
         except DoesNotExist:
             return False
 
-    @staticmethod
-    async def get_notification_services(account: Account, only_names=False):
-        services_active: list[NotificationService] = [
-            service for service in account.notification_services if not service.is_deleted
-        ]
-
-        return [service.name for service in services_active] if only_names else services_active
+    # FIXME
+    # @staticmethod
+    # async def get_notification_services(account: Account, only_names=False):
+    #     services_active: list[NotificationService] = [
+    #         service for service in account.notification_services if not service.is_deleted
+    #     ]
+    #
+    #     return [service.name for service in services_active] if only_names else services_active
 
     @staticmethod
     async def search(id_, username: str, page: int) -> tuple[list[Account], int]:
