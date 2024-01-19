@@ -15,12 +15,13 @@
 #
 
 
-from json import JSONDecodeError, loads
+from json import JSONDecodeError, dumps, loads
 
 from app.db.models import Service, Session, Text
 from app.repositories import ServiceRepository, TextRepository
 from app.services.main.text import TextService
 from app.services.base import BaseService
+from app.utils.crypto import create_id_str
 from app.utils.exceptions import ApiException, ModelAlreadyExist
 from app.utils.decorators import session_required
 
@@ -55,12 +56,33 @@ class ServiceService(BaseService):
             'by_admin': True,
         }
         if questions_sections:
+            await self.check_questions(questions_sections=questions_sections)
+            sections = loads(questions_sections)
+            for section in sections:
+                title_text = await TextService().create_by_admin(
+                    session=session,
+                    key=f'title_{await create_id_str()}',
+                    value_default=section['title'],
+                    return_model=True,
+                )
+                section.pop('title')
+                section['title_text_id'] = title_text.id
+                for question in section['questions']:
+                    name_text = await TextService().create_by_admin(
+                        session=session,
+                        key=f'question_{await create_id_str()}',
+                        value_default=question['name'],
+                        return_model=True,
+                    )
+                    question.pop('name')
+                    question['name_text_id'] = name_text.id
+            questions_sections = dumps(sections)
             action_parameters.update(
                 {
                     'questions': questions_sections,
                 }
             )
-            await self.check_questions(questions_sections=questions_sections)
+
         name_text_key = f'service_{id_str}'
         name_text = await TextService().create_by_admin(
             session=session,
@@ -113,6 +135,11 @@ class ServiceService(BaseService):
         if questions_sections:
             await self.check_questions(questions_sections=questions_sections)
 
+            await self._delete_service_questions_texts(
+                session=session,
+                service=service,
+            )
+
             action_parameters.update(
                 {
                     'questions': questions_sections,
@@ -145,6 +172,10 @@ class ServiceService(BaseService):
             session=session,
             key=f'service_{service.id_str}',
         )
+        await self._delete_service_questions_texts(
+            session=session,
+            service=service,
+        )
         await self.create_action(
             model=service,
             action='delete',
@@ -156,32 +187,30 @@ class ServiceService(BaseService):
 
         return {}
 
-    @staticmethod
-    async def get(id_str: str):
-        service = await ServiceRepository().get_by_id_str(id_str=id_str)
+    async def get(self, id_str: str):
+        service: Service = await ServiceRepository().get_by_id_str(id_str=id_str)
         return {
             'service': {
                 'id': service.id,
                 'id_str': service.id_str,
                 'name_text': service.name_text.key,
-                'questions': service.questions,
+                'questions': await self.reformat_questions(questions=service.questions),
             }
         }
 
-    @staticmethod
-    async def get_list() -> dict:
-        services = {
+    async def get_list(self) -> dict:
+        services: list[Service] = await ServiceRepository().get_list()
+        return {
             'services': [
                 {
                     'id': service.id,
                     'id_str': service.id_str,
                     'name_text': service.name_text.key,
-                    'questions': service.questions,
+                    'questions': await self.reformat_questions(questions=service.questions),
                 }
-                for service in await ServiceRepository().get_list()
+                for service in services
             ]
         }
-        return services
 
     async def check_questions(self, questions_sections: str):
         if not await self._is_valid_questions(questions_sections=questions_sections):
@@ -190,19 +219,19 @@ class ServiceService(BaseService):
     @staticmethod
     async def _is_valid_questions(questions_sections: str):
         try:
-            questions_sections = loads(questions_sections)
-            if len(questions_sections) == 0:
+            sections = loads(questions_sections)
+            if len(sections) == 0:
                 return False
-            for section in questions_sections:
-                if not section['title']:
+            for section in sections:
+                if not section['title'] or type(section['title']) != str:
                     return False
                 questions = section['questions']
                 for question in questions:
                     if not question['name'] or type(question['name']) != str:
                         return False
-                    if not question['type']:
+                    if not question['key'] or type(question['key']) != str:
                         return False
-                    if question['type'] not in ['dropdown', 'str', 'int']:
+                    if not question['type'] or question['type'] not in ['dropdown', 'str', 'int']:
                         return False
                     if question['type'] == 'dropdown':
                         if not question['values']:
@@ -219,3 +248,38 @@ class ServiceService(BaseService):
             return False
         except KeyError:
             return False
+
+    @staticmethod
+    async def reformat_questions(questions: str):
+        questions = loads(questions)
+        for section in questions:
+            title_text_id = section['title_text_id']
+            title_text: Text = await TextRepository().get_by_id(id_=title_text_id)
+            section.pop('title_text_id')
+            section['title_text'] = title_text.key
+            for question in section['questions']:
+                name_text_id = question['name_text_id']
+                name_text: Text = await TextRepository().get_by_id(id_=name_text_id)
+                question.pop('name_text_id')
+                question['name_text'] = name_text.key
+        return dumps(questions)
+
+    async def _delete_service_questions_texts(
+            self,
+            session: Session,
+            service: Service,
+    ):
+        if service.questions:
+            sections = loads(await self.reformat_questions(questions=service.questions))
+            for section in sections:
+                if 'title_text' not in section:
+                    break
+                await TextService().delete_by_admin(
+                    session=session,
+                    key=section['title_text'],
+                )
+                for question in section['questions']:
+                    await TextService().delete_by_admin(
+                        session=session,
+                        key=question['name_text'],
+                    )

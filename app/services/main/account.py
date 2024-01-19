@@ -16,15 +16,16 @@
 
 
 from math import ceil
+from re import compile, search
 
 from app.db.models import Account
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
     CurrencyRepository, TextPackRepository
-from app.services import AccountRoleCheckPermissionService
+from app.services.main.account_role_check_premission import AccountRoleCheckPermissionService
 from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
-from app.utils.exceptions import ModelAlreadyExist, WrongPassword
+from app.utils.exceptions import InvalidPassword, InvalidUsername, ModelAlreadyExist, WrongPassword
 from config import ITEMS_PER_PAGE
 
 
@@ -49,8 +50,10 @@ class AccountService(BaseService):
                     'id_value': username,
                 }
             )
-        if self.check_new_password():
-            pass
+        if not self.is_valid_password(password=password):
+            raise InvalidPassword()
+        if not self.is_valid_username(username=username):
+            raise InvalidUsername()
 
         # Generate salt and password hash
         password_salt = await create_salt()
@@ -194,5 +197,19 @@ class AccountService(BaseService):
             raise WrongPassword()
 
     @staticmethod
-    async def check_new_password():
-        pass
+    async def is_valid_password(password: str):
+        register = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{7,32}$"
+        pattern = compile(register)
+        if search(pattern, password):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    async def is_valid_username(username: str):
+        register = "^[a-zA-Z][a-zA-Z0-9_]{7,32}$"
+        pattern = compile(register)
+        if search(pattern, username):
+            return True
+        else:
+            return False

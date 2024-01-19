@@ -28,7 +28,7 @@ from app.utils.decorators.session_required import session_required
 class AccountServiceService(BaseService):
 
     async def check_answers(self, questions: str, answers: str):
-        if not await self._is_valid_answers(questions_sections=questions, answers=answers):
+        if not await self._is_valid_answers(sections=questions, answers=answers):
             raise InvalidAccountServiceAnswerList()
 
     async def _create(
@@ -239,25 +239,26 @@ class AccountServiceService(BaseService):
         }
 
     @staticmethod
-    async def _is_valid_answers(questions_sections: str, answers: str):
+    async def _is_valid_answers(sections: str, answers: str):
         try:
-            questions_sections = loads(questions_sections)
+            sections = loads(sections)
             questions_count = []
-            for section in questions_sections:
+            for section in sections:
                 questions_count.append(len(section['questions']))
             answers: list = loads(answers)
             if len(answers) != sum(questions_count):
                 return False
-            for i in range(len(questions_count)):
-                for j in range(questions_count[i]):
-                    if questions_sections[i]['questions'][j]['type'] == 'dropdown':
-                        if answers[0] not in questions_sections[i]['questions'][j]['values']:
+            for section in sections:
+                for question in section['questions']:
+                    if question['key'] not in answers:
+                        return False
+                    else:
+                        if question['type'] == 'int' and type(answers[question['key']]) != int:
                             return False
-                    if questions_sections[i]['questions'][j]['type'] == 'str' and type(answers[0]) != str:
-                        return False
-                    if questions_sections[i]['questions'][j]['type'] == 'int' and type(answers[0]) != int:
-                        return False
-                    answers.pop(0)
+                        if question['type'] == 'str' and type(answers[question['key']]) != str:
+                            return False
+                        if question['type'] == 'dropdown' and answers[question['key']] not in question['values']:
+                            return False
             return True
         except JSONDecodeError:
             return False

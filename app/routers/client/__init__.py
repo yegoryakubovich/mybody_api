@@ -17,7 +17,6 @@
 
 from .accounts import router as router_accounts
 from .sessions import router as router_sessions
-from .notifications import router as router_notifications
 from .languages import router as router_languages
 from .countries import router as router_countries
 from .currencies import router as router_currencies
@@ -41,7 +40,6 @@ router = Router(
         router_accounts,
         router_services,
         router_sessions,
-        router_notifications,
         router_languages,
         router_countries,
         router_currencies,
