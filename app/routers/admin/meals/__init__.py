@@ -21,6 +21,7 @@ from .update import router as router_update
 from .delete import router as router_delete
 from .get import router as router_get
 from .get_list import router as router_get_list
+from .get_list_all import router as router_get_list_all
 from .products import router as router_products
 from .reports import router as router_reports
 
@@ -34,6 +35,7 @@ router = Router(
         router_delete,
         router_get,
         router_get_list,
+        router_get_list_all,
         router_products,
         router_reports,
     ]

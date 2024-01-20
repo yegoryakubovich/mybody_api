@@ -19,7 +19,7 @@ from datetime import date
 
 from app.db.models import Session
 from app.db.models.meal import Meal
-from app.repositories import AccountServiceRepository, MealProductRepository, MealRepository
+from app.repositories import AccountRepository, AccountServiceRepository, MealProductRepository, MealRepository
 from app.services.base import BaseService
 from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
@@ -200,6 +200,30 @@ class MealService(BaseService):
                         } for meal_product in await MealProductRepository().get_list_by_meal(meal=meal)
                     ]
                 } for meal in await MealRepository().get_list()
+            ]
+        }
+
+    @session_required(permissions=['meals'], return_model=False)
+    async def get_list_by_admin(
+            self,
+            account_id: int,
+    ):
+        account = await AccountRepository().get_by_id(id_=account_id)
+        return {
+            'meals': [
+                {
+                    'id': meal.id,
+                    'account_service': meal.account_service.id,
+                    'date': str(meal.date),
+                    'type': meal.type,
+                    'products': [
+                        {
+                            'id': meal_product.id,
+                            'product': meal_product.product.id,
+                            'value': meal_product.value,
+                        } for meal_product in await MealProductRepository().get_list_by_meal(meal=meal)
+                    ]
+                } for meal in await MealRepository().get_list() if meal.service_account.account == account
             ]
         }
 
