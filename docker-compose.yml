@@ -1,10 +1,24 @@
 version: '3.7'
 
 services:
-  app:
-    container_name: mybody_api
+  #  db:
+  #    image: mysql
+  #    restart: on-failure
+  #    environment:
+  #      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #      MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #    ports:
+  #      - "3306:3306"
+  #    volumes:
+  #      - ./data/mysql/:/var/lib/mysql
+  redis:
+    image: redis
+    restart: on-failure
+    volumes:
+      - ./data/redis:/data
+  api:
     build:
-      dockerfile: dockerfile
+      dockerfile: api.dockerfile
     environment:
       MODULE_NAME: "main"
       MAX_WORKERS: 2
@@ -14,3 +28,12 @@ services:
       - ./assets/articles:/app/assets/articles
       - ./assets/texts_packs:/app/assets/texts_packs
       - ./assets/images:/app/assets/images
+  #    depends_on:
+  #      - db
+  celery:
+    build:
+      dockerfile: celery.dockerfile
+    command: sh -c "sleep 10 && celery -A webapp worker -l info"
+    depends_on:
+      - api
+      - redis
