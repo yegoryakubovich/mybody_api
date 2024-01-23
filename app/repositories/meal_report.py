@@ -29,3 +29,10 @@ class MealReportRepository(BaseRepository):
             return True
         except DoesNotExist:
             return False
+
+    @staticmethod
+    async def get_by_meal(meal: Meal):
+        try:
+            return MealReport.get((MealReport.meal == meal) & (MealReport.is_deleted == False))
+        except DoesNotExist:
+            return False

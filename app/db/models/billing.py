@@ -24,7 +24,7 @@ from .base import BaseModel
 
 class Billing(BaseModel):
     id = PrimaryKeyField()
-    service_account = ForeignKeyField(model=AccountService)
+    account_service = ForeignKeyField(model=AccountService)
     service_cost = ForeignKeyField(model=ServiceCost)
     cost = FloatField()
     state = CharField(max_length=64)

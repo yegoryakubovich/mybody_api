@@ -15,32 +15,25 @@
 #
 
 
-from datetime import date as datetime_date
-from typing import Optional
-
 from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import MealService
+from app.services import TrainingService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/list/get'
+    prefix='/list/get/all'
 )
 
 
-class MealGetListByAdminSchema(BaseModel):
+class TrainingGetListAllByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    date: Optional[datetime_date] = Field(default=None)
-    account_service_id: int = Field()
 
 
 @router.get()
-async def route(schema: MealGetListByAdminSchema = Depends()):
-    result = await MealService().get_list_by_admin(
+async def route(schema: TrainingGetListAllByAdminSchema = Depends()):
+    result = await TrainingService().get_list_all_by_admin(
         token=schema.token,
-        date_=schema.date,
-        account_service_id=schema.account_service_id,
     )
     return Response(**result)

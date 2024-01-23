@@ -75,7 +75,7 @@ class TextPackService(BaseService):
     ):
         languages = await LanguageRepository().get_list()
         for language in languages:
-            await self.create_by_admin(session=session, language=language.id_str)
+            await self.create_by_admin(session=session, language_id_str=language.id_str)
 
     @session_required(permissions=['texts'])
     async def delete_by_admin(self, session: Session, id_: int):

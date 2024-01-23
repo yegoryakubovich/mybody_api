@@ -17,8 +17,9 @@
 
 from datetime import date
 
-from app.db.models import Session, Training
-from app.repositories import ArticleRepository, TrainingRepository, AccountServiceRepository
+from app.db.models import Session, Training, TrainingReport
+from app.repositories import ArticleRepository, TrainingExerciseRepository, TrainingReportRepository, \
+    TrainingRepository, AccountServiceRepository
 from app.services.base import BaseService
 from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
@@ -139,8 +140,8 @@ class TrainingService(BaseService):
 
         return {}
 
-    @staticmethod
     async def _get(
+            self,
             session: Session,
             id_: int,
             by_admin: bool = False,
@@ -151,11 +152,7 @@ class TrainingService(BaseService):
             raise NotEnoughPermissions()
 
         return {
-            'training': {
-                'id': training.id,
-                'account_service': training.account_service.id,
-                'date': str(training.date),
-            }
+            'training': await self._generate_training_dict(training=training)
         }
 
     @session_required(permissions=['trainings'])
@@ -164,7 +161,7 @@ class TrainingService(BaseService):
             session: Session,
             id_: int,
     ):
-        await self._get(
+        return await self._get(
             session=session,
             id_=id_,
             by_admin=True,
@@ -176,42 +173,85 @@ class TrainingService(BaseService):
             session: Session,
             id_: int,
     ):
-        await self._get(
+        return await self._get(
             session=session,
             id_=id_,
         )
+
+    async def _get_list(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date = None,
+            by_admin: bool = False,
+    ):
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service, date_=date_)
+
+        if account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+
+        return {
+            'trainings': [
+                await self._generate_training_dict(training=training)
+                for training in trainings
+            ],
+        }
 
     @session_required()
     async def get_list(
             self,
             session: Session,
             account_service_id: int,
+            date_: date = None,
     ):
-        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
-        trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service)
+        return await self._get_list(
+            session=session,
+            date_=date_,
+            account_service_id=account_service_id,
+        )
 
-        if account_service.account != session.account:
-            raise NotEnoughPermissions()
-
-        return {
-            'trainings': [
-                {
-                    'id': training.id,
-                    'account_service': training.account_service.id,
-                    'date': str(training.date),
-                } for training in trainings
-            ]
-        }
+    @session_required(permissions=['trainings'])
+    async def get_list_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date = None,
+    ):
+        return await self._get_list(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
+            by_admin=True,
+        )
 
     @session_required(permissions=['trainings'], return_model=False)
-    async def get_list_by_admin(self):
+    async def get_list_all_by_admin(self):
         trainings = await TrainingRepository().get_list()
         return {
             'trainings': [
+                await self._generate_training_dict(training=training)
+                for training in trainings
+            ],
+        }
+
+    @staticmethod
+    async def _generate_training_dict(training: Training):
+        training_report: TrainingReport = await TrainingReportRepository().get_by_training(training=training)
+        return {
+            'id': training.id,
+            'account_service': training.account_service.id,
+            'date': str(training.date),
+            'training_report_id': training_report.id if training_report else None,
+            'article_id': training.article.id if training.article else None,
+            'exercises': [
                 {
-                    'id': training.id,
-                    'account_service': training.account_service.id,
-                    'date': str(training.date),
-                } for training in trainings
+                    'id': training_exercise.id,
+                    'exercise': training_exercise.exercise.id,
+                    'priority': training_exercise.priority,
+                    'value': training_exercise.value,
+                    'rest': training_exercise.rest,
+                } for training_exercise in
+                await TrainingExerciseRepository().get_list_by_training(training=training)
             ]
         }

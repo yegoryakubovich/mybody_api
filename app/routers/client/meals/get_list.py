@@ -15,7 +15,7 @@
 #
 
 
-from datetime import date as date_datetime
+from datetime import date as datetime_date
 from typing import Optional
 
 from fastapi import Depends
@@ -33,7 +33,7 @@ router = Router(
 class MealGetListSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
-    date: Optional[date_datetime] = Field(default=None)
+    date: Optional[datetime_date] = Field(default=None)
 
 
 @router.get()

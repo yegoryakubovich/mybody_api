@@ -25,7 +25,7 @@ class MealRepository(BaseRepository):
     model = Meal
 
     @staticmethod
-    async def get_list_by_account_service(
+    async def get_list_by_account_service_and_date(
             account_service: AccountService,
             date_: date = None,
     ) -> list[Meal]:
