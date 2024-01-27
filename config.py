@@ -19,7 +19,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    port: int
+    app_port: int
 
     mysql_host: str
     mysql_port: int
