@@ -15,7 +15,7 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, CharField, ForeignKeyField
+from peewee import BooleanField, PrimaryKeyField, CharField, ForeignKeyField, IntegerField
 
 from .article import Article
 from .text import Text
@@ -27,6 +27,10 @@ class Product(BaseModel):
     name_text = ForeignKeyField(model=Text)
     type = CharField(max_length=16)
     unit = CharField(max_length=4)
+    fats = IntegerField()
+    proteins = IntegerField()
+    carbohydrates = IntegerField()
+    calories = IntegerField(null=True)
     article = ForeignKeyField(null=True, model=Article)
     is_deleted = BooleanField(default=False)
 

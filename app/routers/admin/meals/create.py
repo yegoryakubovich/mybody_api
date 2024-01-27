@@ -33,6 +33,9 @@ class MealCreateByAdminSchema(BaseModel):
     account_service_id: int = Field()
     date: datetime_date = Field()
     type: str = Field(max_length=16)
+    fats: int = Field()
+    proteins: int = Field()
+    carbohydrates: int = Field()
 
 
 @router.post()
@@ -42,5 +45,8 @@ async def route(schema: MealCreateByAdminSchema):
         account_service_id=schema.account_service_id,
         date_=schema.date,
         type_=schema.type,
+        fats=schema.fats,
+        proteins=schema.proteins,
+        carbohydrates=schema.carbohydrates,
     )
     return Response(**result)

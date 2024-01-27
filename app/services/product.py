@@ -43,6 +43,10 @@ class ProductService(BaseService):
             name: str,
             type_: str,
             unit: str,
+            fats: int,
+            proteins: int,
+            carbohydrates: int,
+            calories: int = None,
             article_id: int = None,
     ):
         await self.check_product_type(type_=type_)
@@ -60,6 +64,9 @@ class ProductService(BaseService):
             'name_text_id': name_text.id,
             'type': type_,
             'unit': unit,
+            'fats': fats,
+            'proteins': proteins,
+            'carbohydrates': carbohydrates,
             'by_admin': True,
         }
 
@@ -73,10 +80,21 @@ class ProductService(BaseService):
         else:
             article = None
 
+        if calories:
+            action_parameters.update(
+                {
+                    'calories': calories,
+                }
+            )
+
         product = await ProductRepository().create(
             name_text=name_text,
             type=type_,
             unit=unit,
+            fats=fats,
+            proteins=proteins,
+            carbohydrates=carbohydrates,
+            calories=calories,
             article=article,
         )
 
@@ -95,6 +113,10 @@ class ProductService(BaseService):
             id_: int,
             type_: str = None,
             unit: str = None,
+            fats: int = None,
+            proteins: int = None,
+            carbohydrates: int = None,
+            calories: int = None,
             article_id: int = None,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
@@ -103,10 +125,16 @@ class ProductService(BaseService):
             'updater': f'session_{session.id}',
             'by_admin': True,
         }
-        if not type_ and not unit and not article_id:
+        if not type_ \
+                and not unit \
+                and not article_id \
+                and not calories \
+                and not fats \
+                and not proteins \
+                and not carbohydrates:
             raise NoRequiredParameters(
                 kwargs={
-                    'parameters': ['type', 'unit', 'article_id']
+                    'parameters': ['type', 'unit', 'fats', 'proteins', 'carbohydrates', 'calories', 'article_id']
                 }
             )
         if type_:
@@ -121,6 +149,30 @@ class ProductService(BaseService):
             action_parameters.update(
                 {
                     'unit': unit,
+                }
+            )
+        if fats:
+            action_parameters.update(
+                {
+                    'fats': fats,
+                }
+            )
+        if proteins:
+            action_parameters.update(
+                {
+                    'proteins': proteins,
+                }
+            )
+        if carbohydrates:
+            action_parameters.update(
+                {
+                    'carbohydrates': carbohydrates,
+                }
+            )
+        if calories:
+            action_parameters.update(
+                {
+                    'calories': calories,
                 }
             )
         if article_id:
@@ -145,6 +197,10 @@ class ProductService(BaseService):
             model=product,
             type=type_,
             unit=unit,
+            fats=fats,
+            proteins=proteins,
+            carbohydrates=carbohydrates,
+            calories=calories,
             article=article,
         )
 
@@ -184,39 +240,22 @@ class ProductService(BaseService):
         await self.check_product_type(type_=type_)
         return {
             'products': [
-                {
-                    'id': product.id,
-                    'name_text': product.name_text.key,
-                    'unit': product.unit,
-                    'article': product.article.id if product.article else None,
-                } for product in await ProductRepository().get_list_by_type(type_=type_)
+                await self._generate_product_dict(product=product)
+                for product in await ProductRepository().get_list_by_type(type_=type_)
             ]
         }
 
-    @staticmethod
-    async def get(id_: int):
+    async def get(self, id_: int):
         product: Product = await ProductRepository().get_by_id(id_=id_)
         return {
-            'product': {
-                'id': product.id,
-                'name_text': product.name_text.key,
-                'type': product.type,
-                'unit': product.unit,
-                'article': product.article.id if product.article else None,
-            }
+            'product': await self._generate_product_dict(product=product)
         }
 
-    @staticmethod
-    async def get_list():
+    async def get_list(self):
         return {
             'products': [
-                {
-                    'id': product.id,
-                    'name_text': product.name_text.key,
-                    'type': product.type,
-                    'unit': product.unit,
-                    'article': product.article.id if product.article else None,
-                } for product in await ProductRepository().get_list()
+                await self._generate_product_dict(product=product)
+                for product in await ProductRepository().get_list()
             ]
         }
 
@@ -239,3 +278,17 @@ class ProductService(BaseService):
                     'all': all_,
                 },
             )
+
+    @staticmethod
+    async def _generate_product_dict(product: Product):
+        return {
+            'id': product.id,
+            'name_text': product.name_text.key,
+            'type': product.type,
+            'unit': product.unit,
+            'fats': product.fats,
+            'proteins': product.proteins,
+            'carbohydrates': product.carbohydrates,
+            'calories': product.calories if product.calories else None,
+            'article': product.article.id if product.article else None,
+        }

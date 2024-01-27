@@ -15,7 +15,7 @@
 #
 
 
-from peewee import BooleanField, CharField, DateField, PrimaryKeyField, ForeignKeyField
+from peewee import BooleanField, CharField, DateField, PrimaryKeyField, ForeignKeyField, IntegerField
 
 from .account_service import AccountService
 from .base import BaseModel
@@ -25,6 +25,9 @@ class Meal(BaseModel):
     id = PrimaryKeyField()
     account_service = ForeignKeyField(model=AccountService)
     date = DateField()
+    fats = IntegerField()
+    proteins = IntegerField()
+    carbohydrates = IntegerField()
     type = CharField(max_length=16)
     is_deleted = BooleanField(default=False)
 

@@ -40,6 +40,9 @@ class MealService(BaseService):
             account_service_id: int,
             date_: date,
             type_: str,
+            fats: int,
+            proteins: int,
+            carbohydrates: int,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         await self.check_meal_type(type_=type_)
@@ -48,6 +51,9 @@ class MealService(BaseService):
             account_service=account_service,
             date=date_,
             type=type_,
+            fats=fats,
+            carbohydrates=carbohydrates,
+            proteins=proteins,
         )
 
         await self.create_action(
@@ -57,6 +63,9 @@ class MealService(BaseService):
                 'creator': f'session_{session.id}',
                 'account_service_id': account_service_id,
                 'date': date_,
+                'fats': fats,
+                'proteins': proteins,
+                'carbohydrates': carbohydrates,
                 'type': type_,
                 'by_admin': True,
             }
@@ -71,7 +80,9 @@ class MealService(BaseService):
             id_: int,
             date_: date = None,
             type_: str = None,
-
+            fats: int = None,
+            proteins: int = None,
+            carbohydrates: int = None,
     ):
         meal = await MealRepository().get_by_id(id_=id_)
 
@@ -80,10 +91,14 @@ class MealService(BaseService):
                 'by_admin': True,
         }
 
-        if not date_ and not type_:
+        if not date_ \
+                and not type_\
+                and not fats\
+                and not proteins\
+                and not carbohydrates:
             raise NoRequiredParameters(
                 kwargs={
-                    'parameters': ['data', 'type']
+                    'parameters': ['data', 'type', 'fats', 'proteins', 'carbohydrates'],
                 }
             )
         if date_:
@@ -99,11 +114,32 @@ class MealService(BaseService):
                     'type': type_,
                 }
             )
+        if fats:
+            action_parameters.update(
+                {
+                    'fats': fats,
+                }
+            )
+        if proteins:
+            action_parameters.update(
+                {
+                    'proteins': proteins,
+                }
+            )
+        if carbohydrates:
+            action_parameters.update(
+                {
+                    'carbohydrates': carbohydrates,
+                }
+            )
 
         await MealRepository().update(
             model=meal,
             date=date_,
             type=type_,
+            fats=fats,
+            carbohydrates=carbohydrates,
+            proteins=proteins,
         )
 
         await self.create_action(
@@ -224,6 +260,9 @@ class MealService(BaseService):
             'account_service': meal.account_service.id,
             'date': str(meal.date),
             'type': meal.type,
+            'fats': meal.fats,
+            'proteins': meal.proteins,
+            'carbohydrates': meal.carbohydrates,
             'meal_report_id': meal_report.id if meal_report else None,
             'products': [
                 {

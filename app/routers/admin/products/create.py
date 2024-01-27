@@ -30,7 +30,11 @@ class ProductCreateByAdminSchema(BaseModel):
     name: str = Field(min_length=2, max_length=1024)
     type: str = Field(min_length=2, max_length=16)
     unit: str = Field(min_length=2, max_length=4)
-    article_id: int | None = Field(default=None)
+    fats: int = Field()
+    proteins: int = Field()
+    carbohydrates: int = Field()
+    calories: int = Field(default=None)
+    article_id: int = Field(default=None)
 
 
 @router.post()
@@ -40,6 +44,10 @@ async def route(schema: ProductCreateByAdminSchema):
         name=schema.name,
         type_=schema.type,
         unit=schema.unit,
+        fats=schema.fats,
+        proteins=schema.proteins,
+        carbohydrates=schema.carbohydrates,
+        calories=schema.calories,
         article_id=schema.article_id,
     )
     return Response(**result)
