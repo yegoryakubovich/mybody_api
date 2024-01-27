@@ -20,7 +20,7 @@ from os import path, remove
 from fastapi import UploadFile
 from PIL import Image as ImagePillow
 
-from config import PATH_IMAGES
+from config import settings
 from app.services.base import BaseService
 from app.db.models import Image, Session
 from app.repositories import ImageRepository
@@ -49,19 +49,19 @@ class ImageService(BaseService):
                 }
             )
 
-        with open(f'{PATH_IMAGES}/{id_str}.jpg', mode='wb') as image:
+        with open(f'{settings.path_images}/{id_str}.jpg', mode='wb') as image:
             file_content = await file.read()
             image.write(file_content)
             image.close()
 
-        while path.getsize(f'{PATH_IMAGES}/{id_str}.jpg') > 2097152:
-            image = ImagePillow.open(f'{PATH_IMAGES}/{id_str}.jpg')
+        while path.getsize(f'{settings.path_images}/{id_str}.jpg') > 2097152:
+            image = ImagePillow.open(f'{settings.path_images}/{id_str}.jpg')
 
             width, height = image.size
             new_size = (int(width // 1.5), int(height // 1.5))
             resized_image = image.resize(new_size)
 
-            resized_image.save(f'{PATH_IMAGES}/{id_str}.jpg', optimize=True, quality=90)
+            resized_image.save(f'{settings.path_images}/{id_str}.jpg', optimize=True, quality=90)
 
         image = await ImageRepository().create(id_str=id_str)
 
@@ -123,7 +123,7 @@ class ImageService(BaseService):
 
         await ImageRepository().delete(model=image)
 
-        remove(f'{PATH_IMAGES}/{id_str}.jpg')
+        remove(f'{settings.path_images}/{id_str}.jpg')
 
         await self.create_action(
             model=image,

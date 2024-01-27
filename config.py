@@ -15,28 +15,26 @@
 #
 
 
-from configparser import ConfigParser
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-config = ConfigParser()
-config.read('config.ini')
+class Settings(BaseSettings):
+    port: int
 
-config_db = config['db']
-config_tg = config['tg']
-config_settings = config['settings']
+    mysql_host: str
+    mysql_port: int
+    mysql_user: str
+    mysql_password: str
+    mysql_name: str
 
-MYSQL_HOST = config_db['host']
-MYSQL_PORT = int(config_db['port'])
-MYSQL_USER = config_db['user']
-MYSQL_PASSWORD = config_db['password']
-MYSQL_NAME = config_db['name']
+    root_token: str
 
-TG_BOT_USERNAME = config_tg['bot_username']
-TG_BOT_TOKEN = config_tg['bot_token']
+    path_articles: str = 'assets/articles'
+    path_texts_packs: str = 'assets/texts_packs'
+    path_images: str = 'assets/images'
+    items_per_page: int = 10
 
-ROOT_TOKEN = config_settings['root_token']
+    model_config = SettingsConfigDict(env_file='.env')
 
-PATH_ARTICLES = 'assets/articles'
-PATH_TEXTS_PACKS = 'assets/texts_packs'
-PATH_IMAGES = 'assets/images'
-ITEMS_PER_PAGE = 10
+
+settings = Settings()

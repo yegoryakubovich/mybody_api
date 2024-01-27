@@ -19,11 +19,11 @@ from datetime import date
 
 from app.db.models import MealReport, Session
 from app.db.models.meal import Meal
-from app.repositories import AccountRepository, AccountServiceRepository, MealProductRepository, MealReportRepository, \
+from app.repositories import AccountServiceRepository, MealProductRepository, MealReportRepository, \
     MealRepository
 from app.services.base import BaseService
-from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions
 from app.utils.decorators import session_required
+from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions
 
 
 class MealTypes:

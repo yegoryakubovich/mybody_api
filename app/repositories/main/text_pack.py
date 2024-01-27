@@ -22,7 +22,7 @@ from peewee import DoesNotExist
 from app.db.models import Language, TextPack, Text
 from .text import TextRepository
 from app.repositories.base import BaseRepository
-from config import PATH_TEXTS_PACKS
+from config import settings
 
 
 class TextPackRepository(BaseRepository):
@@ -38,7 +38,7 @@ class TextPackRepository(BaseRepository):
 
         text_pack = TextPack.create(language=language)
 
-        with open(f'{PATH_TEXTS_PACKS}/{text_pack.id}.json', encoding='utf-8', mode='w') as md_file:
+        with open(f'{settings.path_texts_packs}/{text_pack.id}.json', encoding='utf-8', mode='w') as md_file:
             md_file.write(dumps(json))
 
         return text_pack

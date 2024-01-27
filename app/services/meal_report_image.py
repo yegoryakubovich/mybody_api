@@ -15,7 +15,7 @@
 #
 
 
-from config import PATH_IMAGES
+from config import settings
 from . import ImageService
 from .base import BaseService
 from ..db.models import MealReportImage, Session
@@ -172,6 +172,6 @@ class MealReportImageService(BaseService):
         meal_report = await MealReportRepository().get_by_id(id_=meal_report_id)
         meal_report_images = await MealReportImageRepository().get_list_by_meal_report(meal_report=meal_report)
         return [
-                f'{PATH_IMAGES}/{meal_report_image.id_str}.jpg'
+                f'{settings.path_images}/{meal_report_image.id_str}.jpg'
                 for meal_report_image in meal_report_images
         ]

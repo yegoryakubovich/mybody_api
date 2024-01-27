@@ -6,6 +6,7 @@ pytz
 inflection
 starlette
 pydantic==2.5.3
+pydantic_settings
 python-multipart
 addict
 pillow

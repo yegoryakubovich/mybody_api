@@ -20,8 +20,7 @@ from pydantic import BaseModel, Field
 from starlette.responses import FileResponse
 
 from app.utils import Router
-from config import PATH_IMAGES
-
+from config import settings
 
 router = Router(
     prefix='/get',
@@ -34,4 +33,4 @@ class ImageGetSchema(BaseModel):
 
 @router.get()
 async def route(schema: ImageGetSchema = Depends()):
-    return FileResponse(path=f'{PATH_IMAGES}/{schema.id_str}.jpg')
+    return FileResponse(path=f'{settings.settings.path_images}/{schema.id_str}.jpg')

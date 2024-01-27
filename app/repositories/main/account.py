@@ -18,9 +18,9 @@
 from peewee import DoesNotExist
 
 from app.db.models import Account
-from config import ITEMS_PER_PAGE
 from app.repositories.base import BaseRepository
 from app.utils.exceptions import ModelDoesNotExist
+from config import settings
 
 
 class AccountRepository(BaseRepository):
@@ -69,6 +69,8 @@ class AccountRepository(BaseRepository):
             (Account.id % f'%{id_}%')
         )
 
-        accounts = query.limit(ITEMS_PER_PAGE).offset(ITEMS_PER_PAGE*(page-1)).order_by(Account.id).execute()
+        accounts = query.limit(
+            settings.items_per_page
+        ).offset(settings.items_per_page*(page-1)).order_by(Account.id).execute()
         results = query.count()
         return accounts, results

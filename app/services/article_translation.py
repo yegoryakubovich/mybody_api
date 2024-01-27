@@ -21,7 +21,7 @@ from app.repositories import TextTranslationRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 from app.utils.exceptions import ModelAlreadyExist
-from config import PATH_ARTICLES
+from config import settings
 
 
 class ArticleTranslationService(BaseService):
@@ -72,7 +72,7 @@ class ArticleTranslationService(BaseService):
         )
 
         # Create md file
-        with open(f'{PATH_ARTICLES}/{article.id}_{language.id_str}.md', encoding='utf-8', mode='w') as md_file:
+        with open(f'{settings.path_articles}/{article.id}_{language.id_str}.md', encoding='utf-8', mode='w') as md_file:
             md_file.write('')
 
         return {'id': article_translation.id}

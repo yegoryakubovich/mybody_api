@@ -26,7 +26,7 @@ from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
 from app.utils.exceptions import InvalidPassword, InvalidUsername, ModelAlreadyExist, WrongPassword
-from config import ITEMS_PER_PAGE
+from config import settings
 
 
 class AccountService(BaseService):
@@ -181,9 +181,9 @@ class AccountService(BaseService):
         return {
             'accounts': accounts,
             'results': results,
-            'pages': ceil(results/ITEMS_PER_PAGE),
+            'pages': ceil(results/settings.items_per_page),
             'page': page,
-            'items_per_page': ITEMS_PER_PAGE,
+            'items_per_page': settings.items_per_page,
         }
 
     @staticmethod

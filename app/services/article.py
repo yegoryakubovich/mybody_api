@@ -24,7 +24,7 @@ from app.services.base import BaseService
 from app.utils.exceptions import ArticleSessionRequired, ModelDoesNotExist
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
-from config import PATH_ARTICLES
+from config import settings
 
 
 class ArticleService(BaseService):
@@ -60,7 +60,7 @@ class ArticleService(BaseService):
         )
 
         # Create md file
-        with open(f'{PATH_ARTICLES}/{article.id}.md', encoding='utf-8', mode='w') as md_file:
+        with open(f'{settings.path_articles}/{article.id}.md', encoding='utf-8', mode='w') as md_file:
             md_file.write('')
 
         return {'id': article.id}
@@ -137,7 +137,7 @@ class ArticleService(BaseService):
             },
         )
 
-        with open(f'{PATH_ARTICLES}/{filename}.md', encoding='utf-8', mode='w') as md_file:
+        with open(f'{settings.path_articles}/{filename}.md', encoding='utf-8', mode='w') as md_file:
             md_file.truncate(0)
             md_file.write(md)
 
@@ -224,7 +224,7 @@ class ArticleService(BaseService):
             except ModelDoesNotExist:
                 pass
 
-        with open(f'{PATH_ARTICLES}/{filename}.md', encoding='utf-8', mode='r') as md_file:
+        with open(f'{settings.path_articles}/{filename}.md', encoding='utf-8', mode='r') as md_file:
             md = md_file.read()
         return {
             'article': {

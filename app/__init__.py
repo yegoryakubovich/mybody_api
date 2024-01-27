@@ -43,7 +43,10 @@ app = FastAPI(
     dependencies=[Depends(init)],
     exception_handlers={RequestValidationError: validation_error},
 )
-app.add_middleware(middleware_class=BaseHTTPMiddleware, dispatch=Middleware())
+app.add_middleware(
+    middleware_class=BaseHTTPMiddleware,
+    dispatch=Middleware(),
+)
 [app.include_router(router) for router in routers]
 
 

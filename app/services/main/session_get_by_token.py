@@ -22,7 +22,7 @@ from app.db.models import Session
 from app.services.base import BaseService
 from app.utils.exceptions import ApiException
 from app.utils.crypto import create_hash_by_string_and_salt
-from config import ROOT_TOKEN
+from config import settings
 
 
 class WrongToken(ApiException):
@@ -44,7 +44,7 @@ class SessionGetByTokenService(BaseService):
         session_id = int(session_id_str)
 
         if session_id == 0:
-            if token == ROOT_TOKEN:
+            if token == settings.root_token:
                 session_dict = {
                     'id': 0,
                     'account': {

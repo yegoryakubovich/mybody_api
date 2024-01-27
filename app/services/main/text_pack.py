@@ -21,7 +21,7 @@ from app.db.models import TextPack, Session
 from app.repositories import TextPackRepository, LanguageRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from config import PATH_TEXTS_PACKS
+from config import settings
 
 
 class TextPackService(BaseService):
@@ -39,7 +39,7 @@ class TextPackService(BaseService):
                 'text_pack': {},
             }
 
-        with open(f'{PATH_TEXTS_PACKS}/{text_pack.id}.json', encoding='utf-8', mode='r') as md_file:
+        with open(f'{settings.path_texts_packs}/{text_pack.id}.json', encoding='utf-8', mode='r') as md_file:
             json_str = md_file.read()
 
         json = loads(json_str)
