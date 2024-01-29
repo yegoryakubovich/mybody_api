@@ -77,7 +77,7 @@ class AccountRoleService(BaseService):
             'accounts_roles': [
                 {
                     'id': account_role.id,
-                    'account': account_role.account.id,
+                    'account_id': account_role.account.id,
                     'username': account_role.account.username,
                     'role': account_role.role.id,
                 } for account_role in accounts_roles
@@ -92,7 +92,7 @@ class AccountRoleService(BaseService):
             'accounts_roles': [
                 {
                     'id': account_role.id,
-                    'role': account_role.role.id,
+                    'role_id': account_role.role.id,
                 } for account_role in accounts_roles
             ]
         }

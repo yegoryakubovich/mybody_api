@@ -162,8 +162,8 @@ class AccountServiceService(BaseService):
         )
         return {}
 
-    @staticmethod
     async def _get(
+            self,
             session: Session,
             id_: int,
             by_admin: bool = False,
@@ -172,14 +172,7 @@ class AccountServiceService(BaseService):
         if account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
         return {
-            'account_service': {
-                'id': account_service.id,
-                'account': account_service.account.id,
-                'service': account_service.service.id,
-                'questions': account_service.questions,
-                'answers': account_service.answers,
-                'state': account_service.state,
-            }
+            'account_service': await self._generate_account_service_dict(account_service=account_service)
         }
 
     @session_required()
@@ -209,14 +202,8 @@ class AccountServiceService(BaseService):
     async def get_list_by_admin(self):
         return {
             'accounts_services': [
-                {
-                    'id': account_service.id,
-                    'account': account_service.account.id,
-                    'service': account_service.service.id,
-                    'questions': account_service.questions,
-                    'answers': account_service.answers,
-                    'state': account_service.state,
-                } for account_service in await AccountServiceRepository().get_list()
+                await self._generate_account_service_dict(account_service=account_service)
+                for account_service in await AccountServiceRepository().get_list()
             ]
         }
 
@@ -266,3 +253,14 @@ class AccountServiceService(BaseService):
             return False
         except KeyError:
             return False
+
+    @staticmethod
+    async def _generate_account_service_dict(account_service: AccountService):
+        return {
+            'id': account_service.id,
+            'account_id': account_service.account.id,
+            'service_id': account_service.service.id,
+            'questions': account_service.questions,
+            'answers': account_service.answers,
+            'state': account_service.state,
+        }

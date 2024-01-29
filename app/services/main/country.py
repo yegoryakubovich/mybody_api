@@ -169,35 +169,30 @@ class CountryService(BaseService):
 
         return {}
 
-    @staticmethod
     async def get(
+            self,
             id_str: str,
     ):
         country: Country = await CountryRepository().get_by_id_str(id_str=id_str)
         return {
-            'country':
-                {
-                    'id': country.id,
-                    'id_str': country.id_str,
-                    'name_text': country.name_text.key,
-                    'language': country.language_default.id_str,
-                    'timezone': country.timezone_default.id_str,
-                    'currency': country.currency_default.id_str,
-                }
+            'country': await self._generate_country_dict(country=country)
+        }
+
+    async def get_list(self) -> dict:
+        return {
+            'countries': [
+                await self._generate_country_dict(country=country)
+                for country in await CountryRepository().get_list()
+            ]
         }
 
     @staticmethod
-    async def get_list() -> dict:
+    async def _generate_country_dict(country: Country):
         return {
-            'countries': [
-                {
-                    'id': country.id,
-                    'id_str': country.id_str,
-                    'name_text': country.name_text.key,
-                    'language_default': country.language_default.id_str,
-                    'timezone_default': country.timezone_default.id_str,
-                    'currency_default': country.currency_default.id_str,
-                }
-                for country in await CountryRepository().get_list()
-            ]
+            'id': country.id,
+            'id_str': country.id_str,
+            'name_text': country.name_text.key,
+            'language': country.language_default.id_str,
+            'timezone': country.timezone_default.id_str,
+            'currency': country.currency_default.id_str,
         }

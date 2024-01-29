@@ -126,8 +126,8 @@ class MealProductService(BaseService):
 
         return {}
 
-    @staticmethod
     async def _get(
+            self,
             session: Session,
             id_: int,
             by_admin: bool = False,
@@ -136,12 +136,7 @@ class MealProductService(BaseService):
         if session.account != meal_product.meal.account_service.account and not by_admin:
             raise NotEnoughPermissions()
         return {
-            'meal_product': {
-                'id': meal_product.id,
-                'meal': meal_product.meal.id,
-                'product': meal_product.product.id,
-                'value': meal_product.value,
-            }
+            'meal_product': await self._generate_meal_product_dict(meal_product=meal_product)
         }
 
     @session_required()
@@ -167,8 +162,8 @@ class MealProductService(BaseService):
             by_admin=True,
         )
 
-    @staticmethod
     async def _get_list(
+            self,
             session: Session,
             meal_id: int,
             by_admin: bool = False,
@@ -178,12 +173,8 @@ class MealProductService(BaseService):
             raise NotEnoughPermissions()
         return {
             'meal_products': [
-                {
-                    'id': meal_product.id,
-                    'meal': meal_product.meal.id,
-                    'product': meal_product.product.id,
-                    'value': meal_product.value,
-                } for meal_product in await MealProductRepository().get_list_by_meal(meal=meal)
+                await self._generate_meal_product_dict(meal_product=meal_product)
+                for meal_product in await MealProductRepository().get_list_by_meal(meal=meal)
             ]
         }
 
@@ -209,3 +200,12 @@ class MealProductService(BaseService):
             meal_id=meal_id,
             by_admin=True,
         )
+
+    @staticmethod
+    async def _generate_meal_product_dict(meal_product: MealProduct):
+        return {
+            'id': meal_product.id,
+            'meal_id': meal_product.meal.id,
+            'product_id': meal_product.product.id,
+            'value': meal_product.value,
+        }

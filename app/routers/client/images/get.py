@@ -33,4 +33,4 @@ class ImageGetSchema(BaseModel):
 
 @router.get()
 async def route(schema: ImageGetSchema = Depends()):
-    return FileResponse(path=f'{settings.settings.path_images}/{schema.id_str}.jpg')
+    return FileResponse(path=f'{settings.path_images}/{schema.id_str}.jpg')

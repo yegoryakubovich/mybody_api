@@ -123,7 +123,8 @@ class ServiceService(BaseService):
         if name:
             text: Text = await TextRepository().get_by_key(key=f'service_{id_str}')
             await TextService().update_by_admin(
-                model=text,
+                session=session,
+                key=text.key,
                 value_default=name,
             )
 

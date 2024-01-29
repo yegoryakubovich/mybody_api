@@ -79,7 +79,7 @@ class RolePermissionService(BaseService):
         return {
             'role_permission': {
                 'id': role_permission.id,
-                'role': role_permission.role.id,
+                'role_id': role_permission.role.id,
                 'permission': role_permission.permission.id_str,
             }
         }

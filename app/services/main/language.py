@@ -91,7 +91,7 @@ class LanguageService(BaseService):
             'language': {
                 'id': language.id,
                 'id_str': language.id_str,
-                'name_text': language.name,
+                'name': language.name,
             }
         }
 

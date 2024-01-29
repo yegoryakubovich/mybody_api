@@ -257,7 +257,7 @@ class MealService(BaseService):
         meal_report: MealReport = await MealReportRepository().get_by_meal(meal=meal)
         return {
             'id': meal.id,
-            'account_service': meal.account_service.id,
+            'account_service_id': meal.account_service.id,
             'date': str(meal.date),
             'type': meal.type,
             'fats': meal.fats,

@@ -240,7 +240,7 @@ class TrainingService(BaseService):
         training_report: TrainingReport = await TrainingReportRepository().get_by_training(training=training)
         return {
             'id': training.id,
-            'account_service': training.account_service.id,
+            'account_service_id': training.account_service.id,
             'date': str(training.date),
             'training_report_id': training_report.id if training_report else None,
             'article_id': training.article.id if training.article else None,

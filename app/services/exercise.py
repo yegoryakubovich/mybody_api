@@ -62,7 +62,7 @@ class ExerciseService(BaseService):
             article = await ArticleRepository().get_by_id(id_=article_id)
             action_parameters.update(
                 {
-                    'article': article_id,
+                    'article_id': article_id,
                 }
             )
         else:
@@ -102,14 +102,14 @@ class ExerciseService(BaseService):
                 article = -1
                 action_parameters.update(
                     {
-                        'article': None,
+                        'article_id': None,
                     }
                 )
             else:
                 article = await ArticleRepository().get_by_id(id_=article_id)
                 action_parameters.update(
                     {
-                        'article': article_id,
+                        'article_id': article_id,
                     }
                 )
         else:
@@ -163,9 +163,10 @@ class ExerciseService(BaseService):
         exercise = await ExerciseRepository().get_by_id(id_=id_)
         return {
             'exercise': {
-                    'id': exercise.id,
-                    'name_text': exercise.name_text.key,
-                    'type': exercise.type,
+                'id': exercise.id,
+                'name_text': exercise.name_text.key,
+                'type': exercise.type,
+                'article_id': exercise.article.id if exercise.article else None,
             }
         }
 
@@ -177,6 +178,7 @@ class ExerciseService(BaseService):
                     'id': exercise.id,
                     'name_text': exercise.name_text.key,
                     'type': exercise.type,
+                    'article_id': exercise.article.id if exercise.article else None,
                 } for exercise in await ExerciseRepository().get_list()
             ]
         }

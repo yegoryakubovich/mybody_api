@@ -150,20 +150,8 @@ class ArticleService(BaseService):
         articles = await ArticleRepository().get_list()
         for article in articles:
             article: Article
-            translations = await ArticleTranslationRepository().get_list_by_article(article=article)
             articles_list.append(
-                {
-                    'id': article.id,
-                    'name_text': article.name_text.key,
-                    'can_guest': article.can_guest,
-                    'is_hide': article.is_hide,
-                    'translations': [
-                        {
-                            'language': translation.language.id_str,
-                        }
-                        for translation in translations
-                    ],
-                }
+                await self._generate_article_dict(article=article),
             )
         return {
             'articles': articles_list,
@@ -174,18 +162,7 @@ class ArticleService(BaseService):
         article = await ArticleRepository().get_by_id(id_=id_)
         translations = await ArticleTranslationRepository().get_list_by_article(article=article)
         return {
-            'article': {
-                'id': article.id,
-                'name_text': article.name_text.key,
-                'can_guest': article.can_guest,
-                'is_hide': article.is_hide,
-                'translations': [
-                    {
-                        'language': translation.language.id_str,
-                    }
-                    for translation in translations
-                ],
-            },
+            'article': await self._generate_article_dict(article=article),
         }
 
     @session_required(can_guest=True)
@@ -233,4 +210,20 @@ class ArticleService(BaseService):
                 'name': name,
                 'md': md,
             }
+        }
+
+    @staticmethod
+    async def _generate_article_dict(article: Article):
+        translations = await ArticleTranslationRepository().get_list_by_article(article=article)
+        return {
+            'id': article.id,
+            'name_text': article.name_text.key,
+            'can_guest': article.can_guest,
+            'is_hide': article.is_hide,
+            'translations': [
+                {
+                    'language': translation.language.id_str,
+                }
+                for translation in translations
+            ],
         }

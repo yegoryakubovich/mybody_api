@@ -16,7 +16,7 @@
 
 
 from .base import BaseService
-from ..db.models import Session, Training, Exercise
+from ..db.models import Session, Training, Exercise, TrainingExercise
 from ..repositories import TrainingRepository, ExerciseRepository, TrainingExerciseRepository
 from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
 from ..utils.decorators import session_required
@@ -145,8 +145,8 @@ class TrainingExerciseService(BaseService):
 
         return {}
 
-    @staticmethod
     async def _get(
+            self,
             session: Session,
             id_: int,
             by_admin: bool = False,
@@ -157,13 +157,7 @@ class TrainingExerciseService(BaseService):
             raise NotEnoughPermissions()
 
         return {
-            'training_exercise': {
-                    'id': training_exercise.id,
-                    'exercise': training_exercise.exercise.name_text.key,
-                    'priority': training_exercise.priority,
-                    'value': training_exercise.value,
-                    'rest': training_exercise.rest,
-            }
+            'training_exercise': await self._generate_training_exercise_dict(training_exercise=training_exercise),
         }
 
     @session_required()
@@ -189,8 +183,8 @@ class TrainingExerciseService(BaseService):
             by_admin=True,
         )
 
-    @staticmethod
     async def _get_list(
+            self,
             session: Session,
             training_id: int,
             by_admin: bool = False,
@@ -202,13 +196,8 @@ class TrainingExerciseService(BaseService):
 
         return {
             'training_exercises': [
-                {
-                    'id': training_exercise.id,
-                    'exercise': training_exercise.exercise.name_text.key,
-                    'priority': training_exercise.priority,
-                    'value': training_exercise.value,
-                    'rest': training_exercise.rest,
-                } for training_exercise in await TrainingExerciseRepository().get_list_by_training(training=training)
+                await self._generate_training_exercise_dict(training_exercise=training_exercise)
+                for training_exercise in await TrainingExerciseRepository().get_list_by_training(training=training)
             ]
         }
 
@@ -234,3 +223,13 @@ class TrainingExerciseService(BaseService):
             training_id=training_id,
             by_admin=True,
         )
+
+    @staticmethod
+    async def _generate_training_exercise_dict(training_exercise: TrainingExercise):
+        return {
+            'id': training_exercise.id,
+            'exercise': training_exercise.exercise.name_text.key,
+            'priority': training_exercise.priority,
+            'value': training_exercise.value,
+            'rest': training_exercise.rest,
+        }

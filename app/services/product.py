@@ -180,14 +180,14 @@ class ProductService(BaseService):
                 article = -1
                 action_parameters.update(
                     {
-                        'article': None,
+                        'article_id': None,
                     }
                 )
             else:
                 article = await ArticleRepository().get_by_id(id_=article_id)
                 action_parameters.update(
                     {
-                        'article': article_id,
+                        'article_id': article_id,
                     }
                 )
         else:
@@ -290,5 +290,5 @@ class ProductService(BaseService):
             'proteins': product.proteins,
             'carbohydrates': product.carbohydrates,
             'calories': product.calories if product.calories else None,
-            'article': product.article.id if product.article else None,
+            'article_id': product.article.id if product.article else None,
         }
