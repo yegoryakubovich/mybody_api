@@ -48,4 +48,9 @@ class SessionService(BaseService):
         )
 
         token = f'{session.id:08}:{token}'
-        return {'token': token}
+        return {
+            'session': {
+                'id': session.id,
+                'token': token,
+            },
+        }

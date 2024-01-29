@@ -229,8 +229,8 @@ class AccountServiceService(BaseService):
             'account_services': [
                 {
                     'id': account_service.id,
-                    'account': account_service.account.id,
-                    'service': account_service.service.id,
+                    'account_id': account_service.account.id,
+                    'service_id': account_service.service.id,
                     'questions': account_service.questions,
                     'answers': account_service.answers,
                     'state': account_service.state,
