@@ -18,6 +18,7 @@
 from json import JSONDecodeError, loads
 
 from fastapi import UploadFile
+from fastapi.params import File
 from peewee import DoesNotExist
 
 from app.services.main.image import ImageService
@@ -30,7 +31,7 @@ from app.repositories import MealReportImageRepository, MealReportProductReposit
 from app.utils.decorators import session_required
 from ..db.models import Meal, MealReport, Session
 from app.utils.exceptions import InvalidFileType, InvalidProductList, ModelAlreadyExist, NotEnoughPermissions, \
-    TooLargeFile
+    TooLargeFile, NoRequiredParameters
 
 
 class MealReportService(BaseService):
@@ -39,15 +40,22 @@ class MealReportService(BaseService):
             self,
             session: Session,
             meal_id: int,
-            comment: str,
-            images: list[UploadFile],
-            products: str,
+            comment: str = None,
+            products: str = None,
+            images: list[UploadFile] = None,
             by_admin: bool = False,
     ) -> MealReport:
         meal: Meal = await MealRepository().get_by_id(id_=meal_id)
-        products = await self.get_products_list(products=products)
-        for file in images:
-            await self.check_image(image=file)
+        if not products and not comment:
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['comment', 'products']
+                }
+            )
+
+        if images and len(images) > 0:
+            for file in images:
+                await self.check_image(image=file)
         action_parameters = {
             'creator': f'session_{session.id}',
             'meal': meal_id,
@@ -76,46 +84,47 @@ class MealReportService(BaseService):
             meal=meal,
             comment=comment,
         )
-
-        for product in products:
-            if by_admin:
-                await MealReportProductService().create_by_admin(
-                    session=session,
-                    meal_report_id=meal_report.id,
-                    product_id=product['id'],
-                    value=product['value'],
-                )
-            else:
-                await MealReportProductService().create(
-                    session=session,
-                    meal_report_id=meal_report.id,
-                    product_id=product['id'],
-                    value=product['value'],
-                )
-
-        for file in images:
-            if by_admin:
-                image = await ImageService().create_by_admin(
-                    session=session,
-                    file=file,
-                    return_model=True,
-                )
-                await MealReportImageService().create_by_admin(
-                    session=session,
-                    meal_report_id=meal_report.id,
-                    image_id_str=image.id_str,
-                )
-            else:
-                image = await ImageService().create(
-                    session=session,
-                    file=file,
-                    return_model=True,
-                )
-                await MealReportImageService().create(
-                    session=session,
-                    meal_report_id=meal_report.id,
-                    image_id_str=image.id_str,
-                )
+        if products:
+            products = await self.get_products_list(products=products)
+            for product in products:
+                if by_admin:
+                    await MealReportProductService().create_by_admin(
+                        session=session,
+                        meal_report_id=meal_report.id,
+                        product_id=product['id'],
+                        value=product['value'],
+                    )
+                else:
+                    await MealReportProductService().create(
+                        session=session,
+                        meal_report_id=meal_report.id,
+                        product_id=product['id'],
+                        value=product['value'],
+                    )
+        if images and len(images) > 0:
+            for file in images:
+                if by_admin:
+                    image = await ImageService().create_by_admin(
+                        session=session,
+                        file=file,
+                        return_model=True,
+                    )
+                    await MealReportImageService().create_by_admin(
+                        session=session,
+                        meal_report_id=meal_report.id,
+                        image_id_str=image.id_str,
+                    )
+                else:
+                    image = await ImageService().create(
+                        session=session,
+                        file=file,
+                        return_model=True,
+                    )
+                    await MealReportImageService().create(
+                        session=session,
+                        meal_report_id=meal_report.id,
+                        image_id_str=image.id_str,
+                    )
 
         await self.create_action(
             model=meal_report,
@@ -130,9 +139,9 @@ class MealReportService(BaseService):
             self,
             session: Session,
             meal_id: int,
-            comment: str,
-            images: list[UploadFile],
-            products: str,
+            comment: str = None,
+            products: str = None,
+            images: list[UploadFile] = None,
     ):
         meal_report = await self._create(
             session=session,
@@ -149,9 +158,9 @@ class MealReportService(BaseService):
             self,
             session: Session,
             meal_id: int,
-            comment: str,
-            images: list[UploadFile],
-            products: str,
+            comment: str = None,
+            products: str = None,
+            images: list[UploadFile] = None,
     ):
         meal_report = await self._create(
             session=session,

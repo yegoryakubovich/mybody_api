@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+from typing import Optional
 
 from fastapi import UploadFile
 
@@ -30,9 +31,9 @@ router = Router(
 async def route(
         token: str,
         meal_id: int,
-        comment: str,
-        products: str,
-        images: list[UploadFile],
+        comment: str = None,
+        products: str = None,
+        images: Optional[list[UploadFile]] = None,
 ):
     result = await MealReportService().create_by_admin(
         token=token,

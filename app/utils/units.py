@@ -18,6 +18,7 @@
 class Units:
     GRAMS = 'gr'
     MILLILITRES = 'ml'
+    PIECES = 'pcs'
 
     def all(self):
-        return [self.GRAMS, self.MILLILITRES]
+        return [self.GRAMS, self.MILLILITRES, self.PIECES]

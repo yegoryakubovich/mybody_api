@@ -18,10 +18,10 @@
 from datetime import date
 
 from app.db.models import Session, Training, TrainingReport
-from app.repositories import ArticleRepository, TrainingExerciseRepository, TrainingReportRepository, \
-    TrainingRepository, AccountServiceRepository
+from app.repositories import TrainingExerciseRepository, TrainingReportRepository, TrainingRepository, \
+    AccountServiceRepository
 from app.services.base import BaseService
-from app.utils.exceptions import NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist
 from app.utils.decorators import session_required
 
 
@@ -32,37 +32,36 @@ class TrainingService(BaseService):
             session: Session,
             account_service_id: int,
             date_: date,
-            article_id: int = None,
     ):
-        account_service_id = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
 
-        action_parameters = {
-            'creator': f'session_{session.id}',
-            'account_service_id': account_service_id,
-            'date': date_,
-            'by_admin': True,
-        }
-
-        if article_id:
-            article = await ArticleRepository().get_by_id(id_=article_id)
-            action_parameters.update(
-                {
-                    'article_id': article_id,
+        trainings = await TrainingRepository().get_list_by_account_service(
+            account_service=account_service,
+            date_=date_
+        )
+        if trainings and len(trainings) > 0:
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Training',
+                    'id_type': '["account_service_id", "date"]',
+                    'id_value': [account_service_id, str(date_)],
                 }
             )
-        else:
-            article = None
 
         training = await TrainingRepository().create(
-            account_service=account_service_id,
+            account_service=account_service,
             date=date_,
-            article=article,
         )
 
         await self.create_action(
             model=training,
             action='create',
-            parameters=action_parameters,
+            parameters={
+                'creator': f'session_{session.id}',
+                'account_service_id': account_service_id,
+                'date': date_,
+                'by_admin': True,
+            },
         )
 
         return {'id': training.id}
@@ -72,50 +71,23 @@ class TrainingService(BaseService):
             self,
             session: Session,
             id_: int,
-            date_: date = None,
-            article_id: int = None,
+            date_: date,
     ):
         training = await TrainingRepository().get_by_id(id_=id_)
-
-        action_parameters = {
-            'updater': f'session_{session.id}',
-            'by_admin': True,
-        }
-
-        if not date_ and not article_id:
-            raise NoRequiredParameters(
-                kwargs={
-                    'parameters': ['date', 'article_id'],
-                }
-            )
-
-        if date_:
-            action_parameters.update(
-                {
-                    'date': date_,
-                }
-            )
-
-        if article_id:
-            article = await ArticleRepository().get_by_id(id_=article_id)
-            action_parameters.update(
-                {
-                    'article_id': article_id,
-                }
-            )
-        else:
-            article = None
 
         await TrainingRepository().update(
             model=training,
             date=date_,
-            article=article,
         )
 
         await self.create_action(
             model=training,
             action='update',
-            parameters=action_parameters,
+            parameters={
+                'updater': f'session_{session.id}',
+                'by_admin': True,
+                'date': date_,
+            },
         )
 
         return {}
@@ -243,7 +215,6 @@ class TrainingService(BaseService):
             'account_service_id': training.account_service.id,
             'date': str(training.date),
             'training_report_id': training_report.id if training_report else None,
-            'article_id': training.article.id if training.article else None,
             'exercises': [
                 {
                     'id': training_exercise.id,

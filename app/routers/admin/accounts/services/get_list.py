@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from typing import Optional
 
 from fastapi import Depends
 from pydantic import BaseModel, Field
@@ -30,11 +30,13 @@ router = Router(
 
 class AccountServiceGetListByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
+    account_id: Optional[int] = Field(default=None)
 
 
 @router.get()
 async def route(schema: AccountServiceGetListByAdminSchema = Depends()):
     result = await AccountServiceService().get_list_by_admin(
         token=schema.token,
+        account_id=schema.account_id,
     )
     return Response(**result)

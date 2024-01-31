@@ -31,8 +31,7 @@ router = Router(
 class TrainingUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    date: datetime_date = Field(default=None)
-    article_id: int = Field(default=None)
+    date: datetime_date = Field()
 
 
 @router.post()
@@ -41,6 +40,5 @@ async def route(schema: TrainingUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         date_=schema.date,
-        article_id=schema.article_id,
     )
     return Response(**result)

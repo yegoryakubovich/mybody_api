@@ -18,7 +18,6 @@
 from app.utils import Router
 from .get import router as router_get
 from .get_list import router as router_get_list
-from .products import router as router_products
 from .reports import router as router_reports
 
 
@@ -28,7 +27,6 @@ router = Router(
     routes_included=[
         router_get,
         router_get_list,
-        router_products,
         router_reports,
     ]
 )

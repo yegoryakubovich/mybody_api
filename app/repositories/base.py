@@ -44,6 +44,7 @@ class BaseRepository:
             return False
 
     async def create(self, **kwargs):
+
         return self.model.create(**kwargs)
 
     async def get_list(self) -> list[BaseModel]:

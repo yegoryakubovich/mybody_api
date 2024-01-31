@@ -16,6 +16,8 @@
 
 
 from app.utils import Router
+from .get import router as router_get
+from .get_list import router as router_get_list
 from .create import router as router_create
 from .delete import router as router_delete
 
@@ -23,7 +25,9 @@ from .delete import router as router_delete
 router = Router(
     prefix='/permissions',
     routes_included=[
-         router_create,
-         router_delete,
+        router_create,
+        router_delete,
+        router_get,
+        router_get_list,
     ]
 )

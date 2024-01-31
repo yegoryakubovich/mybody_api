@@ -26,7 +26,6 @@ class Training(BaseModel):
     id = PrimaryKeyField()
     account_service = ForeignKeyField(model=AccountService)
     date = DateField()
-    article = ForeignKeyField(null=True, model=Article)
     is_deleted = BooleanField(default=False)
 
     class Meta:

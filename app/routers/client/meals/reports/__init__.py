@@ -28,7 +28,5 @@ router = Router(
         router_get,
         router_create,
         router_delete,
-        router_images,
-        router_products,
     ]
 )

@@ -199,13 +199,25 @@ class AccountServiceService(BaseService):
         )
 
     @session_required(permissions=['accounts'], return_model=False)
-    async def get_list_by_admin(self):
-        return {
-            'accounts_services': [
-                await self._generate_account_service_dict(account_service=account_service)
-                for account_service in await AccountServiceRepository().get_list()
-            ]
-        }
+    async def get_list_by_admin(
+            self,
+            account_id: int = None,
+    ):
+        if account_id:
+            account = await AccountRepository().get_by_id(id_=account_id)
+            return {
+                'account_services': [
+                    await self._generate_account_service_dict(account_service=account_service)
+                    for account_service in await AccountServiceRepository().get_list_by_account(account=account)
+                ]
+            }
+        else:
+            return {
+                'account_services': [
+                    await self._generate_account_service_dict(account_service=account_service)
+                    for account_service in await AccountServiceRepository().get_list()
+                ]
+            }
 
     @session_required()
     async def get_list(
@@ -214,14 +226,8 @@ class AccountServiceService(BaseService):
     ):
         return {
             'account_services': [
-                {
-                    'id': account_service.id,
-                    'account_id': account_service.account.id,
-                    'service_id': account_service.service.id,
-                    'questions': account_service.questions,
-                    'answers': account_service.answers,
-                    'state': account_service.state,
-                } for account_service in await AccountServiceRepository().get_list_by_account(account=session.account)
+                await self._generate_account_service_dict(account_service=account_service)
+                for account_service in await AccountServiceRepository().get_list_by_account(account=session.account)
             ]
         }
 
