@@ -14,9 +14,11 @@
 # limitations under the License.
 #
 
+
 from typing import Optional
 
-from fastapi import UploadFile
+from fastapi import UploadFile, Depends
+from pydantic import Field, BaseModel
 
 from app.services import MealReportService
 from app.utils import Response, Router
@@ -27,19 +29,23 @@ router = Router(
 )
 
 
+class MealReportCreateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    meal_id: int = Field()
+    comment: Optional[str] = Field(default=None)
+    products: Optional[str] = Field(default=None)
+
+
 @router.post()
 async def route(
-        token: str,
-        meal_id: int,
-        comment: str = None,
-        products: str = None,
+        schema: MealReportCreateByAdminSchema = Depends(),
         images: Optional[list[UploadFile]] = None,
 ):
     result = await MealReportService().create_by_admin(
-        token=token,
-        meal_id=meal_id,
-        comment=comment,
+        token=schema.token,
+        meal_id=schema.meal_id,
+        comment=schema.comment,
         images=images,
-        products=products,
+        products=schema.products,
     )
     return Response(**result)

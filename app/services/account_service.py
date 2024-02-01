@@ -20,6 +20,7 @@ from json import JSONDecodeError, loads
 
 from app.db.models import Account, AccountService, Service, Session
 from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
+from app.services.service import ServiceService
 from app.services.base import BaseService
 from app.utils.exceptions import InvalidAccountServiceAnswerList, NotEnoughPermissions
 from app.utils.decorators.session_required import session_required
@@ -266,7 +267,7 @@ class AccountServiceService(BaseService):
             'id': account_service.id,
             'account_id': account_service.account.id,
             'service_id': account_service.service.id,
-            'questions': account_service.questions,
+            'questions': await ServiceService.reformat_questions(questions=account_service.questions),
             'answers': account_service.answers,
             'state': account_service.state,
         }

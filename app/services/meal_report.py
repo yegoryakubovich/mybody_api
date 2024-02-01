@@ -339,4 +339,3 @@ class MealReportService(BaseService):
             return False
         except DoesNotExist:
             return False
-

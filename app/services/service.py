@@ -74,6 +74,18 @@ class ServiceService(BaseService):
                         value_default=question['name'],
                         return_model=True,
                     )
+                    if 'values' in question:
+                        values_texts = []
+                        for value in question['values']:
+                            value_text = await TextService().create_by_admin(
+                                session=session,
+                                key=f'value_{await create_id_str()}',
+                                value_default=value,
+                                return_model=True,
+                            )
+                            values_texts.append(value_text.id)
+                        question.pop('values')
+                        question['values_texts_ids'] = values_texts
                     question.pop('name')
                     question['name_text_id'] = name_text.id
             questions_sections = dumps(sections)
@@ -82,7 +94,6 @@ class ServiceService(BaseService):
                     'questions': questions_sections,
                 }
             )
-
         name_text_key = f'service_{id_str}'
         name_text = await TextService().create_by_admin(
             session=session,
@@ -263,6 +274,13 @@ class ServiceService(BaseService):
                 name_text: Text = await TextRepository().get_by_id(id_=name_text_id)
                 question.pop('name_text_id')
                 question['name_text'] = name_text.key
+                if 'values_texts_ids' in question:
+                    values_texts = []
+                    for value_text_id in question['values_texts_ids']:
+                        value_text: Text = await TextRepository().get_by_id(id_=value_text_id)
+                        values_texts.append(value_text.key)
+                    question.pop('values_texts_ids')
+                    question['values_texts'] = values_texts
         return dumps(questions)
 
     async def _delete_service_questions_texts(
@@ -284,3 +302,9 @@ class ServiceService(BaseService):
                         session=session,
                         key=question['name_text'],
                     )
+                    if 'values_texts' in question:
+                        for value_text in question['values_texts']:
+                            await TextService().delete_by_admin(
+                                session=session,
+                                key=value_text,
+                            )
