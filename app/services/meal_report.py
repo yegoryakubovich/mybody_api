@@ -18,20 +18,19 @@
 from json import JSONDecodeError, loads
 
 from fastapi import UploadFile
-from fastapi.params import File
 from peewee import DoesNotExist
 
-from app.services.main.image import ImageService
-from .meal_report_image import MealReportImageService
-from .meal_report_product import MealReportProductService
-from .base import BaseService
 from app.repositories import MealReportImageRepository, MealReportProductRepository, \
     MealReportRepository, \
     MealRepository, ProductRepository
+from app.services.main.image import ImageService
 from app.utils.decorators import session_required
-from ..db.models import Meal, MealReport, Session
 from app.utils.exceptions import InvalidFileType, InvalidProductList, ModelAlreadyExist, NotEnoughPermissions, \
     TooLargeFile, NoRequiredParameters
+from .base import BaseService
+from .meal_report_image import MealReportImageService
+from .meal_report_product import MealReportProductService
+from ..db.models import Meal, MealReport, Session
 
 
 class MealReportService(BaseService):

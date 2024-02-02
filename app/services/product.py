@@ -175,6 +175,7 @@ class ProductService(BaseService):
                     'calories': calories,
                 }
             )
+        # noinspection DuplicatedCode
         if article_id:
             if article_id == -1:
                 article = -1

@@ -17,7 +17,6 @@
 
 from peewee import BooleanField, DateField, PrimaryKeyField, ForeignKeyField
 
-from .article import Article
 from .account_service import AccountService
 from .base import BaseModel
 

@@ -160,7 +160,8 @@ class ArticleService(BaseService):
     @session_required(return_model=False)
     async def get(self, id_):
         article = await ArticleRepository().get_by_id(id_=id_)
-        translations = await ArticleTranslationRepository().get_list_by_article(article=article)
+        # FIXME
+        # translations = await ArticleTranslationRepository().get_list_by_article(article=article)
         return {
             'article': await self._generate_article_dict(article=article),
         }

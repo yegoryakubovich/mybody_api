@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+
 from pydantic import Field, BaseModel
 
 from app.services import MealReportService

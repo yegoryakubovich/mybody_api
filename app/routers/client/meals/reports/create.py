@@ -24,6 +24,7 @@ from app.services import MealReportService
 from app.utils import Response, Router
 
 
+# noinspection DuplicatedCode
 router = Router(
     prefix='/create',
 )

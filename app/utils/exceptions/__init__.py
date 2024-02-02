@@ -25,31 +25,3 @@ from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, No
 from .meal import InvalidMealType
 from .product import InvalidProductList, InvalidProductType, InvalidUnit
 
-
-__all__ = [
-    'ApiException',
-
-    'ModelDoesNotExist',
-    'NotEnoughPermissions',
-    'NoRequiredParameters',
-    'ModelAlreadyExist',
-
-    'WrongPassword',
-    'AccountMissingPermission',
-    'InvalidAccountServiceAnswerList',
-    'InvalidPassword',
-    'InvalidUsername',
-
-    'ArticleSessionRequired',
-
-    'InvalidExerciseType',
-
-    'InvalidProductType',
-    'InvalidUnit',
-    'InvalidProductList',
-
-    'InvalidMealType',
-
-    'InvalidFileType',
-    'TooLargeFile',
-]

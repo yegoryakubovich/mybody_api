@@ -17,7 +17,3 @@
 
 from .session_required import session_required
 
-
-__all__ = [
-    'session_required'
-]

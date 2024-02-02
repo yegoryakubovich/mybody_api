@@ -97,6 +97,7 @@ class ExerciseService(BaseService):
             'by_admin': True,
         }
 
+        # noinspection DuplicatedCode
         if article_id:
             if article_id == -1:
                 article = -1

@@ -43,6 +43,7 @@ app = FastAPI(
     dependencies=[Depends(init)],
     exception_handlers={RequestValidationError: validation_error},
 )
+# noinspection PyTypeChecker
 app.add_middleware(
     middleware_class=BaseHTTPMiddleware,
     dispatch=Middleware(),
