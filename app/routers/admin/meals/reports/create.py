@@ -17,7 +17,6 @@
 
 from typing import Optional
 
-from fastapi import UploadFile, Depends
 from pydantic import Field, BaseModel
 
 from app.services import MealReportService
@@ -39,14 +38,12 @@ class MealReportCreateByAdminSchema(BaseModel):
 
 @router.post()
 async def route(
-        schema: MealReportCreateByAdminSchema = Depends(),
-        images: Optional[list[UploadFile]] = None,
+        schema: MealReportCreateByAdminSchema,
 ):
     result = await MealReportService().create_by_admin(
         token=schema.token,
         meal_id=schema.meal_id,
         comment=schema.comment,
-        images=images,
         products=schema.products,
     )
     return Response(**result)

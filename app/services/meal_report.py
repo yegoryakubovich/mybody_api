@@ -17,20 +17,18 @@
 
 from json import JSONDecodeError, loads
 
-from fastapi import UploadFile
+
 from peewee import DoesNotExist
 
+from .meal_report_image import MealReportImageService
+from .meal_report_product import MealReportProductService
+from .base import BaseService
 from app.repositories import MealReportImageRepository, MealReportProductRepository, \
     MealReportRepository, \
     MealRepository, ProductRepository
-from app.services.main.image import ImageService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidFileType, InvalidProductList, ModelAlreadyExist, NotEnoughPermissions, \
-    TooLargeFile, NoRequiredParameters
-from .base import BaseService
-from .meal_report_image import MealReportImageService
-from .meal_report_product import MealReportProductService
 from ..db.models import Meal, MealReport, Session
+from app.utils.exceptions import InvalidProductList, ModelAlreadyExist, NotEnoughPermissions, NoRequiredParameters
 
 
 class MealReportService(BaseService):
@@ -41,7 +39,6 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str = None,
             products: str = None,
-            images: list[UploadFile] = None,
             by_admin: bool = False,
     ) -> MealReport:
         meal: Meal = await MealRepository().get_by_id(id_=meal_id)
@@ -51,10 +48,6 @@ class MealReportService(BaseService):
                     'parameters': ['comment', 'products']
                 }
             )
-
-        if images and len(images) > 0:
-            for file in images:
-                await self.check_image(image=file)
         action_parameters = {
             'creator': f'session_{session.id}',
             'meal': meal_id,
@@ -100,30 +93,6 @@ class MealReportService(BaseService):
                         product_id=product['id'],
                         value=product['value'],
                     )
-        if images and len(images) > 0:
-            for file in images:
-                if by_admin:
-                    image = await ImageService().create_by_admin(
-                        session=session,
-                        file=file,
-                        return_model=True,
-                    )
-                    await MealReportImageService().create_by_admin(
-                        session=session,
-                        meal_report_id=meal_report.id,
-                        image_id_str=image.id_str,
-                    )
-                else:
-                    image = await ImageService().create(
-                        session=session,
-                        file=file,
-                        return_model=True,
-                    )
-                    await MealReportImageService().create(
-                        session=session,
-                        meal_report_id=meal_report.id,
-                        image_id_str=image.id_str,
-                    )
 
         await self.create_action(
             model=meal_report,
@@ -140,13 +109,11 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str = None,
             products: str = None,
-            images: list[UploadFile] = None,
     ):
         meal_report = await self._create(
             session=session,
             meal_id=meal_id,
             comment=comment,
-            images=images,
             products=products,
         )
 
@@ -159,13 +126,11 @@ class MealReportService(BaseService):
             meal_id: int,
             comment: str = None,
             products: str = None,
-            images: list[UploadFile] = None,
     ):
         meal_report = await self._create(
             session=session,
             meal_id=meal_id,
             comment=comment,
-            images=images,
             products=products,
             by_admin=True,
         )
@@ -309,13 +274,6 @@ class MealReportService(BaseService):
         if not await self._is_valid_products(products=products):
             raise InvalidProductList()
         return loads(products)
-
-    @staticmethod
-    async def check_image(image: UploadFile):
-        if 'image' not in image.content_type:
-            raise InvalidFileType()
-        if image.size >= 16777216:
-            raise TooLargeFile()
 
     @staticmethod
     async def _is_valid_products(products: str):

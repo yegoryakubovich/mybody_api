@@ -36,7 +36,7 @@ class MealReportImageCreateByAdminSchema(BaseModel):
 async def route(schema: MealReportImageCreateByAdminSchema):
     result = await MealReportImageService().create_by_admin(
         token=schema.token,
-        meal_report_id=schema.meal_report_id,
+        id_=schema.meal_report_id,
         image_id_str=schema.image,
     )
     return Response(**result)

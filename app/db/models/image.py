@@ -23,6 +23,8 @@ from .base import BaseModel
 class Image(BaseModel):
     id = PrimaryKeyField()
     id_str = CharField()
+    model = CharField()
+    model_id = CharField()
     is_deleted = BooleanField(default=False)
 
     class Meta:

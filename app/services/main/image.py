@@ -20,6 +20,8 @@ from os import path, remove
 from fastapi import UploadFile
 from PIL import Image as ImagePillow
 
+from app.services import MealReportImageService
+from app.utils.exceptions import InvalidFileType, TooLargeFile, ModelDoesNotExist
 from config import settings
 from app.services.base import BaseService
 from app.db.models import Image, Session
@@ -33,9 +35,17 @@ class ImageService(BaseService):
             self,
             session: Session,
             file: UploadFile,
+            model: str,
+            id_: int | str,
             by_admin: bool = False,
     ) -> Image:
         id_str = await create_id_str()
+
+        await self.check_file(file=file)
+
+        services = {
+            'meal_report': MealReportImageService(),
+        }
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -63,7 +73,34 @@ class ImageService(BaseService):
 
             resized_image.save(f'{settings.path_images}/{id_str}.jpg', optimize=True, quality=90)
 
-        image = await ImageRepository().create(id_str=id_str)
+        image = await ImageRepository().create(
+            id_str=id_str,
+            model=model,
+            model_id=id_,
+        )
+
+        try:
+            service = services[model]
+            if by_admin:
+                service.create_by_admin(
+                    session=session,
+                    id_=id_,
+                    image_id_str=id_str,
+                )
+            else:
+                service.create(
+                    session=session,
+                    id_=id_,
+                    image_id_str=id_str,
+                )
+        except KeyError:
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'model',
+                    'id_type': 'name',
+                    'id_value': model,
+                },
+            )
 
         await self.create_action(
             model=image,
@@ -78,9 +115,11 @@ class ImageService(BaseService):
             self,
             session: Session,
             file: UploadFile,
+            model: str,
+            id_: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session)
+        image = await self._create(file=file, session=session, model=model, id_=id_)
 
         if return_model:
             return image
@@ -92,9 +131,11 @@ class ImageService(BaseService):
             self,
             session: Session,
             file: UploadFile,
+            model: str,
+            id_: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session)
+        image = await self._create(file=file, session=session, model=model, id_=id_)
 
         if return_model:
             return image
@@ -155,3 +196,11 @@ class ImageService(BaseService):
             id_str=id_str,
             by_admin=True,
         )
+
+    @staticmethod
+    async def check_file(file: UploadFile):
+        if 'image' not in file.content_type:
+            raise InvalidFileType()
+        if file.size >= 16777216:
+            raise TooLargeFile()
+

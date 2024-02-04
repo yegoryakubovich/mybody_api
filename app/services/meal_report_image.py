@@ -28,16 +28,16 @@ class MealReportImageService(BaseService):
     async def _create(
             self,
             session: Session,
-            meal_report_id: int,
+            id_: int,
             image_id_str: str,
             by_admin: bool = False,
     ):
-        meal_report = await MealReportRepository().get_by_id(id_=meal_report_id)
+        meal_report = await MealReportRepository().get_by_id(id_=id_)
         image = await ImageRepository().get_by_id_str(id_str=image_id_str)
 
         action_parameters = {
                 'creator': f'session_{session.id}',
-                'meal_report_id': meal_report_id,
+                'meal_report_id': id_,
                 'image': image_id_str,
         }
 
@@ -68,11 +68,11 @@ class MealReportImageService(BaseService):
     async def create(
             self,
             session: Session,
-            meal_report_id: int,
+            id_: int,
             image_id_str: str,
     ):
         meal_report_image = await self._create(
-            meal_report_id=meal_report_id,
+            id_=id_,
             image_id_str=image_id_str,
             session=session,
         )
@@ -83,11 +83,11 @@ class MealReportImageService(BaseService):
     async def create_by_admin(
             self,
             session: Session,
-            meal_report_id: int,
+            id_: int,
             image_id_str: str,
     ):
         meal_report_image = await self._create(
-            meal_report_id=meal_report_id,
+            id_=id_,
             image_id_str=image_id_str,
             session=session,
             by_admin=True,
