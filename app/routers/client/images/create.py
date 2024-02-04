@@ -15,27 +15,28 @@
 #
 
 
-from pydantic import BaseModel, Field
+from fastapi import UploadFile
 
-from app.services import MealReportImageService
+from app.services import ImageService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/delete'
+    prefix='/create',
 )
 
 
-class MealReportImageDeleteSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
-
-
 @router.post()
-async def route(schema: MealReportImageDeleteSchema):
-    result = await MealReportImageService().delete(
-        token=schema.token,
-        id_=schema.id,
+async def route(
+        token: str,
+        model: str,
+        model_id: int | str,
+        file: UploadFile,
+):
+    result = await ImageService().create(
+        token=token,
+        model=model,
+        model_id=model_id,
+        file=file,
     )
     return Response(**result)
-

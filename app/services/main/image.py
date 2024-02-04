@@ -20,7 +20,7 @@ from os import path, remove
 from fastapi import UploadFile
 from PIL import Image as ImagePillow
 
-from app.services import MealReportImageService
+from app.services.meal_report_image import MealReportImageService
 from app.utils.exceptions import InvalidFileType, TooLargeFile, ModelDoesNotExist
 from config import settings
 from app.services.base import BaseService
@@ -31,21 +31,33 @@ from app.utils.decorators import session_required
 
 
 class ImageService(BaseService):
+
+    image_services = {
+        'meal_report': MealReportImageService(),
+    }
+
     async def _create(
             self,
             session: Session,
             file: UploadFile,
             model: str,
-            id_: int | str,
+            model_id: int | str,
             by_admin: bool = False,
     ) -> Image:
         id_str = await create_id_str()
 
         await self.check_file(file=file)
 
-        services = {
-            'meal_report': MealReportImageService(),
-        }
+        try:
+            service = self.image_services[model]
+        except KeyError:
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'model',
+                    'id_type': 'name',
+                    'id_value': model,
+                },
+            )
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -57,6 +69,19 @@ class ImageService(BaseService):
                 {
                     'by_admin': True,
                 }
+            )
+
+        if by_admin:
+            service.create_by_admin(
+                session=session,
+                model_id=model_id,
+                image_id_str=id_str,
+            )
+        else:
+            service.create(
+                session=session,
+                id_=model_id,
+                image_id_str=id_str,
             )
 
         with open(f'{settings.path_images}/{id_str}.jpg', mode='wb') as image:
@@ -76,31 +101,8 @@ class ImageService(BaseService):
         image = await ImageRepository().create(
             id_str=id_str,
             model=model,
-            model_id=id_,
+            model_id=model_id,
         )
-
-        try:
-            service = services[model]
-            if by_admin:
-                service.create_by_admin(
-                    session=session,
-                    id_=id_,
-                    image_id_str=id_str,
-                )
-            else:
-                service.create(
-                    session=session,
-                    id_=id_,
-                    image_id_str=id_str,
-                )
-        except KeyError:
-            raise ModelDoesNotExist(
-                kwargs={
-                    'model': 'model',
-                    'id_type': 'name',
-                    'id_value': model,
-                },
-            )
 
         await self.create_action(
             model=image,
@@ -116,10 +118,10 @@ class ImageService(BaseService):
             session: Session,
             file: UploadFile,
             model: str,
-            id_: int | str,
+            model_id: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session, model=model, id_=id_)
+        image = await self._create(file=file, session=session, model=model, model_id=model_id)
 
         if return_model:
             return image
@@ -132,10 +134,10 @@ class ImageService(BaseService):
             session: Session,
             file: UploadFile,
             model: str,
-            id_: int | str,
+            model_id: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session, model=model, id_=id_)
+        image = await self._create(file=file, session=session, model=model, model_id=model_id)
 
         if return_model:
             return image
@@ -148,7 +150,7 @@ class ImageService(BaseService):
             id_str: str,
             by_admin: bool = False,
     ):
-        image = await ImageRepository().get_by_id_str(id_str=id_str)
+        image: Image = await ImageRepository().get_by_id_str(id_str=id_str)
 
         action_parameters = {
             'deleter': f'session_{session.id}',
@@ -160,6 +162,18 @@ class ImageService(BaseService):
                 {
                     'by_admin': True,
                 }
+            )
+
+        service = self.image_services[image.model]
+        if by_admin:
+            await service.delete_by_admin(
+                session=session,
+                id_=image.model_id,
+            )
+        else:
+            await service.delete(
+                session=session,
+                id_=image.model_id,
             )
 
         await ImageRepository().delete(model=image)

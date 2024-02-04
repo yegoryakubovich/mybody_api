@@ -29,10 +29,14 @@ router = Router(
 @router.post()
 async def route(
         token: str,
+        model: str,
+        model_id: int | str,
         file: UploadFile,
 ):
     result = await ImageService().create_by_admin(
         token=token,
+        model=model,
+        model_id=model_id,
         file=file,
     )
     return Response(**result)

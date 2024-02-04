@@ -16,7 +16,6 @@
 
 
 from config import settings
-from . import ImageService
 from .base import BaseService
 from ..db.models import MealReportImage, Session
 from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
@@ -119,17 +118,6 @@ class MealReportImageService(BaseService):
                 raise NotEnoughPermissions()
 
         await MealReportImageRepository().delete(model=meal_report_image)
-
-        if by_admin:
-            await ImageService().delete_by_admin(
-                session=session,
-                id_str=meal_report_image.image.id_str,
-            )
-        else:
-            await ImageService().delete(
-                session=session,
-                id_str=meal_report_image.image.id_str,
-            )
 
         await self.create_action(
             model=meal_report_image,

@@ -19,7 +19,6 @@ from app.utils import Router
 from .get import router as router_get
 from .create import router as router_create
 from .delete import router as router_delete
-from .images import router as router_images
 from .products import router as router_products
 
 router = Router(
@@ -28,7 +27,6 @@ router = Router(
         router_get,
         router_create,
         router_delete,
-        router_images,
         router_products,
     ]
 )
