@@ -15,20 +15,23 @@
 #
 
 
-from .create import router as router_create
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from app.utils import Router
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import PermissionService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/permissions',
-    routes_included=[
-        router_get,
-        router_get_list,
-        router_create,
-        router_delete,
-    ],
-    tags=['Permissions'],
+    prefix='/list/get',
 )
+
+
+class PermissionGetListByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+
+
+@router.get()
+async def route(schema: PermissionGetListByAdminSchema = Depends()):
+    result = await PermissionService().get_list_by_admin(token=schema.token)
+    return Response(**result)

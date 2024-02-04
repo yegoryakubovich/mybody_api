@@ -81,6 +81,7 @@ class TextService(BaseService):
             key: str,
             value_default: str,
             return_model: bool = False,
+            create_text_pack: bool = True,
     ) -> dict | Text:
         text = await TextRepository().create(
             key=key,
@@ -96,7 +97,8 @@ class TextService(BaseService):
                 'by_admin': True,
             },
         )
-        await TextPackService().create_all_by_admin(session=session)
+        if create_text_pack:
+            await TextPackService().create_all_by_admin(session=session)
         if return_model:
             return text
         return {'key': text.key}

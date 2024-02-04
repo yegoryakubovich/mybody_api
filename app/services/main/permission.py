@@ -92,8 +92,9 @@ class PermissionService(BaseService):
 
         return {}
 
-    @staticmethod
-    async def get(
+    @session_required(permissions=['permissions'], return_model=False)
+    async def get_by_admin(
+            self,
             id_str: str,
     ):
         permission: Permission = await PermissionRepository().get_by_id_str(id_str=id_str)
@@ -105,8 +106,8 @@ class PermissionService(BaseService):
             }
         }
 
-    @staticmethod
-    async def get_list():
+    @session_required(permissions=['permissions'], return_model=False)
+    async def get_list_by_admin(self):
         return {
             'permissions': [
                 {
