@@ -121,7 +121,12 @@ class ImageService(BaseService):
             model_id: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session, model=model, model_id=model_id)
+        image = await self._create(
+            file=file,
+            session=session,
+            model=model,
+            model_id=model_id
+        )
 
         if return_model:
             return image
@@ -137,7 +142,13 @@ class ImageService(BaseService):
             model_id: int | str,
             return_model: bool = False,
     ):
-        image = await self._create(file=file, session=session, model=model, model_id=model_id)
+        image = await self._create(
+            file=file,
+            session=session,
+            model=model,
+            model_id=model_id,
+            by_admin=True
+        )
 
         if return_model:
             return image
