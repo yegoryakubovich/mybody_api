@@ -40,6 +40,6 @@ async def route(schema: TrainingGetByDateSchema = Depends()):
     result = await TrainingService().get_by_date(
         token=schema.token,
         account_service_id=schema.account_service_id,
-        date=schema.date,
+        date_=schema.date,
     )
     return Response(**result)

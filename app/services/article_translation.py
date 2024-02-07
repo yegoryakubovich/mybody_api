@@ -43,7 +43,7 @@ class ArticleTranslationService(BaseService):
             raise ModelAlreadyExist(
                 kwargs={
                     'model': 'ArticleTranslation',
-                    'id_type': '["article_id", "language_id_str"]',
+                    'id_type': ['article_id', 'language_id_str'],
                     'id_value': [article_id, language_id_str],
                 }
             )

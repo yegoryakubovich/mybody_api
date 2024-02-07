@@ -55,10 +55,11 @@ class TrainingRepository(BaseRepository):
     @staticmethod
     async def get_by_date_and_account_service(
             account_service: AccountService,
-            date_: date = None,
+            date_: date,
     ):
+
         try:
-            Training.get(
+            return Training.get(
                 (Training.account_service == account_service) &
                 (Training.date == date_) &
                 (Training.is_deleted == False)
@@ -67,7 +68,7 @@ class TrainingRepository(BaseRepository):
             raise ModelDoesNotExist(
                 kwargs={
                     'model': 'Training',
-                    'id_type': 'date, account_service',
-                    'id_value': [date_, account_service.id],
+                    'id_type': ['date', 'account_service'],
+                    'id_value': [str(date_), account_service.id],
                 },
             )

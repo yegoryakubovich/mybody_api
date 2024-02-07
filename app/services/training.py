@@ -39,7 +39,7 @@ class TrainingService(BaseService):
             raise ModelAlreadyExist(
                 kwargs={
                     'model': 'Training',
-                    'id_type': '["account_service_id", "date"]',
+                    'id_type': ['account_service_id', 'date'],
                     'id_value': [account_service_id, str(date_)],
                 }
             )
@@ -156,14 +156,14 @@ class TrainingService(BaseService):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         training: Training = await TrainingRepository().get_by_date_and_account_service(
             account_service=account_service,
-            date_=date_
+            date_=date_,
         )
 
         if training.account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
 
         return {
-            'training': await self._generate_training_dict(training=training)
+            'training': await self._generate_training_dict(training=training),
         }
 
     @session_required(permissions=['trainings'])
