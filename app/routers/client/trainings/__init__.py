@@ -17,6 +17,7 @@
 
 from app.utils import Router
 from .get import router as router_get
+from .get_by_date import router as router_get_by_date
 from .get_list import router as router_get_list
 from .reports import router as router_reports
 
@@ -25,6 +26,7 @@ router = Router(
     prefix='/trainings',
     routes_included=[
         router_get,
+        router_get_by_date,
         router_get_list,
         router_reports,
     ],

@@ -20,6 +20,7 @@ from .create import router as router_create
 from .update import router as router_update
 from .delete import router as router_delete
 from .get import router as router_get
+from .get_by_date import router as router_get_by_date
 from .get_list import router as router_get_list
 from .get_list_all import router as router_get_list_all
 from .exercises import router as router_exercises
@@ -33,6 +34,7 @@ router = Router(
         router_update,
         router_delete,
         router_get,
+        router_get_by_date,
         router_get_list,
         router_get_list_all,
         router_exercises,

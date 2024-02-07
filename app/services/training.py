@@ -35,11 +35,7 @@ class TrainingService(BaseService):
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
 
-        trainings = await TrainingRepository().get_list_by_account_service(
-            account_service=account_service,
-            date_=date_
-        )
-        if trainings and len(trainings) > 0:
+        if await TrainingRepository().is_exist_by_date_and_account_service(account_service=account_service, date_=date_):
             raise ModelAlreadyExist(
                 kwargs={
                     'model': 'Training',
@@ -150,15 +146,61 @@ class TrainingService(BaseService):
             id_=id_,
         )
 
+    async def _get_by_date(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+            by_admin: bool = False,
+    ):
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        training: Training = await TrainingRepository().get_by_date_and_account_service(
+            account_service=account_service,
+            date_=date_
+        )
+
+        if training.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+
+        return {
+            'training': await self._generate_training_dict(training=training)
+        }
+
+    @session_required(permissions=['trainings'])
+    async def get_by_date_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+    ):
+        return await self._get_by_date(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
+            by_admin=True,
+        )
+
+    @session_required()
+    async def get_by_date(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+    ):
+        return await self._get_by_date(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
+        )
+
     async def _get_list(
             self,
             session: Session,
             account_service_id: int,
-            date_: date = None,
             by_admin: bool = False,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
-        trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service, date_=date_)
+        trainings = await TrainingRepository().get_list_by_account_service(account_service=account_service)
 
         if account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
@@ -175,11 +217,9 @@ class TrainingService(BaseService):
             self,
             session: Session,
             account_service_id: int,
-            date_: date = None,
     ):
         return await self._get_list(
             session=session,
-            date_=date_,
             account_service_id=account_service_id,
         )
 
@@ -188,12 +228,10 @@ class TrainingService(BaseService):
             self,
             session: Session,
             account_service_id: int,
-            date_: date = None,
     ):
         return await self._get_list(
             session=session,
             account_service_id=account_service_id,
-            date_=date_,
             by_admin=True,
         )
 

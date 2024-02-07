@@ -16,7 +16,6 @@
 
 
 from datetime import date as datetime_date
-from typing import Optional
 
 from fastapi import Depends
 from pydantic import BaseModel, Field
@@ -26,19 +25,21 @@ from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/list/get'
+    prefix='/by-date/get'
 )
 
 
-class TrainingGetListByAdminSchema(BaseModel):
+class TrainingGetByDateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
+    date: datetime_date = Field()
 
 
 @router.get()
-async def route(schema: TrainingGetListByAdminSchema = Depends()):
-    result = await TrainingService().get_list_by_admin(
+async def route(schema: TrainingGetByDateSchema = Depends()):
+    result = await TrainingService().get_by_date(
         token=schema.token,
         account_service_id=schema.account_service_id,
+        date=schema.date,
     )
     return Response(**result)

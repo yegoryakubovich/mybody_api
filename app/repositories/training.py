@@ -17,9 +17,12 @@
 
 from datetime import date
 
+from peewee import DoesNotExist
+
 from app.db.models import Training
 from .base import BaseRepository
 from app.db.models import AccountService
+from ..utils.exceptions import ModelDoesNotExist
 
 
 class TrainingRepository(BaseRepository):
@@ -28,16 +31,43 @@ class TrainingRepository(BaseRepository):
     @staticmethod
     async def get_list_by_account_service(
             account_service: AccountService,
-            date_: date = None,
     ) -> list[Training]:
-        if date_:
-            return Training.select().where(
+        return Training.select().where(
+            (Training.account_service == account_service) &
+            (Training.is_deleted == False)
+        ).execute()
+
+    @staticmethod
+    async def is_exist_by_date_and_account_service(
+            account_service: AccountService,
+            date_: date,
+    ):
+        try:
+            Training.select().where(
                 (Training.account_service == account_service) &
                 (Training.date == date_) &
                 (Training.is_deleted == False)
             ).execute()
-        else:
-            return Training.select().where(
+            return True
+        except DoesNotExist:
+            return False
+
+    @staticmethod
+    async def get_by_date_and_account_service(
+            account_service: AccountService,
+            date_: date = None,
+    ):
+        try:
+            Training.get(
                 (Training.account_service == account_service) &
+                (Training.date == date_) &
                 (Training.is_deleted == False)
-            ).execute()
+            )
+        except DoesNotExist:
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'Training',
+                    'id_type': 'date, account_service',
+                    'id_value': [date_, account_service.id],
+                },
+            )
