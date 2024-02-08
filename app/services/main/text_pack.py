@@ -32,7 +32,6 @@ class TextPackService(BaseService):
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
         text_pack = await TextPackRepository.get_current(language=language)
 
-        # FIXME
         if text_pack.id == 0:
             return {
                 'text_pack_id': text_pack.id,

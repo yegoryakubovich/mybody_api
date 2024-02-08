@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
@@ -31,8 +32,8 @@ class AccountServiceUpdateByAdminSchema(BaseModel):
     id: int = Field()
     answers: str = Field(default=None, min_length=2, max_length=8192)
     state: str = Field(default=None, min_length=2, max_length=128)
-    datetime_from: str = Field(default=None)
-    datetime_to: str = Field(default=None)
+    datetime_from: datetime = Field(default=None)
+    datetime_to: datetime = Field(default=None)
 
 
 @router.post()

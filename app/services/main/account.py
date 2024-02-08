@@ -50,10 +50,10 @@ class AccountService(BaseService):
                     'id_value': username,
                 }
             )
-        if not self.is_valid_password(password=password):
-            raise InvalidPassword()
         if not self.is_valid_username(username=username):
             raise InvalidUsername()
+        if not self.is_valid_password(password=password):
+            raise InvalidPassword()
 
         # Generate salt and password hash
         password_salt = await create_salt()

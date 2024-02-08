@@ -56,4 +56,4 @@ class TextPackRepository(BaseRepository):
             ).order_by(TextPack.id.desc()).get()
             return text_pack
         except DoesNotExist:
-            return TextPack(id=0)  # FIXME
+            return TextPack().get(TextPack.id == 0)

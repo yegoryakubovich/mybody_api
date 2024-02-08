@@ -19,11 +19,7 @@ from peewee import DoesNotExist
 
 from app.db.models import Text, Language, TextTranslation
 from app.repositories.base import BaseRepository
-from app.utils.exceptions import ApiException
-
-
-class TextDoesNotExist(ApiException):
-    pass
+from app.utils.exceptions import ModelDoesNotExist
 
 
 class TextRepository(BaseRepository):
@@ -32,9 +28,18 @@ class TextRepository(BaseRepository):
     @staticmethod
     async def get_by_key(key: str) -> Text:
         try:
-            return Text.get((Text.key == key) & (Text.is_deleted == False))
+            return Text.get(
+                (Text.key == key) &
+                (Text.is_deleted == False)
+            )
         except DoesNotExist:
-            raise TextDoesNotExist(f'Text with key "{key}" does not exist')
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'Text',
+                    'id_type': 'key',
+                    'id_value': key,
+                },
+            )
 
     @staticmethod
     async def get_value(text: Text, language: Language = None) -> str:

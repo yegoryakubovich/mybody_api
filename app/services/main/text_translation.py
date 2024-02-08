@@ -19,6 +19,7 @@ from app.db.models import Language, Session, Text, TextTranslation
 from app.repositories import LanguageRepository, TextRepository, TextTranslationRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
+from app.utils.exceptions import ModelAlreadyExist, ModelDoesNotExist
 
 
 class TextTranslationService(BaseService):
@@ -33,11 +34,23 @@ class TextTranslationService(BaseService):
     ) -> dict | TextTranslation:
         text: Text = await TextRepository().get_by_key(key=text_key)
         language: Language = await LanguageRepository().get_by_id_str(id_str=language)
-        text_translation = await TextTranslationRepository().create(
-            text=text,
-            language=language,
-            value=value,
-        )
+
+        try:
+            await TextTranslationRepository.get(text=text, language=language)
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'TextTranslation',
+                    'id_type': 'language',
+                    'id_value': language.id_str,
+                },
+            )
+        except ModelDoesNotExist:
+            text_translation = await TextTranslationRepository().create(
+                text=text,
+                language=language,
+                value=value,
+            )
+
         await self.create_action(
             model=text_translation,
             action='create',

@@ -15,7 +15,7 @@
 #
 
 
-from datetime import datetime
+from datetime import datetime, date
 from json import JSONDecodeError, loads
 
 from app.db.models import Account, AccountService, Service, Session
@@ -103,16 +103,12 @@ class AccountServiceService(BaseService):
             id_: int,
             answers: str = None,
             state: str = None,
-            datetime_from: str = None,
-            datetime_to: str = None,
+            datetime_from: date = None,
+            datetime_to: date = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
         if answers:
             await self.check_answers(questions=account_service.questions, answers=answers)
-        if datetime_from:
-            datetime_from = datetime.strptime(datetime_from, '')  # FIXME format
-        if datetime_to:
-            datetime_to = datetime.strptime(datetime_to, '')  # FIXME format
         await AccountServiceRepository().update(
             model=account_service,
             answers=answers,
