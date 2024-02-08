@@ -54,9 +54,9 @@ class MealService(BaseService):
         ):
             raise ModelAlreadyExist(
                 kwargs={
-                    'model': 'Training',
-                    'id_type': ['account_service_id', 'date'],
-                    'id_value': [account_service_id, str(date_)],
+                    'model': 'Meal',
+                    'id_type': ['account_service_id', 'date', 'type'],
+                    'id_value': [account_service.id, str(date_), type_],
                 }
             )
 
@@ -114,17 +114,29 @@ class MealService(BaseService):
                     'parameters': ['data', 'type', 'fats', 'proteins', 'carbohydrates'],
                 }
             )
-        if date_:
-            action_parameters.update(
-                {
-                    'date': date_,
-                }
-            )
         if type_:
             await self.check_meal_type(type_=type_)
             action_parameters.update(
                 {
                     'type': type_,
+                }
+            )
+        if date_:
+            if await MealRepository().is_exist_by_parameters(
+                    account_service=meal.account_service,
+                    date_=date_,
+                    type_=type_,
+            ):
+                raise ModelAlreadyExist(
+                    kwargs={
+                        'model': 'Meal',
+                        'id_type': ['account_service_id', 'date', 'type'],
+                        'id_value': [meal.account_service.id, str(date_), type_],
+                    }
+                )
+            action_parameters.update(
+                {
+                    'date': date_,
                 }
             )
         if fats:
@@ -143,19 +155,6 @@ class MealService(BaseService):
             action_parameters.update(
                 {
                     'carbohydrates': carbohydrates,
-                }
-            )
-
-        if await MealRepository().is_exist_by_parameters(
-            account_service=meal.account_service,
-            date_=date_,
-            type_=type_,
-        ):
-            raise ModelAlreadyExist(
-                kwargs={
-                    'model': 'Training',
-                    'id_type': ['account_service_id', 'date'],
-                    'id_value': [meal.account_service.id, str(date_)],
                 }
             )
 

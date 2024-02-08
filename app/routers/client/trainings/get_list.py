@@ -32,7 +32,6 @@ router = Router(
 
 class TrainingGetListSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    date: Optional[datetime_date] = Field(default=None)
     account_service_id: int = Field()
 
 
@@ -40,7 +39,6 @@ class TrainingGetListSchema(BaseModel):
 async def route(schema: TrainingGetListSchema = Depends()):
     result = await TrainingService().get_list(
         token=schema.token,
-        date_=schema.date,
         account_service_id=schema.account_service_id,
     )
     return Response(**result)
