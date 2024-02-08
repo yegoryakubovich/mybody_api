@@ -17,6 +17,8 @@
 
 from datetime import date
 
+from peewee import DoesNotExist
+
 from app.db.models import AccountService, Meal
 from app.repositories.base import BaseRepository
 
@@ -40,3 +42,20 @@ class MealRepository(BaseRepository):
                 (Meal.account_service == account_service) &
                 (Meal.is_deleted == False)
             ).execute()
+
+    @staticmethod
+    async def is_exist_by_parameters(
+            account_service: AccountService,
+            date_: date,
+            type_: str,
+    ) -> bool:
+        try:
+            Meal.get(
+                (Meal.account_service == account_service) &
+                (Meal.date == date_) &
+                (Meal.type == type_) &
+                (Meal.is_deleted == False)
+            )
+            return True
+        except DoesNotExist:
+            return False

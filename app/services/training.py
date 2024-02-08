@@ -69,7 +69,19 @@ class TrainingService(BaseService):
             id_: int,
             date_: date,
     ):
-        training = await TrainingRepository().get_by_id(id_=id_)
+        training: Training = await TrainingRepository().get_by_id(id_=id_)
+
+        if await TrainingRepository().is_exist_by_date_and_account_service(
+                account_service=training.account_service,
+                date_=date_,
+        ):
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Training',
+                    'id_type': ['account_service_id', 'date'],
+                    'id_value': [training.account_service.id, str(date_)],
+                }
+            )
 
         await TrainingRepository().update(
             model=training,

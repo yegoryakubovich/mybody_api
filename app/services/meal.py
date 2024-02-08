@@ -23,7 +23,7 @@ from app.repositories import AccountServiceRepository, MealProductRepository, Me
     MealRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions
+from app.utils.exceptions import InvalidMealType, NoRequiredParameters, NotEnoughPermissions, ModelAlreadyExist
 
 
 class MealTypes:
@@ -46,6 +46,19 @@ class MealService(BaseService):
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         await self.check_meal_type(type_=type_)
+
+        if await MealRepository().is_exist_by_parameters(
+            account_service=account_service,
+            date_=date_,
+            type_=type_,
+        ):
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Training',
+                    'id_type': ['account_service_id', 'date'],
+                    'id_value': [account_service_id, str(date_)],
+                }
+            )
 
         meal = await MealRepository().create(
             account_service=account_service,
@@ -84,7 +97,7 @@ class MealService(BaseService):
             proteins: int = None,
             carbohydrates: int = None,
     ):
-        meal = await MealRepository().get_by_id(id_=id_)
+        meal: Meal = await MealRepository().get_by_id(id_=id_)
 
         action_parameters = {
                 'updater': f'session_{session.id}',
@@ -130,6 +143,19 @@ class MealService(BaseService):
             action_parameters.update(
                 {
                     'carbohydrates': carbohydrates,
+                }
+            )
+
+        if await MealRepository().is_exist_by_parameters(
+            account_service=meal.account_service,
+            date_=date_,
+            type_=type_,
+        ):
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Training',
+                    'id_type': ['account_service_id', 'date'],
+                    'id_value': [meal.account_service.id, str(date_)],
                 }
             )
 
