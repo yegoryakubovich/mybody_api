@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from peewee import DoesNotExist
 
 from .base import BaseRepository
-from ..db.models import MealReport, MealReportImage
+from ..db.models import MealReport, MealReportImage, Image
+from ..utils.exceptions import ModelDoesNotExist
 
 
 class MealReportImageRepository(BaseRepository):
@@ -28,3 +29,22 @@ class MealReportImageRepository(BaseRepository):
             (MealReportImage.meal_report == meal_report) &
             (MealReportImage.is_deleted == False)
         ).execute()
+
+    @staticmethod
+    async def get_by_meal_report_and_image(
+            meal_report: MealReport,
+            image: Image,
+    ):
+        try:
+            return MealReportImage.get(
+                (MealReportImage.meal_report == meal_report) &
+                (MealReportImage.image == image))
+        except DoesNotExist:
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'MealReportImage',
+                    'id_type': ['meal_report', 'image'],
+                    'id_value': [meal_report.id, image.id],
+                },
+            )
+

@@ -25,7 +25,7 @@ from app.utils.exceptions import InvalidFileType, TooLargeFile, ModelDoesNotExis
 from config import settings
 from app.services.base import BaseService
 from app.db.models import Image, Session
-from app.repositories import ImageRepository
+from app.repositories import ImageRepository, MealReportRepository
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 
@@ -34,6 +34,10 @@ class ImageService(BaseService):
 
     image_services = {
         'meal_report': MealReportImageService(),
+    }
+
+    model_repositories = {
+        'meal_report': MealReportRepository(),
     }
 
     async def _create(
@@ -59,6 +63,11 @@ class ImageService(BaseService):
                 },
             )
 
+        if model_id.isnumeric():
+            await self.model_repositories[model].get_by_id(id_=model_id)
+        else:
+            await self.model_repositories[model].get_by_id_str(id_str=model_id)
+
         action_parameters = {
             'creator': f'session_{session.id}',
             'id_str': id_str,
@@ -69,19 +78,6 @@ class ImageService(BaseService):
                 {
                     'by_admin': True,
                 }
-            )
-
-        if by_admin:
-            service.create_by_admin(
-                session=session,
-                model_id=model_id,
-                image_id_str=id_str,
-            )
-        else:
-            service.create(
-                session=session,
-                id_=model_id,
-                image_id_str=id_str,
             )
 
         with open(f'{settings.path_images}/{id_str}.jpg', mode='wb') as image:
@@ -103,6 +99,19 @@ class ImageService(BaseService):
             model=model,
             model_id=model_id,
         )
+
+        if by_admin:
+            await service.create_by_admin(
+                session=session,
+                model_id=model_id,
+                image_id_str=id_str,
+            )
+        else:
+            await service.create(
+                session=session,
+                model_id=model_id,
+                image_id_str=id_str,
+            )
 
         await self.create_action(
             model=image,
@@ -163,6 +172,8 @@ class ImageService(BaseService):
     ):
         image: Image = await ImageRepository().get_by_id_str(id_str=id_str)
 
+        image_model_id = await self._get_model_image_id(model_name=image.model, model_id=image.model_id, image=image)
+
         action_parameters = {
             'deleter': f'session_{session.id}',
             'id_str': id_str,
@@ -179,12 +190,12 @@ class ImageService(BaseService):
         if by_admin:
             await service.delete_by_admin(
                 session=session,
-                id_=image.model_id,
+                id_=image_model_id,
             )
         else:
             await service.delete(
                 session=session,
-                id_=image.model_id,
+                id_=image_model_id,
             )
 
         await ImageRepository().delete(model=image)
@@ -228,4 +239,14 @@ class ImageService(BaseService):
             raise InvalidFileType()
         if file.size >= 16777216:
             raise TooLargeFile()
+
+    async def _get_model_image_id(
+            self,
+            model_name: str,
+            model_id: int | str,
+            image: Image,
+    ):
+        image_service = self.image_services[model_name]
+        model_image = await image_service.get_by_id_and_image(id_=model_id, image=image)
+        return model_image.id
 

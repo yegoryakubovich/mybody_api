@@ -17,7 +17,7 @@
 
 from config import settings
 from .base import BaseService
-from ..db.models import MealReportImage, Session
+from ..db.models import MealReportImage, Session, MealReport, Image
 from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
 from app.utils.exceptions import NotEnoughPermissions
 from ..utils.decorators import session_required
@@ -27,16 +27,16 @@ class MealReportImageService(BaseService):
     async def _create(
             self,
             session: Session,
-            id_: int,
+            model_id: int,
             image_id_str: str,
             by_admin: bool = False,
     ):
-        meal_report = await MealReportRepository().get_by_id(id_=id_)
+        meal_report = await MealReportRepository().get_by_id(id_=model_id)
         image = await ImageRepository().get_by_id_str(id_str=image_id_str)
 
         action_parameters = {
                 'creator': f'session_{session.id}',
-                'meal_report_id': id_,
+                'meal_report_id': model_id,
                 'image': image_id_str,
         }
 
@@ -67,11 +67,11 @@ class MealReportImageService(BaseService):
     async def create(
             self,
             session: Session,
-            id_: int,
+            model_id: int,
             image_id_str: str,
     ):
         meal_report_image = await self._create(
-            id_=id_,
+            model_id=model_id,
             image_id_str=image_id_str,
             session=session,
         )
@@ -82,11 +82,11 @@ class MealReportImageService(BaseService):
     async def create_by_admin(
             self,
             session: Session,
-            id_: int,
+            model_id: int,
             image_id_str: str,
     ):
         meal_report_image = await self._create(
-            id_=id_,
+            model_id=model_id,
             image_id_str=image_id_str,
             session=session,
             by_admin=True,
@@ -163,3 +163,14 @@ class MealReportImageService(BaseService):
                 f'{settings.path_images}/{meal_report_image.id_str}.jpg'
                 for meal_report_image in meal_report_images
         ]
+
+    @staticmethod
+    async def get_by_id_and_image(
+            id_: int,
+            image: Image,
+    ):
+        meal_report = await MealReportRepository().get_by_id(id_=id_)
+        return await MealReportImageRepository().get_by_meal_report_and_image(
+            meal_report=meal_report,
+            image=image,
+        )
