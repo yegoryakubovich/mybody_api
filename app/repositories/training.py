@@ -43,11 +43,11 @@ class TrainingRepository(BaseRepository):
             date_: date,
     ):
         try:
-            Training.select().where(
+            Training.get(
                 (Training.account_service == account_service) &
                 (Training.date == date_) &
                 (Training.is_deleted == False)
-            ).execute()
+            )
             return True
         except DoesNotExist:
             return False

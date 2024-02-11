@@ -1,6 +1,6 @@
 fastapi==0.109.1
 uvicorn==0.27.0.post1
-peewee==3.17.0
+peewee
 pymysql==1.1.0
 pytz==2024.1
 inflection==0.5.1

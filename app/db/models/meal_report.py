@@ -24,7 +24,7 @@ from .base import BaseModel
 class MealReport(BaseModel):
     id = PrimaryKeyField()
     meal = ForeignKeyField(model=Meal)
-    comment = CharField(max_length=1024)
+    comment = CharField(max_length=1024, default=None, null=True)
     is_deleted = BooleanField(default=False)
 
     class Meta:
