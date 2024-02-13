@@ -16,9 +16,11 @@
 
 
 from math import ceil
+from random import sample
 from re import compile, search
+from string import ascii_letters, digits
 
-from app.db.models import Account
+from app.db.models import Account, Session
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
     CurrencyRepository, TextPackRepository
 from app.services.main.account_role_check_premission import AccountRoleCheckPermissionService
@@ -50,9 +52,8 @@ class AccountService(BaseService):
                     'id_value': username,
                 }
             )
-        if not self.is_valid_username(username=username):
-            raise InvalidUsername()
-        if not self.is_valid_password(password=password):
+        await self.is_valid_username(username=username)
+        if not await self._is_valid_password(password=password):
             raise InvalidPassword()
 
         # Generate salt and password hash
@@ -120,6 +121,15 @@ class AccountService(BaseService):
             )
         return {}
 
+    async def is_valid_password(
+            self,
+            password: str,
+    ):
+        if await self._is_valid_password(password=password):
+            return {}
+        else:
+            raise InvalidPassword()
+
     @session_required(return_model=False, permissions=['accounts'])
     async def get_by_admin(self, id_: int) -> dict:
         account = await AccountRepository().get_by_id(id_=id_)
@@ -186,6 +196,80 @@ class AccountService(BaseService):
             'items_per_page': settings.items_per_page,
         }
 
+    @session_required()
+    async def change_password(
+            self,
+            session: Session,
+            current_password: str,
+            new_password: str,
+    ):
+        return await self._change_password(
+            session=session,
+            current_password=current_password,
+            new_password=new_password,
+        )
+
+    @session_required(permissions=['accounts'])
+    async def change_password_by_admin(
+            self,
+            session: Session,
+            account_id: int,
+    ):
+        return await self._change_password(
+            session=session,
+            account_id=account_id,
+            by_admin=True,
+        )
+
+    async def _change_password(
+            self,
+            session: Session,
+            new_password: str = None,
+            current_password: str = None,
+            account_id: int = None,
+            by_admin: bool = False,
+    ):
+        generated_password = None
+
+        if by_admin:
+            account: Account = await AccountRepository().get_by_id(id_=account_id)
+            chars = ascii_letters + digits + '!@#$%^&*'
+            while True:
+                generated_password = ''.join(sample(chars, 10))
+                if await self._is_valid_password(password=generated_password):
+                    break
+            password_salt = await create_salt()
+            password_hash = await create_hash_by_string_and_salt(string=generated_password, salt=password_salt)
+        else:
+            account: Account = session.account
+            await self._is_correct_password(account=account, password=current_password)
+            if not await self._is_valid_password(password=new_password):
+                raise InvalidPassword()
+            password_salt = await create_salt()
+            password_hash = await create_hash_by_string_and_salt(string=new_password, salt=password_salt)
+        account.password_salt = password_salt
+        account.password_hash = password_hash
+        account.save()
+
+        action_parameters = {
+            'account_id': account.id,
+            'password_salt': password_salt,
+            'password_hash': password_hash,
+        }
+
+        if by_admin:
+            action_parameters['by_admin'] = True
+
+        await self.create_action(
+            model=account,
+            action='change_password',
+            parameters=action_parameters,
+        )
+
+        if generated_password:
+            return {'new_password': generated_password}
+        return {}
+
     @staticmethod
     async def _is_correct_password(account: Account, password: str):
         if account.password_hash == await create_hash_by_string_and_salt(
@@ -197,7 +281,7 @@ class AccountService(BaseService):
             raise WrongPassword()
 
     @staticmethod
-    async def is_valid_password(password: str):
+    async def _is_valid_password(password: str):
         register = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{7,32}$"
         pattern = compile(register)
         if search(pattern, password):
@@ -212,4 +296,4 @@ class AccountService(BaseService):
         if search(pattern, username):
             return True
         else:
-            return False
+            raise InvalidUsername()

@@ -247,8 +247,6 @@ class AccountServiceService(BaseService):
                             return False
                         if question['type'] == 'str' and type(answers[question['key']]) != str:
                             return False
-                        if question['type'] == 'dropdown' and answers[question['key']] not in question['values']:
-                            return False
             return True
         except JSONDecodeError:
             return False

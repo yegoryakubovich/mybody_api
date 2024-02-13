@@ -15,24 +15,26 @@
 #
 
 
-from .get import router as router_get
-from .create import router as router_create
-from .check_username import router as router_check_username
-from .check_password import router as router_check_password
-from .change_password import router as router_change_password
-from .services import router as router_services
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import AccountService
+from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/accounts',
-    routes_included=[
-        router_get,
-        router_create,
-        router_check_username,
-        router_change_password,
-        router_check_password,
-        router_services,
-    ],
-    tags=['Accounts'],
+    prefix='/password/change',
 )
+
+
+class ChangeAccountPasswordByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_id: int = Field()
+
+
+@router.post()
+async def route(schema: ChangeAccountPasswordByAdminSchema):
+    result = await AccountService().change_password_by_admin(
+        token=schema.token,
+        account_id=schema.account_id,
+    )
+    return Response(**result)

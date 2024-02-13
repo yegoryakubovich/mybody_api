@@ -21,7 +21,6 @@ from .languages import router as router_languages
 from .countries import router as router_countries
 from .currencies import router as router_currencies
 from .timezones import router as router_timezones
-from .permissions import router as router_permissions
 from .articles import router as router_articles
 from .texts import router as router_texts
 from .services import router as router_services
@@ -43,7 +42,6 @@ router = Router(
         router_countries,
         router_currencies,
         router_timezones,
-        router_permissions,
         router_articles,
         router_texts,
         router_images,

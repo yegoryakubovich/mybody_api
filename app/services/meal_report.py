@@ -232,19 +232,21 @@ class MealReportService(BaseService):
         meal_report_images = await MealReportImageRepository().get_list_by_meal_report(meal_report=meal_report)
 
         return {
-            'products': [
-                {
-                    'meal_report_product_id': meal_report_product.id,
-                    'product_id': meal_report_product.product.id,
-                    'value': meal_report_product.value,
-                } for meal_report_product in meal_report_products
-            ],
-            'images': [
-                {
-                    'id_str': meal_report_image.image.id_str,
-                } for meal_report_image in meal_report_images
-            ],
-            'comment': meal_report.comment,
+            'meal_report': {
+                'products': [
+                    {
+                        'meal_report_product_id': meal_report_product.id,
+                        'product_id': meal_report_product.product.id,
+                        'value': meal_report_product.value,
+                    } for meal_report_product in meal_report_products
+                ],
+                'images': [
+                    {
+                        'id_str': meal_report_image.image.id_str,
+                    } for meal_report_image in meal_report_images
+                ],
+                'comment': meal_report.comment,
+            }
         }
 
     @session_required()
