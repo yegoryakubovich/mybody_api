@@ -107,10 +107,11 @@ class AccountService(BaseService):
     ):
         await self._is_correct_password(account=account, password=password)
 
-    @staticmethod
     async def check_username(
+            self,
             username: str,
     ):
+        await self.is_valid_username(username=username)
         if await AccountRepository.is_exist_by_username(username=username):
             raise ModelAlreadyExist(
                 kwargs={

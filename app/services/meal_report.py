@@ -72,10 +72,14 @@ class MealReportService(BaseService):
                 }
             )
 
+        if products:
+            await self.get_products_list(products=products)
+
         meal_report: MealReport = await MealReportRepository().create(
             meal=meal,
             comment=comment,
         )
+
         if products:
             products = await self.get_products_list(products=products)
             for product in products:
