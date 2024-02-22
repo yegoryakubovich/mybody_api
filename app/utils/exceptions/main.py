@@ -36,3 +36,8 @@ class NoRequiredParameters(ApiException):
 class ModelAlreadyExist(ApiException):
     code = 1003
     message = '{model} with {id_type} "{id_value}" already exist'
+
+
+class MethodNotSupportedRoot(ApiException):
+    code = 1004
+    message = 'Method do not support root user'

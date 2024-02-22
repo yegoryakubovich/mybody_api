@@ -20,10 +20,6 @@ from app.services.main.session_get_by_token import SessionGetByTokenService
 from app.utils.exceptions.base import ApiException
 
 
-class MethodNotSupportedRoot(ApiException):
-    pass
-
-
 def session_required(
         return_model: bool = True,
         return_account: bool = False,
@@ -43,7 +39,7 @@ def session_required(
 
                 # Check support root
                 if session.id == 0 and not can_root:
-                    raise MethodNotSupportedRoot('Method not supported root user')
+                    raise MethodNotSupportedRoot()
 
             # Return model
             if return_model:

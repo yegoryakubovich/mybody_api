@@ -20,17 +20,8 @@ from addict import Dict
 from app.repositories import SessionRepository
 from app.db.models import Session
 from app.services.base import BaseService
-from app.utils.exceptions import ApiException
 from app.utils.crypto import create_hash_by_string_and_salt
 from config import settings
-
-
-class WrongToken(ApiException):
-    pass
-
-
-class WrongTokenFormat(ApiException):
-    pass
 
 
 class SessionGetByTokenService(BaseService):
@@ -40,7 +31,7 @@ class SessionGetByTokenService(BaseService):
         try:
             session_id_str, token = token.split(':')
         except ValueError:
-            raise WrongTokenFormat('Token does not match format')
+            raise WrongTokenFormat()
         session_id = int(session_id_str)
 
         if session_id == 0:
@@ -63,7 +54,7 @@ class SessionGetByTokenService(BaseService):
                 }
                 return Dict(**session_dict)
             else:
-                raise WrongToken('Wrong root token')
+                raise WrongToken()
 
         session: Session = await SessionRepository().get_by_id(id_=session_id)
         if session.token_hash == await create_hash_by_string_and_salt(

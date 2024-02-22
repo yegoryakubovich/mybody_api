@@ -42,3 +42,13 @@ class InvalidPassword(ApiException):
 class InvalidUsername(ApiException):
     code = 2004
     message = 'Invalid username. The correct username starts with a letter and can contain numbers or underscores'
+
+
+class WrongToken(ApiException):
+    code = 2005
+    message = 'Wrong root token'
+
+
+class WrongTokenFormat(ApiException):
+    code = 2006
+    message = 'Token does not match format'

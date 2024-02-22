@@ -103,6 +103,7 @@ class ServiceCostService(BaseService):
         return {
             'service_costs': [
                 {
+                    'id': service_cost.id,
                     'currency': service_cost.currency.id_str,
                     'cost': service_cost.cost
                 } for service_cost in await ServiceCostRepository().get_list_by_service(service=service)

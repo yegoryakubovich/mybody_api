@@ -15,15 +15,9 @@
 #
 
 
-from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, InvalidPassword, InvalidUsername, \
-    WrongPassword
-from .article import ArticleSessionRequired
 from .base import ApiException
-from .exercise import InvalidExerciseType
-from .image import InvalidFileType, TooLargeFile
-from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
-from .meal import InvalidMealType
-from .product import InvalidProductList, InvalidProductType, InvalidUnit
-from .service import InvalidServiceQuestionList
-from .billing import InvalidBillingState, UnpaidBill
 
+
+class InvalidServiceQuestionList(ApiException):
+    code = 8000
+    message = 'Invalid question list'

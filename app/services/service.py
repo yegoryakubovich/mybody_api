@@ -22,12 +22,8 @@ from app.repositories import ServiceRepository, TextRepository
 from app.services.main.text import TextService
 from app.services.base import BaseService
 from app.utils.crypto import create_id_str
-from app.utils.exceptions import ApiException, ModelAlreadyExist
+from app.utils.exceptions import ModelAlreadyExist, InvalidServiceQuestionList
 from app.utils.decorators import session_required
-
-
-class InvalidQuestionList(ApiException):
-    pass
 
 
 class ServiceService(BaseService):
@@ -226,7 +222,7 @@ class ServiceService(BaseService):
 
     async def check_questions(self, questions_sections: str):
         if not await self._is_valid_questions(questions_sections=questions_sections):
-            raise InvalidQuestionList('Invalid question list')
+            raise InvalidServiceQuestionList()
 
     @staticmethod
     async def _is_valid_questions(questions_sections: str):
