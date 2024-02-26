@@ -15,21 +15,28 @@
 #
 
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, FloatField
+from pydantic import BaseModel, Field
 
-from .account_service import AccountService
-from .service_cost import ServiceCost
-from .base import BaseModel
+from app.services import BillingService
+from app.utils import Response, Router
 
 
-class Billing(BaseModel):
-    id = PrimaryKeyField()
-    account_service = ForeignKeyField(model=AccountService)
-    service_cost = ForeignKeyField(model=ServiceCost)
-    cost = FloatField()
-    state = CharField(max_length=64)
-    id_str = CharField(max_length=64)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/update',
+)
 
-    class Meta:
-        db_table = 'billings'
+
+class BillingUpdateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+    state: str = Field(max_length=16)
+
+
+@router.post()
+async def route(schema: BillingUpdateByAdminSchema):
+    result = await BillingService().update_by_admin(
+        token=schema.token,
+        id_=schema.id,
+        state=schema.state,
+    )
+    return Response(**result)

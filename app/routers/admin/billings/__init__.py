@@ -15,21 +15,18 @@
 #
 
 
-from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, FloatField
+from app.utils import Router
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
 
-from .account_service import AccountService
-from .service_cost import ServiceCost
-from .base import BaseModel
 
-
-class Billing(BaseModel):
-    id = PrimaryKeyField()
-    account_service = ForeignKeyField(model=AccountService)
-    service_cost = ForeignKeyField(model=ServiceCost)
-    cost = FloatField()
-    state = CharField(max_length=64)
-    id_str = CharField(max_length=64)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'billings'
+router = Router(
+    prefix='/billings',
+    tags=['Billings'],
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+    ]
+)

@@ -32,3 +32,4 @@ from app.services.main.country import CountryService
 from .training import TrainingService
 from .training_exercise import TrainingExerciseService
 from .training_report import TrainingReportService
+from .billing import BillingService

@@ -18,7 +18,7 @@
 from peewee import DoesNotExist
 
 from app.db.models import Billing, AccountService
-from .base import BaseRepository, ModelDoesNotExist
+from .base import BaseRepository
 
 
 class BillingRepository(BaseRepository):
@@ -46,3 +46,10 @@ class BillingRepository(BaseRepository):
             return True
         except DoesNotExist:
             return False
+
+    @staticmethod
+    async def generate_new_id() -> int:
+        try:
+            return Billing.select().order_by(Billing.id.desc()).get().id+1
+        except DoesNotExist:
+            return 1

@@ -19,10 +19,10 @@ from app.db.models import Session, Billing, AccountService, ServiceCost
 from app.repositories import BillingRepository, AccountServiceRepository, ServiceCostRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidBillingState, UnpaidBill
+from app.utils.exceptions import InvalidBillingState, UnpaidBill, NotEnoughPermissions
 
 
-class BillingState:
+class BillingStates:
     UNPAID = 'unpaid'
     PAID = 'paid'
     EXPIRED = 'expired'
@@ -43,6 +43,9 @@ class BillingService(BaseService):
         service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
         cost = service_cost.cost
 
+        if account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+
         action_parameters = {
             'creator': f'session_{session.id}',
             'account_service_id': account_service_id,
@@ -56,10 +59,13 @@ class BillingService(BaseService):
             if await BillingRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
                 raise UnpaidBill()
 
+        id_str = f'18391-1-mybody-{await BillingRepository().generate_new_id()}'
+
         billing = await BillingRepository().create(
             account_service=account_service,
             service_cost=service_cost,
             cost=cost,
+            id_str=id_str,
             state='unpaid',
         )
 
@@ -71,15 +77,46 @@ class BillingService(BaseService):
 
         return {'id': billing.id}
 
+    @session_required()
+    async def create(
+            self,
+            session: Session,
+            account_service_id: int,
+            service_cost_id: int,
+    ):
+        return await self._create(
+            session=session,
+            account_service_id=account_service_id,
+            service_cost_id=service_cost_id,
+        )
+
+    @session_required(permissions=['billings'])
+    async def create_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+            service_cost_id: int,
+    ):
+        return await self._create(
+            session=session,
+            account_service_id=account_service_id,
+            service_cost_id=service_cost_id,
+            by_admin=True,
+        )
+
     async def _update(
             self,
             session: Session,
             id_: int,
             state: str,
+            by_admin: bool = False,
     ):
         billing: Billing = await BillingRepository().get_by_id(id_=id_)
 
-        billing_states = BillingState().all()
+        if billing.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+
+        billing_states = BillingStates().all()
 
         if state not in billing_states:
             raise InvalidBillingState(
@@ -93,6 +130,9 @@ class BillingService(BaseService):
             'state': state,
         }
 
+        if by_admin:
+            action_parameters['by_admin'] = True
+
         await BillingRepository.update(
             model=billing,
             state=state,
@@ -101,12 +141,37 @@ class BillingService(BaseService):
         await self.create_action(
             model=billing,
             action='update',
-            parameters={
-
-            },
+            parameters=action_parameters,
         )
 
         return {}
+
+    @session_required()
+    async def update(
+            self,
+            session: Session,
+            id_: int,
+            state: str,
+    ):
+        return await self._update(
+            session=session,
+            id_=id_,
+            state=state,
+        )
+
+    @session_required(permissions=['billings'])
+    async def update_by_admin(
+            self,
+            session: Session,
+            id_: int,
+            state: str,
+    ):
+        return await self._update(
+            session=session,
+            id_=id_,
+            state=state,
+            by_admin=True,
+        )
 
     @session_required(permissions=['billings'])
     async def delete_by_admin(
