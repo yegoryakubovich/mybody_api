@@ -19,7 +19,7 @@ from json import JSONDecodeError, dumps, loads
 
 from app.db.models import Service, Session, Text
 from app.repositories import ServiceRepository, TextRepository
-from app.services.main.text import TextService
+from app.services.text import TextService
 from app.services.base import BaseService
 from app.utils.crypto import create_id_str
 from app.utils.exceptions import ModelAlreadyExist, InvalidServiceQuestionList

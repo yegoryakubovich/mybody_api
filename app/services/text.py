@@ -17,7 +17,7 @@
 
 from app.db.models import Session, Text
 from app.repositories import TextRepository, TextTranslationRepository
-from app.services.main.text_pack import TextPackService
+from app.services.text_pack import TextPackService
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 

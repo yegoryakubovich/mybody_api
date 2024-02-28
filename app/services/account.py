@@ -23,7 +23,7 @@ from string import ascii_letters, digits
 from app.db.models import Account, Session
 from app.repositories import AccountRepository, CountryRepository, LanguageRepository, TimezoneRepository, \
     CurrencyRepository, TextPackRepository
-from app.services.main.account_role_check_premission import AccountRoleCheckPermissionService
+from app.services.account_role_check_premission import AccountRoleCheckPermissionService
 from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required

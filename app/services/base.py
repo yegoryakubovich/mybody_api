@@ -20,7 +20,7 @@ from json import dumps
 from inflection import underscore
 
 from app.db.models.base import BaseModel
-from app.services.main.action import ActionService
+from app.services.action import ActionService
 from app.utils import client
 
 

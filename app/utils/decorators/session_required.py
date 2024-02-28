@@ -15,9 +15,9 @@
 #
 
 
-from app.services.main.account_role_check_premission import AccountRoleCheckPermissionService
-from app.services.main.session_get_by_token import SessionGetByTokenService
-from app.utils.exceptions.base import ApiException
+from app.services.account_role_check_premission import AccountRoleCheckPermissionService
+from app.services.session_get_by_token import SessionGetByTokenService
+from app.utils.exceptions.main import MethodNotSupportedRoot
 
 
 def session_required(

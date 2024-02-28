@@ -16,7 +16,7 @@
 
 
 from app.repositories import SessionRepository, AccountRepository
-from app.services.main.account import AccountService
+from app.services.account import AccountService
 from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 

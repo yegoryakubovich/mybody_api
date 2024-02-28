@@ -15,7 +15,23 @@
 #
 
 
-from .main import *
+from .account import AccountService
+from .account_role import AccountRoleService
+from .account_role_check_premission import AccountRoleCheckPermissionService
+from .action import ActionService
+from .country import CountryService
+from .currency import CurrencyService
+from .image import ImageService
+from .language import LanguageService
+from .permission import PermissionService
+from .role import RoleService
+from .role_permission import RolePermissionService
+from .session import SessionService
+from .session_get_by_token import SessionGetByTokenService
+from .text import TextService
+from .text_pack import TextPackService
+from .text_translation import TextTranslationService
+from .timezone import TimezoneService
 from .account_service import AccountServiceService
 from .article import ArticleService
 from .article_translation import ArticleTranslationService
@@ -28,7 +44,7 @@ from .meal_report_product import MealReportProductService
 from .product import ProductService
 from .service import ServiceService
 from .service_cost import ServiceCostService
-from app.services.main.country import CountryService
+from app.services.country import CountryService
 from .training import TrainingService
 from .training_exercise import TrainingExerciseService
 from .training_report import TrainingReportService
