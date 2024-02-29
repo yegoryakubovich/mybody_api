@@ -19,13 +19,22 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_port: int
+    api_port: int
+    tasks_flower_port: int
 
     mysql_host: str
     mysql_port: int
     mysql_user: str
     mysql_password: str
     mysql_name: str
+
+    redis_host: str
+    redis_port: int
+    redis_user: str
+    redis_password: str
+
+    flower_user: str
+    flower_password: str
 
     root_token: str
 

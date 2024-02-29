@@ -15,8 +15,10 @@
 #
 
 
-from celery.app import Celery
+import asyncio
+
+from app.tasks.permanents import start_app
 
 
-redis_url = 'redis://localhost:6379'
-app = Celery(__name__, broker=redis_url, backend=redis_url)
+loop = asyncio.get_event_loop()
+loop.run_until_complete(start_app())

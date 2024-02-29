@@ -13,3 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+import asyncio
+import logging
+
+
+prefix = '[start_app]'
+
+
+async def start_app() -> None:
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    while True:
+        tasks_names = [task.get_name() for task in asyncio.all_tasks()]
+        #
+        await asyncio.sleep(10 * 60)
