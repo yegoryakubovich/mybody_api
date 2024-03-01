@@ -19,6 +19,7 @@ from app.db.models import Country, Session
 from app.repositories import CountryRepository, CurrencyRepository, LanguageRepository, TimezoneRepository
 from app.services.text import TextService
 from app.services.base import BaseService
+from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 from app.utils.exceptions import ModelAlreadyExist, NoRequiredParameters
 
@@ -45,7 +46,7 @@ class CountryService(BaseService):
 
         name_text = await TextService().create_by_admin(
             session=session,
-            key=f'country_{id_str}',
+            key=f'country_{await create_id_str()}',
             value_default=name,
             return_model=True,
         )
