@@ -15,22 +15,11 @@
 #
 
 
-import asyncio
-import logging
-
-from app.tasks.permanents.sync_gd import sync_gd
-
-prefix = '[start_app]'
+from app.tasks.permanents.sync_gd.syncers.texts import sync_texts
+from config import settings
+from ..utils.google_sheets_api_client import google_sheets_api_client
 
 
-TASKS = [
-    sync_gd,
-]
-
-
-async def start_app() -> None:
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-    while True:
-        tasks_names = [task.get_name() for task in asyncio.all_tasks()]
-        [asyncio.create_task(coro=task(), name=task.__name__) for task in TASKS if task.__name__ not in tasks_names]
-        await asyncio.sleep(10 * 60)
+async def sync():
+    table = await google_sheets_api_client.get_table_by_name(name=settings.sync_db_table_name)
+    await sync_texts(table=table)

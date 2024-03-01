@@ -17,8 +17,8 @@
 
 FROM python:3.11-slim
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY tasks_permanents_requirements.txt /tmp/tasks_permanents_requirements.txt
+RUN pip install --no-cache-dir -r /tmp/tasks_permanents_requirements.txt
 
 COPY . /app
 WORKDIR /app

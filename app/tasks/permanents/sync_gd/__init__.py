@@ -14,23 +14,13 @@
 # limitations under the License.
 #
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
-import asyncio
-import logging
-
-from app.tasks.permanents.sync_gd import sync_gd
-
-prefix = '[start_app]'
+from app.tasks.permanents.sync_gd.syncers import sync
 
 
-TASKS = [
-    sync_gd,
-]
-
-
-async def start_app() -> None:
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-    while True:
-        tasks_names = [task.get_name() for task in asyncio.all_tasks()]
-        [asyncio.create_task(coro=task(), name=task.__name__) for task in TASKS if task.__name__ not in tasks_names]
-        await asyncio.sleep(10 * 60)
+async def sync_gd():
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(sync, trigger='interval', seconds=3) # trigger=CronTrigger.from_crontab('0-59 * * * *'))
+    scheduler.start()

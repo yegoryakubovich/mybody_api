@@ -15,22 +15,12 @@
 #
 
 
-import asyncio
-import logging
+from mybody_api_client import MyBodyApiClient
 
-from app.tasks.permanents.sync_gd import sync_gd
-
-prefix = '[start_app]'
+from config import settings
 
 
-TASKS = [
-    sync_gd,
-]
-
-
-async def start_app() -> None:
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-    while True:
-        tasks_names = [task.get_name() for task in asyncio.all_tasks()]
-        [asyncio.create_task(coro=task(), name=task.__name__) for task in TASKS if task.__name__ not in tasks_names]
-        await asyncio.sleep(10 * 60)
+mybody_api_client = MyBodyApiClient(
+    url=settings.sync_db_url,
+    token=settings.root_token,
+)

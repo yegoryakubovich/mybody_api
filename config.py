@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     flower_password: str
 
     root_token: str
+    sync_db_url: str
+    sync_db_table_name: str
 
     path_articles: str = 'assets/articles'
     path_texts_packs: str = 'assets/texts_packs'

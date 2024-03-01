@@ -23,7 +23,7 @@ from app.utils.exceptions import ModelAlreadyExist, ModelDoesNotExist
 
 
 class TextTranslationService(BaseService):
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,
@@ -68,7 +68,7 @@ class TextTranslationService(BaseService):
             'id': text_translation.id,
         }
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def update_by_admin(
             self,
             session: Session,
@@ -98,7 +98,7 @@ class TextTranslationService(BaseService):
 
         return {}
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

@@ -103,7 +103,7 @@ class TextService(BaseService):
             return text
         return {'key': text.key}
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def update_by_admin(
             self,
             session: Session,
@@ -145,7 +145,7 @@ class TextService(BaseService):
 
         return {}
 
-    @session_required(permissions=['texts'])
+    @session_required(permissions=['texts'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,
