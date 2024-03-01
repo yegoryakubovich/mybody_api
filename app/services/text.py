@@ -110,6 +110,7 @@ class TextService(BaseService):
             key: str,
             value_default: str = None,
             new_key: str = None,
+            create_text_pack: bool = True
     ) -> dict:
         text = await TextRepository().get_by_key(key=key)
         await TextRepository().update(
@@ -141,7 +142,8 @@ class TextService(BaseService):
             action='update',
             parameters=action_parameters,
         )
-        await TextPackService().create_all_by_admin(session=session)
+        if create_text_pack:
+            await TextPackService().create_all_by_admin(session=session)
 
         return {}
 
