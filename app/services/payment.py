@@ -15,14 +15,15 @@
 #
 
 
-from app.db.models import Session, Billing, AccountService, ServiceCost
-from app.repositories import BillingRepository, AccountServiceRepository, ServiceCostRepository
+from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, PaymentMethodCurrency
+from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
+    PaymentMethodRepository, PaymentMethodCurrencyRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidBillingState, UnpaidBill, NotEnoughPermissions
+from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions
 
 
-class BillingStates:
+class PaymentStates:
     UNPAID = 'unpaid'
     PAID = 'paid'
     EXPIRED = 'expired'
@@ -31,16 +32,20 @@ class BillingStates:
         return [self.UNPAID, self.PAID, self.EXPIRED]
 
 
-class BillingService(BaseService):
+class PaymentService(BaseService):
     async def _create(
             self,
             session: Session,
             account_service_id: int,
             service_cost_id: int,
+            payment_method_id_str: str,
+            payment_method_currency_id: int,
             by_admin: bool = False,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
         service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
+        payment_method: PaymentMethod = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
+        payment_method_currency: PaymentMethodCurrency = await PaymentMethodCurrencyRepository().get_by_id(id_=payment_method_currency_id)
         cost = service_cost.cost
 
         if account_service.account != session.account and not by_admin:
@@ -50,32 +55,33 @@ class BillingService(BaseService):
             'creator': f'session_{session.id}',
             'account_service_id': account_service_id,
             'service_cost_id': service_cost_id,
+            'payment_method_id_str': payment_method_id_str,
+            'payment_method_currency_id': payment_method_currency_id,
             'cost': cost,
         }
 
         if by_admin:
             action_parameters['by_admin'] = True
         else:
-            if await BillingRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
+            if await PaymentRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
                 raise UnpaidBill()
 
-        id_str = f'18391-1-mybody-{await BillingRepository().generate_new_id()}'
-
-        billing = await BillingRepository().create(
+        payment = await PaymentRepository().create(
             account_service=account_service,
+            payment_method=payment_method,
+            payment_method_currency=payment_method_currency,
             service_cost=service_cost,
             cost=cost,
-            id_str=id_str,
             state='unpaid',
         )
 
         await self.create_action(
-            model=billing,
+            model=payment,
             action='create',
             parameters=action_parameters,
         )
 
-        return {'id': billing.id}
+        return {'id': payment.id}
 
     @session_required()
     async def create(
@@ -83,25 +89,33 @@ class BillingService(BaseService):
             session: Session,
             account_service_id: int,
             service_cost_id: int,
+            payment_method_id_str: str,
+            payment_method_currency_id: int,
     ):
         return await self._create(
             session=session,
             account_service_id=account_service_id,
             service_cost_id=service_cost_id,
+            payment_method_id_str=payment_method_id_str,
+            payment_method_currency_id=payment_method_currency_id,
         )
 
-    @session_required(permissions=['billings'])
+    @session_required(permissions=['payments'])
     async def create_by_admin(
             self,
             session: Session,
             account_service_id: int,
             service_cost_id: int,
+            payment_method_id_str: str,
+            payment_method_currency_id: int,
     ):
         return await self._create(
             session=session,
             account_service_id=account_service_id,
             service_cost_id=service_cost_id,
             by_admin=True,
+            payment_method_id_str=payment_method_id_str,
+            payment_method_currency_id=payment_method_currency_id,
         )
 
     async def _update(
@@ -111,17 +125,17 @@ class BillingService(BaseService):
             state: str,
             by_admin: bool = False,
     ):
-        billing: Billing = await BillingRepository().get_by_id(id_=id_)
+        payment: Payment = await PaymentRepository().get_by_id(id_=id_)
 
-        if billing.account_service.account != session.account and not by_admin:
+        if payment.account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
 
-        billing_states = BillingStates().all()
+        payment_states = PaymentStates().all()
 
-        if state not in billing_states:
-            raise InvalidBillingState(
+        if state not in payment_states:
+            raise InvalidPaymentState(
                 kwargs={
-                    'all': billing_states,
+                    'all': payment_states,
                 }
             )
 
@@ -133,13 +147,13 @@ class BillingService(BaseService):
         if by_admin:
             action_parameters['by_admin'] = True
 
-        await BillingRepository.update(
-            model=billing,
+        await PaymentRepository.update(
+            model=payment,
             state=state,
         )
 
         await self.create_action(
-            model=billing,
+            model=payment,
             action='update',
             parameters=action_parameters,
         )
@@ -159,7 +173,7 @@ class BillingService(BaseService):
             state=state,
         )
 
-    @session_required(permissions=['billings'])
+    @session_required(permissions=['payments'])
     async def update_by_admin(
             self,
             session: Session,
@@ -173,20 +187,20 @@ class BillingService(BaseService):
             by_admin=True,
         )
 
-    @session_required(permissions=['billings'])
+    @session_required(permissions=['payments'])
     async def delete_by_admin(
             self,
             session: Session,
             id_: int,
     ):
-        billing: Billing = await BillingRepository().get_by_id(id_=id_)
+        payments: Payment = await PaymentRepository().get_by_id(id_=id_)
 
-        await BillingRepository().delete(
-            model=billing
+        await PaymentRepository().delete(
+            model=payments
         )
 
         await self.create_action(
-            model=billing,
+            model=payments,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
@@ -196,32 +210,32 @@ class BillingService(BaseService):
 
         return {}
 
-    @session_required(permissions=['billings'])
+    @session_required(permissions=['payments'])
     async def get(self, id_: int):
-        billing: Billing = await BillingRepository().get_by_id(id_=id_)
+        payments: Payment = await PaymentRepository().get_by_id(id_=id_)
         return {
-            'billing': await self._generate_billing_dict(billing=billing)
+            'payment': await self._generate_payment_dict(payment=payments)
         }
 
-    @session_required(permissions=['billings'])
+    @session_required(permissions=['payments'])
     async def get_list(self, account_service_id: int):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         return {
-            'exercises': [
-                await self._generate_billing_dict(billing=billing)
-                for billing in await BillingRepository().get_list_by_account_service(account_service=account_service)
+            'payments': [
+                await self._generate_payment_dict(payment=payment)
+                for payment in await PaymentRepository().get_list_by_account_service(account_service=account_service)
             ]
         }
 
     @staticmethod
-    async def _generate_billing_dict(billing: Billing):
+    async def _generate_payment_dict(payment: Payment):
         return {
-            'id': billing.id,
-            'account_service_id': billing.account_service.id,
+            'id': payment.id,
+            'account_service_id': payment.account_service.id,
             'service_cost': {
-                'service': billing.service_cost.service,
-                'currency': billing.service_cost.currency,
-                'cost': billing.service_cost.cost,
+                'service': payment.service_cost.service,
+                'currency': payment.service_cost.currency_default,
+                'cost': payment.service_cost.cost,
             },
-            'cost': billing.cost,
+            'cost': payment.cost,
         }

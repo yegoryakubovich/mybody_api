@@ -15,15 +15,16 @@
 #
 
 
-from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, InvalidPassword, InvalidUsername, \
-    WrongPassword
-from .article import ArticleSessionRequired
-from .base import ApiException
-from .exercise import InvalidExerciseType
-from .image import InvalidFileType, TooLargeFile
-from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
-from .meal import InvalidMealType
-from .product import InvalidProductList, InvalidProductType, InvalidUnit
-from .service import InvalidServiceQuestionList
-from .payment import InvalidPaymentState, UnpaidBill
+from app.utils import Router
+from .create import router as router_create
+from .methods import router as router_methods
 
+
+router = Router(
+    prefix='/payments',
+    tags=['Payments'],
+    routes_included=[
+        router_create,
+        router_methods,
+    ]
+)

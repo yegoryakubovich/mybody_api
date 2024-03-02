@@ -15,14 +15,16 @@
 #
 
 
-from .base import ApiException
+from app.services import PaymentMethodService
+from app.utils import Response, Router
 
 
-class UnpaidBill(ApiException):
-    code = 9000
-    message = "You have an unpaid bill, so you can't create another one"
+router = Router(
+    prefix='/list/get',
+)
 
 
-class InvalidBillingState(ApiException):
-    code = 9001
-    message = "Invalid billing state. Available: {all}"
+@router.get()
+async def route():
+    result = await PaymentMethodService().get_list()
+    return Response(**result)

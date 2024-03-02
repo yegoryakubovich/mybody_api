@@ -17,26 +17,24 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import BillingService
+from app.services import PaymentMethodCurrencyService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/create',
+    prefix='/delete',
 )
 
 
-class BillingCreateSchema(BaseModel):
+class PaymentMethodCurrencyDeleteByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    account_service_id: int = Field()
-    service_cost_id: int = Field()
+    id: int = Field()
 
 
 @router.post()
-async def route(schema: BillingCreateSchema):
-    result = await BillingService().create(
+async def route(schema: PaymentMethodCurrencyDeleteByAdminSchema):
+    result = await PaymentMethodCurrencyService().delete_by_admin(
         token=schema.token,
-        account_service_id=schema.account_service_id,
-        service_cost_id=schema.service_cost_id,
+        id_=schema.id,
     )
     return Response(**result)

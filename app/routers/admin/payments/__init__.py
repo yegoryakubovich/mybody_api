@@ -15,28 +15,20 @@
 #
 
 
-from pydantic import BaseModel, Field
-
-from app.services import BillingService
-from app.utils import Response, Router
+from app.utils import Router
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
+from .methods import router as router_methods
 
 
 router = Router(
-    prefix='/create',
+    prefix='/payments',
+    tags=['Payments'],
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+        router_methods,
+    ]
 )
-
-
-class BillingCreateByAdminSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    account_service_id: int = Field()
-    service_cost_id: int = Field()
-
-
-@router.post()
-async def route(schema: BillingCreateByAdminSchema):
-    result = await BillingService().create_by_admin(
-        token=schema.token,
-        account_service_id=schema.account_service_id,
-        service_cost_id=schema.service_cost_id,
-    )
-    return Response(**result)

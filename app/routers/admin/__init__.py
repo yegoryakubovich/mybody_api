@@ -17,7 +17,7 @@
 
 from .accounts import router as router_accounts
 from .articles import router as router_articles
-from .billings import router as router_billings
+from .payments import router as router_payments
 from .countries import router as router_countries
 from .currencies import router as router_currencies
 from .exercises import router as router_exercises
@@ -39,7 +39,7 @@ router = Router(
     routes_included=[
         router_accounts,
         router_articles,
-        router_billings,
+        router_payments,
         router_countries,
         router_currencies,
         router_exercises,

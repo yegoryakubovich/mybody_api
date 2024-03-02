@@ -17,30 +17,26 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import CountryService
-from app.utils import Router, Response
+from app.services import PaymentMethodCurrencyService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/update',
+    prefix='/create',
 )
 
 
-class CountryUpdateByAdminSchema(BaseModel):
+class PaymentMethodCurrencyCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=2, max_length=16)
-    language_default: str = Field(default=None, min_length=2, max_length=16)
-    timezone_default: str = Field(default=None, min_length=2, max_length=16)
-    currency_default: str = Field(default=None, min_length=2, max_length=16)
+    payment_method: str = Field(max_length=16)
+    currency: str = Field(max_length=16)
 
 
 @router.post()
-async def route(schema: CountryUpdateByAdminSchema):
-    result = await CountryService().update_by_admin(
+async def route(schema: PaymentMethodCurrencyCreateByAdminSchema):
+    result = await PaymentMethodCurrencyService().create_by_admin(
         token=schema.token,
-        id_str=schema.id_str,
-        language_default_id_str=schema.language_default,
-        timezone_default_id_str=schema.timezone_default,
-        currency_default_id_str=schema.currency_default,
+        payment_method_id_str=schema.payment_method_id_str,
+        currency_id_str=schema.currency_id_str,
     )
     return Response(**result)

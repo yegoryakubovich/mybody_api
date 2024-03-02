@@ -45,4 +45,6 @@ from .service_cost import ServiceCostRepository
 from .training import TrainingRepository
 from .training_exercise import TrainingExerciseRepository
 from .training_report import TrainingReportRepository
-from .billing import BillingRepository
+from .payment import PaymentRepository
+from .payment_method import PaymentMethodRepository
+from .payment_method_currency import PaymentMethodCurrencyRepository

@@ -15,23 +15,25 @@
 #
 
 
-from peewee import PrimaryKeyField, CharField, ForeignKeyField, BooleanField
+from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, FloatField
 
-from .language import Language
-from .currency import Currency
-from .timezone import Timezone
+from .account_service import AccountService
+from .service_cost import ServiceCost
+from .payment_method import PaymentMethod
+from .payment_method_currency import PaymentMethodCurrency
 from .base import BaseModel
-from .text import Text
 
 
-class Country(BaseModel):
+class Payment(BaseModel):
     id = PrimaryKeyField()
-    id_str = CharField(max_length=16)
-    name = CharField(max_length=32)
-    language_default = ForeignKeyField(model=Language, null=True)
-    timezone_default = ForeignKeyField(model=Timezone, null=True)
-    currency_default = ForeignKeyField(model=Currency, null=True)
+    account_service = ForeignKeyField(model=AccountService)
+    service_cost = ForeignKeyField(model=ServiceCost)
+    payment_method = ForeignKeyField(model=PaymentMethod)
+    payment_method_currency = ForeignKeyField(model=PaymentMethodCurrency)
+    cost = FloatField()
+    state = CharField(max_length=64)
+    data = CharField(max_length=1024, default=[], null=True)
     is_deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'countries'
+        db_table = 'payments'

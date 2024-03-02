@@ -15,18 +15,28 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
+from pydantic import BaseModel, Field
+
+from app.services import PaymentService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/billings',
-    tags=['Billings'],
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-    ]
+    prefix='/update',
 )
+
+
+class PaymentUpdateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+    state: str = Field(max_length=16)
+
+
+@router.post()
+async def route(schema: PaymentUpdateByAdminSchema):
+    result = await PaymentService().update_by_admin(
+        token=schema.token,
+        id_=schema.id,
+        state=schema.state,
+    )
+    return Response(**result)

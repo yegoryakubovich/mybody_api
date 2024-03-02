@@ -15,28 +15,25 @@
 #
 
 
+from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import BillingService
+from app.services import PaymentMethodCurrencyService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/update',
+    prefix='/list/get',
 )
 
 
-class BillingUpdateByAdminSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
-    state: str = Field(max_length=16)
+class PaymentMethodCurrencyGetListSchema(BaseModel):
+    payment_method: str = Field(max_length=16)
 
 
-@router.post()
-async def route(schema: BillingUpdateByAdminSchema):
-    result = await BillingService().update_by_admin(
-        token=schema.token,
-        id_=schema.id,
-        state=schema.state,
+@router.get()
+async def route(schema: PaymentMethodCurrencyGetListSchema = Depends()):
+    result = await PaymentMethodCurrencyService().get_list(
+        payment_method_id_str=schema.payment_method,
     )
     return Response(**result)

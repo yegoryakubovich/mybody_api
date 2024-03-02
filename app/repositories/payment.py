@@ -17,20 +17,20 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import Billing, AccountService
+from app.db.models import Payment, AccountService
 from .base import BaseRepository
 
 
-class BillingRepository(BaseRepository):
-    model = Billing
+class PaymentRepository(BaseRepository):
+    model = Payment
 
     @staticmethod
     async def get_list_by_account_service(
         account_service: AccountService,
-    ) -> list[Billing]:
-        return Billing.select().where(
-            (Billing.account_service == account_service) &
-            (Billing.is_deleted == False)
+    ) -> list[Payment]:
+        return Payment.select().where(
+            (Payment.account_service == account_service) &
+            (Payment.is_deleted == False)
         ).execute()
 
     @staticmethod
@@ -38,10 +38,10 @@ class BillingRepository(BaseRepository):
         account_service: AccountService,
     ) -> bool:
         try:
-            Billing.get(
-                (Billing.account_service == account_service) &
-                (Billing.state == 'unpaid') &
-                (Billing.is_deleted == False)
+            Payment.get(
+                (Payment.account_service == account_service) &
+                (Payment.state == 'unpaid') &
+                (Payment.is_deleted == False)
             )
             return True
         except DoesNotExist:
@@ -50,6 +50,6 @@ class BillingRepository(BaseRepository):
     @staticmethod
     async def generate_new_id() -> int:
         try:
-            return Billing.select().order_by(Billing.id.desc()).get().id+1
+            return Payment.select().order_by(Payment.id.desc()).get().id + 1
         except DoesNotExist:
             return 1

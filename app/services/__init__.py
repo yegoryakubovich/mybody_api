@@ -44,8 +44,10 @@ from .meal_report_product import MealReportProductService
 from .product import ProductService
 from .service import ServiceService
 from .service_cost import ServiceCostService
-from app.services.country import CountryService
+from .country import CountryService
 from .training import TrainingService
 from .training_exercise import TrainingExerciseService
 from .training_report import TrainingReportService
-from .billing import BillingService
+from .payment import PaymentService
+from .payment_method import PaymentMethodService
+from .payment_method_currency import PaymentMethodCurrencyService

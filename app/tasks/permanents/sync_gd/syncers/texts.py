@@ -60,7 +60,7 @@ async def sync_texts(table: Spreadsheet):
             text.key: dict(
                 default_value=text.value_default,
                 translations={
-                    translation.language: translation.value for translation in text.translations
+                    translation.language_default: translation.value for translation in text.translations
                 },
             ) for text in texts
         }

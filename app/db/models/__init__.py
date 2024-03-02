@@ -22,7 +22,7 @@ from .action import Action
 from .action_parameter import ActionParameter
 from .article import Article
 from .article_translation import ArticleTranslation
-from .billing import Billing
+from .payment import Payment
 from .exercise import Exercise
 from .image import Image
 from .language import Language
@@ -31,6 +31,8 @@ from .meal_product import MealProduct
 from .meal_report import MealReport
 from .meal_report_image import MealReportImage
 from .meal_report_product import MealReportProduct
+from .payment_method import PaymentMethod
+from .payment_method_currency import PaymentMethodCurrency
 from .permission import Permission
 from .product import Product
 from .role_permission import RolePermission
@@ -67,7 +69,10 @@ models = (
     Service,
     ServiceCost,
     AccountService,
-    Billing,
+
+    Payment,
+    PaymentMethod,
+    PaymentMethodCurrency,
 
     # Articles
     Article,

@@ -15,15 +15,25 @@
 #
 
 
-from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, InvalidPassword, InvalidUsername, \
-    WrongPassword
-from .article import ArticleSessionRequired
-from .base import ApiException
-from .exercise import InvalidExerciseType
-from .image import InvalidFileType, TooLargeFile
-from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
-from .meal import InvalidMealType
-from .product import InvalidProductList, InvalidProductType, InvalidUnit
-from .service import InvalidServiceQuestionList
-from .payment import InvalidPaymentState, UnpaidBill
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
+from app.services import PaymentMethodService
+from app.utils import Response, Router
+
+
+router = Router(
+    prefix='/list/get/by-currency',
+)
+
+
+class PaymentMethodGetListByCurrencySchema(BaseModel):
+    currency: str = Field(max_length=16)
+
+
+@router.get()
+async def route(schema: PaymentMethodGetListByCurrencySchema = Depends()):
+    result = await PaymentMethodService().get_list_by_currency(
+        currency_id_str=schema.currency,
+    )
+    return Response(**result)

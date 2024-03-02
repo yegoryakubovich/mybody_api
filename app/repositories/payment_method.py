@@ -15,15 +15,17 @@
 #
 
 
-from .account import AccountMissingPermission, InvalidAccountServiceAnswerList, InvalidPassword, InvalidUsername, \
-    WrongPassword
-from .article import ArticleSessionRequired
-from .base import ApiException
-from .exercise import InvalidExerciseType
-from .image import InvalidFileType, TooLargeFile
-from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
-from .meal import InvalidMealType
-from .product import InvalidProductList, InvalidProductType, InvalidUnit
-from .service import InvalidServiceQuestionList
-from .payment import InvalidPaymentState, UnpaidBill
+from app.db.models import PaymentMethod, Currency
+from app.repositories.base import BaseRepository
+
+
+class PaymentMethodRepository(BaseRepository):
+    model = PaymentMethod
+
+    @staticmethod
+    async def get_list_by_currency(currency: Currency) -> list[PaymentMethod]:
+        return PaymentMethod.select().where(
+            (PaymentMethod.currency == currency) &
+            (PaymentMethod.is_deleted == False)
+        ).execute()
 
