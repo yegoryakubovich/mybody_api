@@ -106,7 +106,7 @@ class PermissionService(BaseService):
             }
         }
 
-    @session_required(permissions=['permissions'], return_model=False)
+    @session_required(permissions=['permissions'], return_model=False, can_root=True)
     async def get_list_by_admin(self):
         return {
             'permissions': [

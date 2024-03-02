@@ -17,17 +17,106 @@
 
 from app.tasks.permanents.sync_gd.syncers.texts import sync_texts
 from config import settings
-from .timezones import sync_timezones
-from ..utils.google_sheets_api_client import google_sheets_api_client
-
-
-SYNCERS = [
-    sync_timezones,
-    sync_texts,
-]
+from .base import sync_base
+from .roles_permissions import sync_roles_permissions
+from ..utils import google_sheets_api_client, mybody_api_client
 
 
 async def sync():
+
+    async def create_permission(obj):
+        await mybody_api_client.admin.permissions.create(
+            id_str=obj.get('id_str'),
+            name=obj.get('name'),
+        )
+
+    async def create_roles(obj):
+        role = await mybody_api_client.admin.roles.create(
+            name=obj.get('name'),
+        )
+        await sync_roles_permissions(role_id=role.id)
+
+    async def create_language(obj):
+        await mybody_api_client.admin.languages.create(
+            id_str=obj.get('id_str'),
+            name=obj.get('name'),
+        )
+
+    async def create_timezone(obj):
+        await mybody_api_client.admin.timezones.create(
+            id_str=obj.get('id_str'),
+            deviation=obj.get('deviation'),
+        )
+
+    async def create_currency(obj):
+        await mybody_api_client.admin.currencies.create(
+            id_str=obj.get('id_str'),
+        )
+
+    async def create_country(obj):
+        await mybody_api_client.admin.countries.create(
+            id_str=obj.get('id_str'),
+            name=obj.get('name'),
+            language_default=obj.get('language_default'),
+            timezone_default=obj.get('timezone_default'),
+            currency_default=obj.get('currency_default'),
+        )
+
     table = await google_sheets_api_client.get_table_by_name(name=settings.sync_db_table_name)
-    for syncer in SYNCERS:
-        await syncer(table=table)
+
+    # Permissions
+    await sync_base(
+        table=table,
+        sheet_name='permissions',
+        api_method_get_list=mybody_api_client.admin.permissions.get_list,
+        api_method_delete=mybody_api_client.admin.permissions.delete,
+        api_method_create=create_permission,
+    )
+
+    # Roles
+    await sync_base(
+        table=table,
+        sheet_name='permissions',
+        api_method_get_list=mybody_api_client.admin.roles.get_list,
+        api_method_delete=mybody_api_client.admin.roles.delete,
+        api_method_create=create_roles,
+    )
+    #
+    # # Languages
+    # await sync_base(
+    #     table=table,
+    #     sheet_name='languages',
+    #     api_method_get_list=mybody_api_client.client.languages.get_list,
+    #     api_method_delete=mybody_api_client.admin.languages.delete,
+    #     api_method_create=create_language,
+    # )
+    #
+    # # Timezones
+    # await sync_base(
+    #     table=table,
+    #     sheet_name='timezones',
+    #     api_method_get_list=mybody_api_client.client.timezones.get_list,
+    #     api_method_delete=mybody_api_client.admin.timezones.delete,
+    #     api_method_create=create_timezone,
+    # )
+    #
+    # # Currencies
+    # await sync_base(
+    #     table=table,
+    #     sheet_name='currencies',
+    #     api_method_get_list=mybody_api_client.client.currencies.get_list,
+    #     api_method_delete=mybody_api_client.admin.currencies.delete,
+    #     api_method_create=create_currency,
+    # )
+    #
+    # # Countries
+    # await sync_base(
+    #     table=table,
+    #     sheet_name='countries',
+    #     api_method_get_list=mybody_api_client.client.countries.get_list,
+    #     api_method_delete=mybody_api_client.admin.countries.delete(),
+    #     api_method_create=create_country,
+    # )
+    #
+    # # Texts
+    # await sync_texts(table=table)

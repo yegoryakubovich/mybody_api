@@ -15,5 +15,15 @@
 #
 
 
-from .mybody_api_client import mybody_api_client
-from .google_sheets_api_client import google_sheets_api_client
+from ..utils import mybody_api_client
+
+
+async def sync_roles_permissions(role_id):
+    role = await mybody_api_client.admin.roles.get(id_=role_id)
+    permissions = await mybody_api_client.admin.permissions.get_list()
+    for permission in permissions:
+        if permission not in role.permissions:
+            await mybody_api_client.admin.roles.permissions.create(
+                role_id=role_id,
+                permission=permission.id_str,
+            )

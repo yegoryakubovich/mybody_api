@@ -79,8 +79,9 @@ class RoleService(BaseService):
 
         return {}
 
-    @staticmethod
+    @session_required(return_model=False, can_root=True)
     async def get(
+            self,
             id_: int,
     ):
         role: Role = await RoleRepository().get_by_id(id_=id_)
@@ -92,8 +93,8 @@ class RoleService(BaseService):
             }
         }
 
-    @staticmethod
-    async def get_list():
+    @session_required(return_model=False, can_root=True)
+    async def get_list(self):
         return {
             'roles': [
                 {
