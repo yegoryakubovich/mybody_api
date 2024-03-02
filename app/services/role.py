@@ -53,7 +53,7 @@ class RoleService(BaseService):
 
         return {'id': role.id}
 
-    @session_required(permissions=['roles'])
+    @session_required(permissions=['roles'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

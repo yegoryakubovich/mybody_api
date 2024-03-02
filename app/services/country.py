@@ -78,7 +78,7 @@ class CountryService(BaseService):
 
         return {'id_str': country.id_str}
 
-    @session_required(permissions=['countries'])
+    @session_required(permissions=['countries'], can_root=True)
     async def update_by_admin(
             self,
             session: Session,
@@ -147,7 +147,7 @@ class CountryService(BaseService):
 
         return {}
 
-    @session_required(permissions=['countries'])
+    @session_required(permissions=['countries'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

@@ -60,7 +60,7 @@ class LanguageService(BaseService):
         await TextPackService().create_by_admin(session=session, language_id_str=language.id_str)
         return {'id_str': language.id_str}
 
-    @session_required(permissions=['languages'])
+    @session_required(permissions=['languages'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

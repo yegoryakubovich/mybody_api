@@ -15,19 +15,14 @@
 #
 
 
-from app.tasks.permanents.sync_gd.syncers.texts import sync_texts
-from config import settings
-from .timezones import sync_timezones
-from ..utils.google_sheets_api_client import google_sheets_api_client
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 
-SYNCERS = [
-    sync_timezones,
-    sync_texts,
-]
+async def sync_gd():
+    async def task():
+        pass
 
-
-async def sync():
-    table = await google_sheets_api_client.get_table_by_name(name=settings.sync_db_table_name)
-    for syncer in SYNCERS:
-        await syncer(table=table)
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(task, trigger=CronTrigger.from_crontab('* * * * *'))
+    scheduler.start()

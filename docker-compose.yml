@@ -29,6 +29,7 @@ services:
     volumes:
       - ./assets/texts_packs:/app/assets/texts_packs
       - ./assets/images:/app/assets/images
+      - ./assets/articles:/app/assets/articles
     env_file:
       - .env
   tasks_permanents:

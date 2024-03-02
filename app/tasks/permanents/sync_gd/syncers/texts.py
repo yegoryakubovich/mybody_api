@@ -69,10 +69,17 @@ async def sync_texts(table: Spreadsheet):
 
     need_create = [key for key in sheet_keys if key not in match]
     need_delete = [key for key in texts_keys if key not in match and not key.startswith(tuple(PREFIXES))]
-    print(need_delete)
-    print(texts_keys)
 
     # Global block
+
+    # Delete
+    for key in need_delete:
+        print(f'DELETE text {key}')
+        await mybody_api_client.admin.texts.delete(
+            key=key,
+            create_text_pack=False,
+        )
+
     for text_table in texts_table:
         key = text_table.key
         text_api = texts_api.get(key)
@@ -84,14 +91,6 @@ async def sync_texts(table: Spreadsheet):
             await mybody_api_client.admin.texts.create(
                 key=key,
                 value_default=text_table.get(DEFAULT_LANGUAGE),
-                create_text_pack=False,
-            )
-            skip_update = True
-        # Delete
-        if key in need_delete:
-            print(f'DELETE text {key}')
-            await mybody_api_client.admin.texts.delete(
-                key=key,
                 create_text_pack=False,
             )
             skip_update = True
@@ -116,6 +115,16 @@ async def sync_texts(table: Spreadsheet):
         need_create_translations = [key for key in new_translations.keys() if key not in match_translations]
         need_delete_translations = [key for key in current_translations.keys() if key not in match_translations]
 
+        # Delete translation
+        for language_delete in need_delete_translations:
+            print(f'DELETE text_translation {key}_{language_delete}')
+            await mybody_api_client.admin.texts.translations.delete(
+                text_key=key,
+                language=language_delete,
+                create_text_pack=False,
+            )
+            continue
+
         for language in languages:
             # Create translation
             if language in need_create_translations:
@@ -124,15 +133,6 @@ async def sync_texts(table: Spreadsheet):
                     text_key=key,
                     language=language,
                     value=new_translations.get(language),
-                    create_text_pack=False,
-                )
-                continue
-            # Delete translation
-            elif language in need_delete_translations:
-                print(f'DELETE text_translation {key}_{language}')
-                await mybody_api_client.admin.texts.translations.delete(
-                    text_key=key,
-                    language=language,
                     create_text_pack=False,
                 )
                 continue

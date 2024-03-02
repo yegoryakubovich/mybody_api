@@ -65,7 +65,7 @@ class PermissionService(BaseService):
 
         return {'id': permission.id}
 
-    @session_required(permissions=['permissions'])
+    @session_required(permissions=['permissions'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

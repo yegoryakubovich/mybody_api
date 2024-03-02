@@ -15,7 +15,6 @@
 #
 
 
-from addict import Dict
 from gspread import Spreadsheet
 
 from ..utils.google_sheets_api_client import google_sheets_api_client
@@ -26,13 +25,25 @@ async def sync_timezones(table: Spreadsheet):
 
     sheet = await google_sheets_api_client.get_sheet_by_table_and_name(table=table, name='timezones')
     timezones_table = await google_sheets_api_client.get_rows(sheet=sheet)
-    timezones_keys_table = [timezone.get('key') for timezone in timezones_table]
+    timezones_ids_str_table = [timezone.get('id_str') for timezone in timezones_table]
 
     timezones = await mybody_api_client.client.timezones.get_list()
-    timezones_keys = [timezone.key for timezone in timezones]
+    timezones_ids_str = [timezone.id_str for timezone in timezones]
 
-    match = list(set(timezones_keys) & set(timezones_keys_table))
-    need_create = [key for key in timezones_keys_table if key not in match]
-    need_delete = [key for key in timezones_keys if key not in match]
+    match = list(set(timezones_ids_str) & set(timezones_ids_str_table))
+    need_create = [id_str for id_str in timezones_ids_str_table if id_str not in match]
+    need_delete = [id_str for id_str in timezones_ids_str if id_str not in match]
+
+    for id_str in need_delete:
+        await mybody_api_client.admin.timezones.delete(
+            id_str=id_str,
+        )
 
     for timezone_table in timezones_table:
+        id_str = timezone_table.get('id_str')
+        deviation = timezone_table.get('deviation')
+        if timezone_table.get('id_str') in need_create:
+            await mybody_api_client.admin.timezones.create(
+                id_str=id_str,
+                deviation=deviation,
+            )

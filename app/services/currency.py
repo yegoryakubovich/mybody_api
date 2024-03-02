@@ -54,7 +54,7 @@ class CurrencyService(BaseService):
 
         return {'id_str': currency.id_str}
 
-    @session_required(permissions=['currencies'])
+    @session_required(permissions=['currencies'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,

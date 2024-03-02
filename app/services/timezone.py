@@ -58,7 +58,7 @@ class TimezoneService(BaseService):
 
         return {'id_str': timezone.id_str}
 
-    @session_required(permissions=['timezones'])
+    @session_required(permissions=['timezones'], can_root=True)
     async def delete_by_admin(
             self,
             session: Session,
