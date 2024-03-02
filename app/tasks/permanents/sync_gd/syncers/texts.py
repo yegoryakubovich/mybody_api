@@ -29,13 +29,12 @@ PREFIXES = [
     'product_',
     'exercise_',
     'article_',
-    'timezone_',
 ]
 DEFAULT_LANGUAGE = 'eng'
 
 
 async def sync_texts(table: Spreadsheet):
-    languages = await mybody_api_client.client.languages.get_list()
+    languages = [language.id_str for language in await mybody_api_client.client.languages.get_list()]
 
     sheet_texts = await google_sheets_api_client.get_sheet_by_table_and_name(table=table, name='texts')
     rows_texts = await google_sheets_api_client.get_rows(sheet=sheet_texts)
@@ -70,28 +69,82 @@ async def sync_texts(table: Spreadsheet):
 
     need_create = [key for key in sheet_keys if key not in match]
     need_delete = [key for key in texts_keys if key not in match and not key.startswith(tuple(PREFIXES))]
+    print(need_delete)
+    print(texts_keys)
 
+    # Global block
     for text_table in texts_table:
         key = text_table.key
         text_api = texts_api.get(key)
 
+        skip_update = False
+        # Create
         if key in need_create:
-            continue
+            print(f'CREATE text {key}')
+            await mybody_api_client.admin.texts.create(
+                key=key,
+                value_default=text_table.get(DEFAULT_LANGUAGE),
+                create_text_pack=False,
+            )
+            skip_update = True
+        # Delete
         if key in need_delete:
-            continue
+            print(f'DELETE text {key}')
+            await mybody_api_client.admin.texts.delete(
+                key=key,
+                create_text_pack=False,
+            )
+            skip_update = True
 
-        current_value_default = text_api.get('default_value')
-        new_value_default = text_table.get(DEFAULT_LANGUAGE)
+        # Update
+        if not skip_update:
+            current_value_default = text_api.get('default_value')
+            new_value_default = text_table.get(DEFAULT_LANGUAGE)
 
-        #print(text_api)
-        # print(text_table)
+            if current_value_default != new_value_default:
+                print(f'UPDATE text {key}')
+                await mybody_api_client.admin.texts.update(
+                    key=key,
+                    value_default=new_value_default,
+                    create_text_pack=False,
+                )
 
-        if current_value_default != new_value_default:
-            print(key, new_value_default)
-            await mybody_api_client.admin.texts.update(key=key, value_default=new_value_default)
+        # Translations block
+        current_translations = text_api.translations if text_api else {}
+        new_translations = text_table.copy(); new_translations.pop('key')
+        match_translations = list(set(current_translations.keys()) & set(new_translations.keys()))
+        need_create_translations = [key for key in new_translations.keys() if key not in match_translations]
+        need_delete_translations = [key for key in current_translations.keys() if key not in match_translations]
 
+        for language in languages:
+            # Create translation
+            if language in need_create_translations:
+                print(f'CREATE text_translation {key}_{language}')
+                await mybody_api_client.admin.texts.translations.create(
+                    text_key=key,
+                    language=language,
+                    value=new_translations.get(language),
+                    create_text_pack=False,
+                )
+                continue
+            # Delete translation
+            elif language in need_delete_translations:
+                print(f'DELETE text_translation {key}_{language}')
+                await mybody_api_client.admin.texts.translations.delete(
+                    text_key=key,
+                    language=language,
+                    create_text_pack=False,
+                )
+                continue
 
-
-
-    # languages = await mybody_api_client.client.languages.get_list()
-    # print(languages)
+            # Update translation
+            current_translation = current_translations.get(language, None)
+            new_translation = new_translations.get(language, None)
+            if current_translation != new_translation:
+                print(f'UPDATE text_translation {key}_{language}')
+                await mybody_api_client.admin.texts.translations.update(
+                    text_key=key,
+                    language=language,
+                    value=new_translation,
+                    create_text_pack=False,
+                )

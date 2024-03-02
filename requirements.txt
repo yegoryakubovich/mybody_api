@@ -12,7 +12,7 @@ pillow==10.2.0
 cryptography==42.0.5
 celery[redis]~=5.3.6
 flower==2.0.1
-mybody_api_client==0.4.6
+mybody_api_client==0.4.7
 apscheduler==3.10.4
 gspread==6.0.2
 oauth2client==4.1.3

@@ -20,7 +20,10 @@ from mybody_api_client import MyBodyApiClient
 from config import settings
 
 
+TOKEN = f'0:{settings.root_token}'
+
+
 mybody_api_client = MyBodyApiClient(
     url=settings.sync_db_url,
-    token=settings.root_token,
+    token=TOKEN,
 )

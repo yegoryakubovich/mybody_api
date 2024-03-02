@@ -22,5 +22,6 @@ from app.tasks.permanents.sync_gd.syncers import sync
 
 async def sync_gd():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(sync, trigger='interval', seconds=3) # trigger=CronTrigger.from_crontab('0-59 * * * *'))
+    await sync()
+    # scheduler.add_job(sync, trigger='interval', seconds=100) # trigger=CronTrigger.from_crontab('0-59 * * * *'))
     scheduler.start()

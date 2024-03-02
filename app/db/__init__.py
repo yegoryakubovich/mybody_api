@@ -15,6 +15,8 @@
 #
 
 
+from peewee import OperationalError
+
 from app.db.db import db
 from app.db.db_manager import db_manager_sync
 from app.db.models import models
