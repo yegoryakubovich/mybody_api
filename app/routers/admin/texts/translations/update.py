@@ -31,6 +31,7 @@ class TextTranslationUpdateByAdminSchema(BaseModel):
     text_key: str = Field(min_length=2, max_length=128)
     language: str = Field(min_length=2, max_length=128)
     value: str = Field(min_length=1, max_length=1024)
+    create_text_pack: bool = Field(default=True)
 
 
 @router.post()
@@ -40,5 +41,6 @@ async def route(schema: TextTranslationUpdateByAdminSchema):
         text_key=schema.text_key,
         language=schema.language,
         value=schema.value,
+        create_text_pack=schema.create_text_pack,
     )
     return Response(**result)

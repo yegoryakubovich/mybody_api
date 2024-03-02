@@ -21,7 +21,7 @@ from app.repositories import SessionRepository
 from app.db.models import Session
 from app.services.base import BaseService
 from app.utils.crypto import create_hash_by_string_and_salt
-from app.utils.exceptions.account import WrongTokenFormat, WrongToken
+from app.utils.exceptions.account import WrongTokenFormat, WrongToken, WrongRootToken
 from config import settings
 
 
@@ -55,7 +55,7 @@ class SessionGetByTokenService(BaseService):
                 }
                 return Dict(**session_dict)
             else:
-                raise WrongToken()
+                raise WrongRootToken()
 
         session: Session = await SessionRepository().get_by_id(id_=session_id)
         if session.token_hash == await create_hash_by_string_and_salt(
@@ -64,4 +64,4 @@ class SessionGetByTokenService(BaseService):
         ):
             return session
         else:
-            raise WrongToken('Wrong token')
+            raise WrongToken()

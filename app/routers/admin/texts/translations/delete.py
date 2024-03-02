@@ -30,6 +30,7 @@ class TextTranslationDeleteByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     text_key: str = Field(min_length=2, max_length=128)
     language: str = Field(min_length=2, max_length=128)
+    create_text_pack: bool = Field(default=True)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: TextTranslationDeleteByAdminSchema):
         token=schema.token,
         text_key=schema.text_key,
         language=schema.language,
+        create_text_pack=schema.create_text_pack,
     )
     return Response(**result)

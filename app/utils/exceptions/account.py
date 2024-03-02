@@ -46,9 +46,14 @@ class InvalidUsername(ApiException):
 
 class WrongToken(ApiException):
     code = 2005
-    message = 'Wrong root token'
+    message = 'Wrong token'
 
 
 class WrongTokenFormat(ApiException):
     code = 2006
     message = 'Token does not match format'
+
+
+class WrongRootToken(ApiException):
+    code = 2007
+    message = 'Wrong root token'
