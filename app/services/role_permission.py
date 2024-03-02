@@ -71,9 +71,10 @@ class RolePermissionService(BaseService):
 
         return {}
 
-    @staticmethod
+    @session_required(return_model=False)
     async def get(
-            id_: int
+            self,
+            id_: int,
     ):
         role_permission: RolePermission = await RolePermissionRepository().get_by_id(id_=id_)
         return {
@@ -84,8 +85,9 @@ class RolePermissionService(BaseService):
             }
         }
 
-    @staticmethod
+    @session_required(return_model=False)
     async def get_list(
+            self,
             role_id: int,
     ):
         role = await RoleRepository().get_by_id(id_=role_id)
