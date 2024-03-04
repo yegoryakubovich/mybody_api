@@ -24,12 +24,13 @@ from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermi
 
 
 class PaymentStates:
-    UNPAID = 'unpaid'
+    CREATING = 'creating'
+    WAITING = 'waiting'
     PAID = 'paid'
     EXPIRED = 'expired'
 
     def all(self):
-        return [self.UNPAID, self.PAID, self.EXPIRED]
+        return [self.WAITING, self.PAID, self.EXPIRED]
 
 
 class PaymentService(BaseService):
@@ -72,7 +73,7 @@ class PaymentService(BaseService):
             payment_method_currency=payment_method_currency,
             service_cost=service_cost,
             cost=cost,
-            state='unpaid',
+            state=PaymentStates.CREATING,
         )
 
         await self.create_action(
@@ -239,3 +240,15 @@ class PaymentService(BaseService):
             },
             'cost': payment.cost,
         }
+
+    async def create_hg(
+            self,
+            payment_id: int,
+    ):
+        pass
+
+    async def check_hg(
+            self,
+            payment_id: int,
+    ):
+        pass

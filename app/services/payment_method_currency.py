@@ -70,17 +70,17 @@ class PaymentMethodCurrencyService(BaseService):
         return {}
 
     @staticmethod
-    async def get_list(
-            payment_method_id_str: str,
-    ):
-        payment_method = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
-        payment_methods_currencies = await PaymentMethodCurrencyRepository().get_list_by_payment_method(payment_method=payment_method)
-        return {
-            'payment_method_currencies': [
-                {
-                    'id': payment_method.id,
-                    'payment_method': pmc.payment_method.id_str,
-                    'currency': pmc.currency.id_str,
-                } for pmc in payment_methods_currencies
-            ]
-        }
+    async def get_list():
+        print(['usd', 'rub', 'byn'])
+        return {} # Return unique currency_id_str in list
+        # payment_method = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
+        # payment_methods_currencies = await PaymentMethodCurrencyRepository().get_list_by_payment_method(payment_method=payment_method)
+        # return {
+        #     'payment_method_currencies': [
+        #         {
+        #             'id': payment_method.id,
+        #             'payment_method': pmc.payment_method.id_str,
+        #             'currency': pmc.currency.id_str,
+        #         } for pmc in payment_methods_currencies
+        #     ]
+        # }

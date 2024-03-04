@@ -13,12 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-
+from inflection import underscore
 from peewee import DoesNotExist
 
 from app.db.models.base import BaseModel
-from app.utils.exceptions import ModelDoesNotExist
+from app.utils.exceptions import ModelDoesNotExist, ModelAlreadyExist
 
 
 class BaseRepository:
@@ -44,6 +43,19 @@ class BaseRepository:
             return False
 
     async def create(self, **kwargs):
+        if 'id_str' in kwargs.keys():
+            id_str = kwargs.get('id_str')
+            try:
+                await self.get_by_id_str(id_str=id_str)
+                raise ModelAlreadyExist(
+                    kwargs={
+                        'model': self.model.__class__.__name__,
+                        'id_type': 'id_str',
+                        'id_value': id_str,
+                    },
+                )
+            except ModelDoesNotExist:
+                pass
 
         return self.model.create(**kwargs)
 

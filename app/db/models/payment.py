@@ -28,11 +28,11 @@ class Payment(BaseModel):
     id = PrimaryKeyField()
     account_service = ForeignKeyField(model=AccountService)
     service_cost = ForeignKeyField(model=ServiceCost)
+    cost = FloatField()
     payment_method = ForeignKeyField(model=PaymentMethod)
     payment_method_currency = ForeignKeyField(model=PaymentMethodCurrency)
-    cost = FloatField()
     state = CharField(max_length=64)
-    data = CharField(max_length=1024, default=[], null=True)
+    data = CharField(max_length=1024, default='{}', null=True)
     is_deleted = BooleanField(default=False)
 
     class Meta:
