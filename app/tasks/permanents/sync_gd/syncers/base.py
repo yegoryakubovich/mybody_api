@@ -20,24 +20,39 @@ from gspread import Spreadsheet
 from ..utils.google_sheets_api_client import google_sheets_api_client
 
 
-async def sync_base(table: Spreadsheet, sheet_name, api_method_get_list, api_method_delete, api_method_create):
+async def sync_base(
+        table: Spreadsheet,
+        sheet_name,
+        api_method_get_list,
+        api_method_delete,
+        api_method_create,
+        key_name = 'id_str',
+):
     sheet = await google_sheets_api_client.get_sheet_by_table_and_name(table=table, name=sheet_name)
     table = await google_sheets_api_client.get_rows(sheet=sheet)
-    table_ids_str = [obj.get('id_str') for obj in table]
+    table_ids_str = [obj.get(key_name) for obj in table]
 
     api = await api_method_get_list()
-    api_ids_str = [obj.id_str for obj in api]
+    api_ids_str = [obj.get(key_name) for obj in api]
 
     match = list(set(api_ids_str) & set(table_ids_str))
     need_create = [id_str for id_str in table_ids_str if id_str not in match]
     need_delete = [id_str for id_str in api_ids_str if id_str not in match]
 
-    for id_str in need_delete:
-        await api_method_delete(
-            id_str=id_str,
-        )
+    if key_name in ['id_str']:
+        for id_str in need_delete:
+            await api_method_delete(
+                id_str=id_str,
+            )
 
     for obj in table:
-        id_str = table.get('id_str')
+        id_str = obj.get(key_name)
         if id_str in need_create:
+
+            # For roles
+            if key_name not in ['id_str']:
+                if len(api) == 0:
+                    await api_method_create(obj=obj)
+                break
+
             await api_method_create(obj=obj)

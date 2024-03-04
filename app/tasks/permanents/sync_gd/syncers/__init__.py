@@ -31,10 +31,11 @@ async def sync():
         )
 
     async def create_roles(obj):
-        role = await mybody_api_client.admin.roles.create(
+        role_id = await mybody_api_client.admin.roles.create(
             name=obj.get('name'),
         )
-        await sync_roles_permissions(role_id=role.id)
+        if role_id == 1:
+            await sync_roles_permissions(role_id=role_id)
 
     async def create_language(obj):
         await mybody_api_client.admin.languages.create(
@@ -76,10 +77,11 @@ async def sync():
     # Roles
     await sync_base(
         table=table,
-        sheet_name='permissions',
+        sheet_name='roles',
         api_method_get_list=mybody_api_client.admin.roles.get_list,
         api_method_delete=mybody_api_client.admin.roles.delete,
         api_method_create=create_roles,
+        key_name='name',
     )
     #
     # # Languages

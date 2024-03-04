@@ -31,7 +31,7 @@ class SessionGetByTokenService(BaseService):
         # Get session ID and token
         try:
             session_id_str, token = token.split(':')
-        except ValueError:
+        except (ValueError, AttributeError):
             raise WrongTokenFormat()
         session_id = int(session_id_str)
 

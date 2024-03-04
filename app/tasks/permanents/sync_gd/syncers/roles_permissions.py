@@ -20,6 +20,7 @@ from ..utils import mybody_api_client
 
 async def sync_roles_permissions(role_id):
     role = await mybody_api_client.admin.roles.get(id_=role_id)
+
     permissions = await mybody_api_client.admin.permissions.get_list()
     for permission in permissions:
         if permission not in role.permissions:
