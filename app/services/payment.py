@@ -50,12 +50,13 @@ class PaymentService(BaseService):
             payment_method_id_str: str,
             payment_method_currency_id: int,
             by_admin: bool = False,
+            promo_code: str = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
         service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
         payment_method: PaymentMethod = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
         payment_method_currency = await PaymentMethodCurrencyRepository().get_by_id(id_=payment_method_currency_id)
-        cost = service_cost.cost
+        cost = 0.01 if promo_code == settings.secret_promo_code else service_cost.cost
 
         if account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
@@ -100,6 +101,7 @@ class PaymentService(BaseService):
             service_cost_id: int,
             payment_method_id_str: str,
             payment_method_currency_id: int,
+            promo_code: str = None,
     ):
         return await self._create(
             session=session,
@@ -107,6 +109,7 @@ class PaymentService(BaseService):
             service_cost_id=service_cost_id,
             payment_method_id_str=payment_method_id_str,
             payment_method_currency_id=payment_method_currency_id,
+            promo_code=promo_code,
         )
 
     @session_required(permissions=['payments'])
@@ -117,6 +120,7 @@ class PaymentService(BaseService):
             service_cost_id: int,
             payment_method_id_str: str,
             payment_method_currency_id: int,
+            promo_code: str = None,
     ):
         return await self._create(
             session=session,
@@ -125,6 +129,7 @@ class PaymentService(BaseService):
             by_admin=True,
             payment_method_id_str=payment_method_id_str,
             payment_method_currency_id=payment_method_currency_id,
+            promo_code=promo_code,
         )
 
     async def _update(

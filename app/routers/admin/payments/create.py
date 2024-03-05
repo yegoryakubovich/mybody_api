@@ -32,6 +32,7 @@ class PaymentCreateByAdminSchema(BaseModel):
     service_cost_id: int = Field()
     payment_method: str = Field(max_length=16)
     payment_method_currency_id: int = Field()
+    promo_code: str | None = Field(min_length=16, default=None)
 
 
 @router.post()
@@ -42,5 +43,6 @@ async def route(schema: PaymentCreateByAdminSchema):
         service_cost_id=schema.service_cost_id,
         payment_method_id_str=schema.payment_method,
         payment_method_currency_id=schema.payment_method_currency_id,
+        promo_code=schema.promo_code,
     )
     return Response(**result)

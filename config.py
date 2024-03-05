@@ -57,6 +57,8 @@ class Settings(BaseSettings):
     payment_hg_store_city: str
     payment_hg_store_locality_city: str
 
+    secret_promo_code: str
+
     path_articles: str = 'assets/articles'
     path_texts_packs: str = 'assets/texts_packs'
     path_images: str = 'assets/images'
