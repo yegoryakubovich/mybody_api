@@ -317,7 +317,7 @@ class AccountServiceService(BaseService):
             'id': account_service.id,
             'account_id': account_service.account.id,
             'service_id': account_service.service.id,
-            'questions': await ServiceService.reformat_questions(questions=account_service.questions),
+            'questions': account_service.questions,
             'answers': account_service.answers,
             'state': account_service.state,
         }

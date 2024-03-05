@@ -353,12 +353,18 @@ class PaymentService(BaseService):
                 id_=payment.id,
                 state=PaymentStates.PAID,
             )
-            await AccountServiceService().update_by_task(
-                id_=payment.account_service.id,
-                datetime_from=datetime.utcnow(),
-                datetime_to=datetime.utcnow() + timedelta(31),
-                state=AccountServiceStates.active,
-            )
+            if payment.account_service.state == AccountServiceStates.active:
+                await AccountServiceService().update_by_task(
+                    id_=payment.account_service.id,
+                    datetime_to=datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31),
+                )
+            else:
+                await AccountServiceService().update_by_task(
+                    id_=payment.account_service.id,
+                    datetime_from=datetime.utcnow(),
+                    datetime_to=datetime.utcnow() + timedelta(31),
+                    state=AccountServiceStates.active,
+                )
 
         if payment.state != PaymentStates.PAID and is_expired:
             await self.update_by_task(
