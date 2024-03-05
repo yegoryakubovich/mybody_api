@@ -13,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from datetime import datetime, timedelta
+from json import dumps, loads
 
 from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, PaymentMethodCurrency
 from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
     PaymentMethodRepository, PaymentMethodCurrencyRepository
+from app.services import AccountServiceService
+from app.services.account_service import AccountServiceStates
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions
+from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters
+from config import settings
 
 
 class PaymentStates:
@@ -30,7 +34,7 @@ class PaymentStates:
     EXPIRED = 'expired'
 
     def all(self):
-        return [self.WAITING, self.PAID, self.EXPIRED]
+        return [self.CREATING, self.WAITING, self.PAID, self.EXPIRED]
 
 
 class PaymentService(BaseService):
@@ -46,7 +50,7 @@ class PaymentService(BaseService):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
         service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
         payment_method: PaymentMethod = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
-        payment_method_currency: PaymentMethodCurrency = await PaymentMethodCurrencyRepository().get_by_id(id_=payment_method_currency_id)
+        payment_method_currency = await PaymentMethodCurrencyRepository().get_by_id(id_=payment_method_currency_id)
         cost = service_cost.cost
 
         if account_service.account != session.account and not by_admin:
@@ -121,29 +125,43 @@ class PaymentService(BaseService):
 
     async def _update(
             self,
-            session: Session,
             id_: int,
-            state: str,
+            state: str = None,
+            data: str = None,
+            session: Session = None,
             by_admin: bool = False,
     ):
         payment: Payment = await PaymentRepository().get_by_id(id_=id_)
 
-        if payment.account_service.account != session.account and not by_admin:
-            raise NotEnoughPermissions()
+        if session:
+            if payment.account_service.account != session.account and not by_admin:
+                raise NotEnoughPermissions()
 
         payment_states = PaymentStates().all()
 
-        if state not in payment_states:
+        if state and state not in payment_states:
             raise InvalidPaymentState(
                 kwargs={
                     'all': payment_states,
                 }
             )
 
+        if not state and not data:
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['state', 'data']
+                }
+            )
+
         action_parameters = {
-            'updater': f'session_{session.id}',
-            'state': state,
+            'updater': f'session_{session.id}' if session else 'task',
         }
+
+        if state:
+            action_parameters['state'] = state
+
+        if data:
+            action_parameters['data'] = data
 
         if by_admin:
             action_parameters['by_admin'] = True
@@ -151,6 +169,7 @@ class PaymentService(BaseService):
         await PaymentRepository.update(
             model=payment,
             state=state,
+            data=data,
         )
 
         await self.create_action(
@@ -161,31 +180,32 @@ class PaymentService(BaseService):
 
         return {}
 
-    @session_required()
-    async def update(
-            self,
-            session: Session,
-            id_: int,
-            state: str,
-    ):
-        return await self._update(
-            session=session,
-            id_=id_,
-            state=state,
-        )
-
     @session_required(permissions=['payments'])
     async def update_by_admin(
             self,
             session: Session,
             id_: int,
-            state: str,
+            state: str = None,
+            data: str = None
     ):
         return await self._update(
             session=session,
             id_=id_,
             state=state,
+            data=data,
             by_admin=True,
+        )
+
+    async def update_by_task(
+            self,
+            id_: int,
+            state: str = None,
+            data: str = None,
+    ):
+        return await self._update(
+            id_=id_,
+            state=state,
+            data=data,
         )
 
     @session_required(permissions=['payments'])
@@ -245,10 +265,94 @@ class PaymentService(BaseService):
             self,
             payment_id: int,
     ):
-        pass
+        payment: Payment = await PaymentRepository().get_by_id(id_=payment_id)
+
+        api_client = HutkiGroshApiClient(
+            url='https://api-epos.hgrosh.by/public',
+        )
+
+        token = await api_client.token.get(
+            client_id=settings.payment_hg_client_id,
+            client_secret=settings.payment_hg_client_secret,
+            service_provider_id=settings.payment_hg_service_provider_id,
+            service_id=settings.payment_hg_service_id,
+        )
+        invoice_id = await api_client.invoices.create(
+            token=token,
+            invoice_name=f'mybody-{payment.id}',
+            service_provider_id=settings.payment_hg_service_provider_id,
+            service_provider_name=settings.payment_hg_service_provider_name,
+            service_id=settings.payment_hg_service_id,
+            service_name=settings.payment_hg_service_name,
+            address_country=settings.payment_hg_address_country,
+            address_line=settings.payment_hg_address_line,
+            address_city=settings.payment_hg_address_city,
+            full_address=settings.payment_hg_full_address,
+            locality_code=settings.payment_hg_locality_code,
+            store_name=settings.payment_hg_store_name,
+            store_locality_name=settings.payment_hg_store_locality_name,
+            store_city=settings.payment_hg_store_city,
+            store_locality_city=settings.payment_hg_store_locality_city,
+            terms_of_days=1,
+            items=[
+                {
+                    'name': 'Услуга',
+                    'description': 'Оплата услуги',
+                    'quantity': 1,
+                    'price': payment.cost,
+                    'discount_percent': 0,
+                    'discount_amount': 0,
+                },
+            ],
+        )
+        await api_client.invoices.set_active(token=token, uuid=invoice_id)
+
+        await self.update_by_task(
+            id_=payment.id,
+            state=PaymentStates.WAITING,
+            data=dumps(
+                {
+                    'invoice_name': 'mybody-{payment.id}',
+                    'uuid': invoice_id,
+                },
+            ),
+        )
 
     async def check_hg(
             self,
             payment_id: int,
     ):
-        pass
+        payment: Payment = await PaymentRepository().get_by_id(id_=payment_id)
+        payment_data = loads(payment.data)
+
+        api_client = HutkiGroshApiClient(
+            url='https://api-epos.hgrosh.by/public',
+        )
+
+        token = await api_client.token.get(
+            client_id=settings.payment_hg_client_id,
+            client_secret=settings.payment_hg_client_secret,
+            service_provider_id=settings.payment_hg_service_provider_id,
+            service_id=settings.payment_hg_service_id,
+        )
+
+        payment_invoice = await api_client.invoices.get(token=token, search_string=payment_data['invoice_name'])[0]
+        is_expired = datetime.fromisoformat(payment_invoice['paymentDueTerms']['dueUTC']) < datetime.utcnow()
+
+        if payment_invoice['totalAmount'] == payment_invoice['amountPaid']:
+            await self.update_by_task(
+                id_=payment.id,
+                state=PaymentStates.PAID,
+            )
+            await AccountServiceService().update_by_task(
+                id_=payment.account_service.id,
+                datetime_from=datetime.utcnow(),
+                datetime_to=datetime.utcnow() + timedelta(31),
+                state=AccountServiceStates.active,
+            )
+
+        if payment.state != PaymentStates.PAID and is_expired:
+            await self.update_by_task(
+                id_=payment.id,
+                state=PaymentStates.EXPIRED,
+            )

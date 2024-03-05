@@ -79,7 +79,7 @@ class RoleService(BaseService):
 
         return {}
 
-    @session_required(return_model=False, can_root=True)
+    @session_required(permissions=['roles'], return_model=False, can_root=True)
     async def get(
             self,
             id_: int,
@@ -93,7 +93,7 @@ class RoleService(BaseService):
             }
         }
 
-    @session_required(return_model=False, can_root=True)
+    @session_required(permissions=['roles'], return_model=False, can_root=True)
     async def get_list(self):
         return {
             'roles': [

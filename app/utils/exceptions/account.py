@@ -57,3 +57,8 @@ class WrongTokenFormat(ApiException):
 class WrongRootToken(ApiException):
     code = 2007
     message = 'Wrong root token'
+
+
+class InvalidAccountServiceState(ApiException):
+    code = 2008
+    message = 'Invalid account service state. Available: {all}'

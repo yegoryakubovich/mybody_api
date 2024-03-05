@@ -29,7 +29,8 @@ router = Router(
 class PaymentUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    state: str = Field(max_length=16)
+    state: str | None = Field(max_length=16, default=None)
+    data: str | None = Field(default=None)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: PaymentUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         state=schema.state,
+        data=schema.data
     )
     return Response(**result)

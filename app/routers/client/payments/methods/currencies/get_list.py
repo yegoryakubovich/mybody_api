@@ -15,9 +15,6 @@
 #
 
 
-from fastapi import Depends
-from pydantic import BaseModel, Field
-
 from app.services import PaymentMethodCurrencyService
 from app.utils import Response, Router
 
@@ -27,13 +24,7 @@ router = Router(
 )
 
 
-class PaymentMethodCurrencyGetListSchema(BaseModel):
-    payment_method: str = Field(max_length=16)
-
-
 @router.get()
-async def route(schema: PaymentMethodCurrencyGetListSchema = Depends()):
-    result = await PaymentMethodCurrencyService().get_list(
-        payment_method_id_str=schema.payment_method,
-    )
+async def route():
+    result = await PaymentMethodCurrencyService().get_list()
     return Response(**result)

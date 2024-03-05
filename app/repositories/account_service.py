@@ -19,13 +19,6 @@ from .base import BaseRepository
 from ..db.models import Account, AccountService
 
 
-class AccountServiceStates:
-    creation = 'CREATION'
-    payment = 'PAYMENT'
-    active = 'ACTIVE'
-    expired = 'EXPIRED'
-
-
 class AccountServiceRepository(BaseRepository):
     model = AccountService
 

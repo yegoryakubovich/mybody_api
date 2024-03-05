@@ -30,15 +30,6 @@ class PaymentMethodService(BaseService):
             id_str: str,
             name: str,
     ):
-        if PaymentMethodRepository().is_exist_by_id_str(id_str=id_str):
-            raise ModelAlreadyExist(
-                kwargs={
-                    'model': 'PaymentMethod',
-                    'id_type': 'id_str',
-                    'id_value': id_str,
-                },
-            )
-
         payment_method = await PaymentMethodRepository().create(
             id_str=id_str,
             name=name,

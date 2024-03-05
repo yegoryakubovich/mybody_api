@@ -40,6 +40,22 @@ class Settings(BaseSettings):
     sync_db_url: str
     sync_db_table_name: str
 
+    payment_hg_client_id: int
+    payment_hg_client_secret: str
+    payment_hg_service_provider_id: int
+    payment_hg_service_id: int
+    payment_hg_service_provider_name: str
+    payment_hg_service_name: str
+    payment_hg_address_country: str
+    payment_hg_address_line: str
+    payment_hg_address_city: str
+    payment_hg_full_address: str
+    payment_hg_locality_code: str
+    payment_hg_store_name: str
+    payment_hg_store_locality_name: str
+    payment_hg_store_city: str
+    payment_hg_store_locality_city: str
+
     path_articles: str = 'assets/articles'
     path_texts_packs: str = 'assets/texts_packs'
     path_images: str = 'assets/images'

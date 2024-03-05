@@ -15,19 +15,28 @@
 #
 
 
-from datetime import datetime, date
+from datetime import datetime
 from json import JSONDecodeError, loads
 
 from app.db.models import Account, AccountService, Service, Session
-from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository, AccountServiceStates
+from app.repositories import AccountRepository, AccountServiceRepository, ServiceRepository
 from app.services.service import ServiceService
 from app.services.base import BaseService
 from app.utils.exceptions import InvalidAccountServiceAnswerList, NotEnoughPermissions
 from app.utils.decorators.session_required import session_required
+from app.utils.exceptions.account import InvalidAccountServiceState
+
+
+class AccountServiceStates:
+    creation = 'CREATION'
+    active = 'ACTIVE'
+    expired = 'EXPIRED'
+
+    def all(self):
+        return [self.creation, self.active, self.expired]
 
 
 class AccountServiceService(BaseService):
-
     async def check_answers(self, questions: str, answers: str):
         if not await self._is_valid_answers(sections=questions, answers=answers):
             raise InvalidAccountServiceAnswerList()
@@ -96,15 +105,14 @@ class AccountServiceService(BaseService):
         account_service = await self._create(session=session, account=account, service=service, answers=answers)
         return {'id': account_service.id}
 
-    @session_required(permissions=['accounts'])
-    async def update_by_admin(
+    async def _update(
             self,
-            session: Session,
             id_: int,
+            session: Session = None,
             answers: str = None,
             state: str = None,
-            datetime_from: date = None,
-            datetime_to: date = None,
+            datetime_from: datetime = None,
+            datetime_to: datetime = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=id_)
         if answers:
@@ -117,8 +125,17 @@ class AccountServiceService(BaseService):
             datetime_to=datetime_to,
         )
 
+        account_service_states = AccountServiceStates().all()
+
+        if state and state not in account_service_states:
+            raise InvalidAccountServiceState(
+                kwargs={
+                    'all': account_service_states,
+                }
+            )
+
         action_parameters = {
-            'updater': f'session_{session.id}',
+            'updater': f'session_{session.id}' if session else 'task',
         }
         if answers:
             action_parameters.update(
@@ -132,6 +149,12 @@ class AccountServiceService(BaseService):
                     'state': state,
                 }
             )
+        if session:
+            action_parameters.update(
+                {
+                    'by_admin': True,
+                }
+            )
 
         await self.create_action(
             model=account_service,
@@ -139,6 +162,39 @@ class AccountServiceService(BaseService):
             parameters=action_parameters,
         )
         return {}
+
+    @session_required(permissions=['accounts'])
+    async def update_by_admin(
+            self,
+            session: Session,
+            id_: int,
+            answers: str = None,
+            state: str = None,
+            datetime_from: datetime = None,
+            datetime_to: datetime = None,
+    ):
+        return await self._update(
+            session=session,
+            id_=id_,
+            answers=answers,
+            state=state,
+            datetime_from=datetime_from,
+            datetime_to=datetime_to,
+        )
+
+    async def update_by_task(
+            self,
+            id_: int,
+            state: str = None,
+            datetime_from: datetime = None,
+            datetime_to: datetime = None,
+    ):
+        return await self._update(
+            id_=id_,
+            state=state,
+            datetime_from=datetime_from,
+            datetime_to=datetime_to,
+        )
 
     @session_required(permissions=['accounts'])
     async def delete_by_admin(
@@ -265,3 +321,15 @@ class AccountServiceService(BaseService):
             'answers': account_service.answers,
             'state': account_service.state,
         }
+
+    async def check(
+            self,
+            account_service_id: int,
+    ):
+        account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
+
+        if account_service.datetime_to < datetime.utcnow():
+            await self.update_by_task(
+                id_=account_service.id,
+                state=AccountServiceStates.expired,
+            )
