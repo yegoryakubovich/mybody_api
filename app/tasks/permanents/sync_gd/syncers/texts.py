@@ -34,6 +34,8 @@ DEFAULT_LANGUAGE = 'eng'
 
 
 async def sync_texts(table: Spreadsheet):
+    is_changed = False
+
     languages = [language.id_str for language in await mybody_api_client.client.languages.get_list()]
 
     sheet_texts = await google_sheets_api_client.get_sheet_by_table_and_name(table=table, name='texts')
@@ -79,6 +81,7 @@ async def sync_texts(table: Spreadsheet):
             key=key,
             create_text_pack=False,
         )
+        is_changed = True
 
     for text_table in texts_table:
         key = text_table.key
@@ -94,6 +97,7 @@ async def sync_texts(table: Spreadsheet):
                 create_text_pack=False,
             )
             skip_update = True
+            is_changed = True
 
         # Update
         if not skip_update:
@@ -107,6 +111,7 @@ async def sync_texts(table: Spreadsheet):
                     value_default=new_value_default,
                     create_text_pack=False,
                 )
+                is_changed = True
 
         # Translations block
         current_translations = text_api.translations if text_api else {}
@@ -123,6 +128,7 @@ async def sync_texts(table: Spreadsheet):
                 language=language_delete,
                 create_text_pack=False,
             )
+            is_changed = True
             continue
 
         for language in languages:
@@ -135,6 +141,7 @@ async def sync_texts(table: Spreadsheet):
                     value=new_translations.get(language),
                     create_text_pack=False,
                 )
+                is_changed = True
                 continue
 
             # Update translation
@@ -142,9 +149,13 @@ async def sync_texts(table: Spreadsheet):
             new_translation = new_translations.get(language, None)
             if current_translation != new_translation:
                 print(f'UPDATE text_translation {key}_{language}')
+                is_changed = True
                 await mybody_api_client.admin.texts.translations.update(
                     text_key=key,
                     language=language,
                     value=new_translation,
                     create_text_pack=False,
                 )
+
+    if is_changed:
+        await mybody_api_client.admin.texts.packs.create()

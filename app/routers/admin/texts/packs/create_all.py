@@ -15,27 +15,24 @@
 #
 
 
-from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import RoleService
-from app.utils import Router, Response
+from app.services import TextPackService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/get',
+    prefix='/all/create',
 )
 
 
-class RoleGetSchema(BaseModel):
+class TextPackCreateAllByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
 
 
-@router.get()
-async def route(schema: RoleGetSchema = Depends()):
-    result = await RoleService().get(
+@router.post()
+async def route(schema: TextPackCreateAllByAdminSchema):
+    result = await TextPackService().create_all_by_admin(
         token=schema.token,
-        id_=schema.id,
     )
     return Response(**result)

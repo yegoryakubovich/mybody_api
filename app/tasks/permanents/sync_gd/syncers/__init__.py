@@ -35,6 +35,7 @@ async def sync():
             name=obj.get('name'),
         )
         if role_id == 1:
+            print('go')
             await sync_roles_permissions(role_id=role_id)
 
     async def create_language(obj):
@@ -83,42 +84,42 @@ async def sync():
         api_method_create=create_roles,
         key_name='name',
     )
-    #
-    # # Languages
-    # await sync_base(
-    #     table=table,
-    #     sheet_name='languages',
-    #     api_method_get_list=mybody_api_client.client.languages.get_list,
-    #     api_method_delete=mybody_api_client.admin.languages.delete,
-    #     api_method_create=create_language,
-    # )
-    #
-    # # Timezones
-    # await sync_base(
-    #     table=table,
-    #     sheet_name='timezones',
-    #     api_method_get_list=mybody_api_client.client.timezones.get_list,
-    #     api_method_delete=mybody_api_client.admin.timezones.delete,
-    #     api_method_create=create_timezone,
-    # )
-    #
-    # # Currencies
-    # await sync_base(
-    #     table=table,
-    #     sheet_name='currencies',
-    #     api_method_get_list=mybody_api_client.client.currencies.get_list,
-    #     api_method_delete=mybody_api_client.admin.currencies.delete,
-    #     api_method_create=create_currency,
-    # )
-    #
-    # # Countries
-    # await sync_base(
-    #     table=table,
-    #     sheet_name='countries',
-    #     api_method_get_list=mybody_api_client.client.countries.get_list,
-    #     api_method_delete=mybody_api_client.admin.countries.delete(),
-    #     api_method_create=create_country,
-    # )
-    #
-    # # Texts
-    # await sync_texts(table=table)
+
+    # Languages
+    await sync_base(
+        table=table,
+        sheet_name='languages',
+        api_method_get_list=mybody_api_client.client.languages.get_list,
+        api_method_delete=mybody_api_client.admin.languages.delete,
+        api_method_create=create_language,
+    )
+
+    # Timezones
+    await sync_base(
+        table=table,
+        sheet_name='timezones',
+        api_method_get_list=mybody_api_client.client.timezones.get_list,
+        api_method_delete=mybody_api_client.admin.timezones.delete,
+        api_method_create=create_timezone,
+    )
+
+    # Currencies
+    await sync_base(
+        table=table,
+        sheet_name='currencies',
+        api_method_get_list=mybody_api_client.client.currencies.get_list,
+        api_method_delete=mybody_api_client.admin.currencies.delete,
+        api_method_create=create_currency,
+    )
+
+    # Countries
+    await sync_base(
+        table=table,
+        sheet_name='countries',
+        api_method_get_list=mybody_api_client.client.countries.get_list,
+        api_method_delete=mybody_api_client.admin.countries.delete,
+        api_method_create=create_country,
+    )
+
+    # Texts
+    await sync_texts(table=table)
