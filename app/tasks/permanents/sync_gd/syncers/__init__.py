@@ -35,7 +35,6 @@ async def sync():
             name=obj.get('name'),
         )
         if role_id == 1:
-            print('go')
             await sync_roles_permissions(role_id=role_id)
 
     async def create_language(obj):

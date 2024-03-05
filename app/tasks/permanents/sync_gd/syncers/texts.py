@@ -62,7 +62,7 @@ async def sync_texts(table: Spreadsheet):
             text.key: dict(
                 default_value=text.value_default,
                 translations={
-                    translation.language_default: translation.value for translation in text.translations
+                    translation.language: translation.value for translation in text.translations
                 },
             ) for text in texts
         }
@@ -76,7 +76,6 @@ async def sync_texts(table: Spreadsheet):
 
     # Delete
     for key in need_delete:
-        print(f'DELETE text {key}')
         await mybody_api_client.admin.texts.delete(
             key=key,
             create_text_pack=False,
@@ -90,7 +89,6 @@ async def sync_texts(table: Spreadsheet):
         skip_update = False
         # Create
         if key in need_create:
-            print(f'CREATE text {key}')
             await mybody_api_client.admin.texts.create(
                 key=key,
                 value_default=text_table.get(DEFAULT_LANGUAGE),
@@ -122,7 +120,6 @@ async def sync_texts(table: Spreadsheet):
 
         # Delete translation
         for language_delete in need_delete_translations:
-            print(f'DELETE text_translation {key}_{language_delete}')
             await mybody_api_client.admin.texts.translations.delete(
                 text_key=key,
                 language=language_delete,
@@ -134,7 +131,6 @@ async def sync_texts(table: Spreadsheet):
         for language in languages:
             # Create translation
             if language in need_create_translations:
-                print(f'CREATE text_translation {key}_{language}')
                 await mybody_api_client.admin.texts.translations.create(
                     text_key=key,
                     language=language,
@@ -148,7 +144,6 @@ async def sync_texts(table: Spreadsheet):
             current_translation = current_translations.get(language, None)
             new_translation = new_translations.get(language, None)
             if current_translation != new_translation:
-                print(f'UPDATE text_translation {key}_{language}')
                 is_changed = True
                 await mybody_api_client.admin.texts.translations.update(
                     text_key=key,
@@ -158,4 +153,4 @@ async def sync_texts(table: Spreadsheet):
                 )
 
     if is_changed:
-        await mybody_api_client.admin.texts.packs.create()
+        await mybody_api_client.admin.texts.packs.create_all()
