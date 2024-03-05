@@ -15,9 +15,6 @@
 #
 
 
-from datetime import date as datetime_date
-from typing import Optional
-
 from fastapi import Depends
 from pydantic import BaseModel, Field
 

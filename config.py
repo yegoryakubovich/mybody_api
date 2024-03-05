@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     sync_db_url: str
     sync_db_table_name: str
 
+    payment_hg_url: str
     payment_hg_client_id: int
     payment_hg_client_secret: str
     payment_hg_service_provider_id: int

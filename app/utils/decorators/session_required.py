@@ -38,8 +38,8 @@ def session_required(
                 session = await SessionGetByTokenService().execute(token=token)
 
                 # Check support root
-                # if session.id == 0 and not can_root:
-                #     raise MethodNotSupportedRoot()
+                if session.id == 0 and not can_root:
+                    raise MethodNotSupportedRoot()
 
             # Return model
             if return_model:

@@ -21,7 +21,6 @@ from .language import Language
 from .currency import Currency
 from .timezone import Timezone
 from .base import BaseModel
-from .text import Text
 
 
 class Country(BaseModel):

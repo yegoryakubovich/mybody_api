@@ -19,7 +19,6 @@ from app.db.models import Session
 from app.repositories import PaymentMethodRepository, CurrencyRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import ModelAlreadyExist
 
 
 class PaymentMethodService(BaseService):

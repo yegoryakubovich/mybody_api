@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
 from datetime import datetime, timedelta
 from json import dumps, loads
 
-from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, PaymentMethodCurrency
+from hg_api_client.routes import HutkiGroshApiClient
+
+from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod
 from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
     PaymentMethodRepository, PaymentMethodCurrencyRepository
 from app.services import AccountServiceService
@@ -268,7 +272,7 @@ class PaymentService(BaseService):
         payment: Payment = await PaymentRepository().get_by_id(id_=payment_id)
 
         api_client = HutkiGroshApiClient(
-            url='https://api-epos.hgrosh.by/public',
+            url=settings.payment_hg_url,
         )
 
         token = await api_client.token.get(
@@ -326,7 +330,7 @@ class PaymentService(BaseService):
         payment_data = loads(payment.data)
 
         api_client = HutkiGroshApiClient(
-            url='https://api-epos.hgrosh.by/public',
+            url=settings.payment_hg_url,
         )
 
         token = await api_client.token.get(

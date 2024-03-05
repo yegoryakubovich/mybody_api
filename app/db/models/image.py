@@ -15,7 +15,7 @@
 #
 
 
-from peewee import BooleanField, CharField, PrimaryKeyField, IntegerField
+from peewee import BooleanField, CharField, PrimaryKeyField
 
 from .base import BaseModel
 

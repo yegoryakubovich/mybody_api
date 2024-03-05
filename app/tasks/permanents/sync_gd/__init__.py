@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
 
 from app.tasks.permanents.sync_gd.syncers import sync
 

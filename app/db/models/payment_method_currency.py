@@ -15,7 +15,7 @@
 #
 
 
-from peewee import PrimaryKeyField, ForeignKeyField, BooleanField, CharField
+from peewee import PrimaryKeyField, ForeignKeyField, BooleanField
 
 from .payment_method import PaymentMethod
 from .currency import Currency

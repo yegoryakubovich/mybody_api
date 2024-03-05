@@ -15,10 +15,9 @@
 #
 
 
-from peewee import PrimaryKeyField, ForeignKeyField, BooleanField, CharField
+from peewee import PrimaryKeyField, BooleanField, CharField
 
 from .base import BaseModel
-from .text import Text
 
 
 class PaymentMethod(BaseModel):

@@ -17,7 +17,7 @@
 
 from config import settings
 from .base import BaseService
-from ..db.models import MealReportImage, Session, MealReport, Image
+from ..db.models import MealReportImage, Session, Image
 from ..repositories import ImageRepository, MealReportRepository, MealReportImageRepository
 from app.utils.exceptions import NotEnoughPermissions
 from ..utils.decorators import session_required

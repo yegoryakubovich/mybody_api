@@ -17,6 +17,7 @@
 
 from .account import AccountRepository
 from .account_role import AccountRoleRepository
+from .account_service import AccountServiceRepository
 from .action import ActionRepository
 from .country import CountryRepository
 from .currency import CurrencyRepository
@@ -30,7 +31,6 @@ from .text import TextRepository
 from .text_pack import TextPackRepository
 from .text_translation import TextTranslationRepository
 from .timezone import TimezoneRepository
-from .account_service import AccountServiceRepository, AccountServiceStates
 from .article import ArticleRepository
 from .article_translation import ArticleTranslationRepository
 from .exercise import ExerciseRepository
