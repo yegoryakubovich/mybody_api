@@ -13,26 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .methods import router as router_methods
+from app.services import PaymentService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/payments',
-    tags=['Payments'],
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-        router_methods,
-    ]
+    prefix='/list/get',
 )
+
+
+class PaymentGetListSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_service_id: int = Field()
+
+
+@router.get()
+async def route(schema: PaymentGetListSchema = Depends()):
+    result = await PaymentService().get_list(
+        token=schema.token,
+        account_service_id=schema.account_service_id,
+    )
+    return Response(**result)

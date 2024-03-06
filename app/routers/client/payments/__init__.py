@@ -17,6 +17,8 @@
 
 from app.utils import Router
 from .create import router as router_create
+from .get import router as router_get
+from .get_list import router as router_get_list
 from .methods import router as router_methods
 
 
@@ -25,6 +27,8 @@ router = Router(
     tags=['Payments'],
     routes_included=[
         router_create,
+        router_get,
+        router_get_list,
         router_methods,
     ]
 )

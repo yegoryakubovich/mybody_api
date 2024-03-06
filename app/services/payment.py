@@ -234,22 +234,80 @@ class PaymentService(BaseService):
 
         return {}
 
-    @session_required(permissions=['payments'])
-    async def get(self, id_: int):
+    async def _get(
+            self,
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
         payments: Payment = await PaymentRepository().get_by_id(id_=id_)
+        if session.account != payments.account_service.account and not by_admin:
+            raise NotEnoughPermissions()
         return {
             'payment': await self._generate_payment_dict(payment=payments)
         }
 
+    @session_required()
+    async def get(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+        )
+
     @session_required(permissions=['payments'])
-    async def get_list(self, account_service_id: int):
+    async def get_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._get(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
+
+    async def _get_list(
+            self,
+            session: Session,
+            account_service_id: int,
+            by_admin: bool = False,
+    ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        if session.account != account_service.account and not by_admin:
+            raise NotEnoughPermissions()
         return {
             'payments': [
                 await self._generate_payment_dict(payment=payment)
                 for payment in await PaymentRepository().get_list_by_account_service(account_service=account_service)
             ]
         }
+
+    @session_required()
+    async def get_list(
+            self,
+            session: Session,
+            account_service_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            account_service_id=account_service_id,
+        )
+
+    @session_required(permissions=['payments'])
+    async def get_list_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+    ):
+        return await self._get_list(
+            session=session,
+            account_service_id=account_service_id,
+            by_admin=True,
+        )
 
     @staticmethod
     async def _generate_payment_dict(payment: Payment):
