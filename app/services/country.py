@@ -28,6 +28,7 @@ class CountryService(BaseService):
             self,
             session: Session,
             id_str: str,
+            name: str,
             language_default_id_str: str,
             timezone_default_id_str: str,
             currency_default_id_str: str,
@@ -47,6 +48,7 @@ class CountryService(BaseService):
 
         country = await CountryRepository().create(
             id_str=id_str,
+            name=name,
             language_default=language_default,
             timezone_default=timezone_default,
             currency_default=currency_default,
@@ -58,6 +60,7 @@ class CountryService(BaseService):
             parameters={
                 'creator': f'session_{session.id}',
                 'id_str': id_str,
+                'name': name,
                 'language_default': language_default_id_str,
                 'timezone_default': timezone_default_id_str,
                 'currency_default': currency_default_id_str,

@@ -16,12 +16,12 @@
 
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from app.tasks.permanents.sync_gd.syncers import sync as go_sync_gd
 
 
 async def sync_gd():
     scheduler = AsyncIOScheduler()
-    await go_sync_gd()
-    # scheduler.add_job(sync, trigger='interval', seconds=100) # trigger=CronTrigger.from_crontab('0-59 * * * *'))
+    scheduler.add_job(go_sync_gd, trigger=CronTrigger.from_crontab('0 * * * *'))
     scheduler.start()

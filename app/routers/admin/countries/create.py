@@ -30,6 +30,7 @@ router = Router(
 class CountryCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id_str: str = Field(min_length=2, max_length=32)
+    name: str = Field(min_length=2, max_length=32)
     language_default: str = Field(min_length=2, max_length=16)
     timezone_default: str = Field(min_length=2, max_length=16)
     currency_default: str = Field(min_length=2, max_length=16)
@@ -40,6 +41,7 @@ async def route(schema: CountryCreateByAdminSchema):
     result = await CountryService().create_by_admin(
         token=schema.token,
         id_str=schema.id_str,
+        name=schema.name,
         language_default_id_str=schema.language_default,
         timezone_default_id_str=schema.timezone_default,
         currency_default_id_str=schema.currency_default,
