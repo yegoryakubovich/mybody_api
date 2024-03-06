@@ -18,11 +18,12 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app.db.db import db
+from app.services.payment import PaymentService
 
-async def sync_gd():
-    async def task():
-        pass
 
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(task, trigger=CronTrigger.from_crontab('* * * * *'))
-    scheduler.start()
+async def sync_payments():
+    with db:
+        scheduler = AsyncIOScheduler()
+        scheduler.add_job(PaymentService().check_hg, trigger=CronTrigger.from_crontab('* * * * *'))
+        scheduler.start()

@@ -15,7 +15,7 @@
 #
 
 
-from app.db.models import PaymentMethodCurrency, PaymentMethod
+from app.db.models import PaymentMethodCurrency, PaymentMethod, Currency
 from app.repositories.base import BaseRepository
 
 
@@ -26,5 +26,12 @@ class PaymentMethodCurrencyRepository(BaseRepository):
     async def get_list_by_payment_method(payment_method: PaymentMethod) -> list[PaymentMethodCurrency]:
         return PaymentMethodCurrency.select().where(
             (PaymentMethodCurrency.payment_method == payment_method) &
+            (PaymentMethodCurrency.is_deleted == False)
+        ).execute()
+
+    @staticmethod
+    async def get_list_by_currency(currency: Currency) -> list[PaymentMethodCurrency]:
+        return PaymentMethodCurrency.select().where(
+            (PaymentMethodCurrency.currency == currency) &
             (PaymentMethodCurrency.is_deleted == False)
         ).execute()

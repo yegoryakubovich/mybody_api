@@ -17,9 +17,9 @@
 
 from app.db import db
 from app.services import PaymentService
+from tasks_celery import celery_app
 
 
-@celery.task
+@celery_app.task
 async def create_hg(payment_id: int):
-    with db:
-        payment = await PaymentService().create_hg(payment_id=payment_id)
+    pass

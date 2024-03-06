@@ -18,6 +18,7 @@
 import asyncio
 import logging
 
+from app.tasks.permanents.payments import sync_payments
 from app.tasks.permanents.sync_gd import sync_gd
 
 prefix = '[start_app]'
@@ -25,6 +26,7 @@ prefix = '[start_app]'
 
 TASKS = [
     sync_gd,
+    sync_payments,
 ]
 
 

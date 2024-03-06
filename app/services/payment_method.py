@@ -16,7 +16,7 @@
 
 
 from app.db.models import Session
-from app.repositories import PaymentMethodRepository, CurrencyRepository
+from app.repositories import PaymentMethodRepository, CurrencyRepository, PaymentMethodCurrencyRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 
@@ -85,9 +85,10 @@ class PaymentMethodService(BaseService):
         return {
             'payment_methods': [
                 {
-                    'id': payment_method.id,
-                    'id_str': payment_method.id_str,
-                    'name': payment_method.name,
-                } for payment_method in await PaymentMethodRepository().get_list_by_currency(currency=currency)
+                    'id': pmc.payment_method.id,
+                    'id_str': pmc.payment_method.id_str,
+                    'name': pmc.payment_method.name,
+                    'payment_method_currency_id': pmc.id,
+                } for pmc in await PaymentMethodCurrencyRepository().get_list_by_currency(currency=currency)
             ]
         }

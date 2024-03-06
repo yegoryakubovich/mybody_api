@@ -21,6 +21,16 @@ from app.db.models import Payment, AccountService
 from .base import BaseRepository
 
 
+class PaymentStates:
+    CREATING = 'creating'
+    WAITING = 'waiting'
+    PAID = 'paid'
+    EXPIRED = 'expired'
+
+    def all(self):
+        return [self.CREATING, self.WAITING, self.PAID, self.EXPIRED]
+
+
 class PaymentRepository(BaseRepository):
     model = Payment
 
@@ -30,6 +40,13 @@ class PaymentRepository(BaseRepository):
     ) -> list[Payment]:
         return Payment.select().where(
             (Payment.account_service == account_service) &
+            (Payment.is_deleted == False)
+        ).execute()
+
+    @staticmethod
+    async def get_unpaid_payments_list() -> list[Payment]:
+        return Payment.select().where(
+            (Payment.state == PaymentStates.WAITING) &
             (Payment.is_deleted == False)
         ).execute()
 

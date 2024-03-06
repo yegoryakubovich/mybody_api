@@ -20,25 +20,17 @@ from json import dumps, loads
 
 from hg_api_client.routes import HutkiGroshApiClient
 
+from app.db import db
 from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod
 from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
     PaymentMethodRepository, PaymentMethodCurrencyRepository
+from app.repositories.payment import PaymentStates
 from app.services import AccountServiceService
 from app.services.account_service import AccountServiceStates
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters
 from config import settings
-
-
-class PaymentStates:
-    CREATING = 'creating'
-    WAITING = 'waiting'
-    PAID = 'paid'
-    EXPIRED = 'expired'
-
-    def all(self):
-        return [self.CREATING, self.WAITING, self.PAID, self.EXPIRED]
 
 
 class PaymentService(BaseService):
@@ -90,6 +82,8 @@ class PaymentService(BaseService):
             action='create',
             parameters=action_parameters,
         )
+
+        await self.create_hg(payment_id=payment.id)
 
         return {'id': payment.id}
 
@@ -195,7 +189,7 @@ class PaymentService(BaseService):
             session: Session,
             id_: int,
             state: str = None,
-            data: str = None
+            data: str = None,
     ):
         return await self._update(
             session=session,
@@ -288,7 +282,7 @@ class PaymentService(BaseService):
         )
         invoice_id = await api_client.invoices.create(
             token=token,
-            invoice_name=f'mybody-{payment.id}',
+            invoice_name=f'mybody-test-{payment.id}',
             service_provider_id=settings.payment_hg_service_provider_id,
             service_provider_name=settings.payment_hg_service_provider_name,
             service_id=settings.payment_hg_service_id,
@@ -321,53 +315,51 @@ class PaymentService(BaseService):
             state=PaymentStates.WAITING,
             data=dumps(
                 {
-                    'invoice_name': 'mybody-{payment.id}',
+                    'invoice_name': f'mybody-test-{payment.id}',
                     'uuid': invoice_id,
                 },
             ),
         )
 
-    async def check_hg(
-            self,
-            payment_id: int,
-    ):
-        payment: Payment = await PaymentRepository().get_by_id(id_=payment_id)
-        payment_data = loads(payment.data)
+    async def check_hg(self):
+        with db:
+            for payment in await PaymentRepository().get_unpaid_payments_list():
+                payment_data = loads(payment.data)
 
-        api_client = HutkiGroshApiClient(
-            url=settings.payment_hg_url,
-        )
-
-        token = await api_client.token.get(
-            client_id=settings.payment_hg_client_id,
-            client_secret=settings.payment_hg_client_secret,
-            service_provider_id=settings.payment_hg_service_provider_id,
-            service_id=settings.payment_hg_service_id,
-        )
-
-        payment_invoice = await api_client.invoices.get(token=token, search_string=payment_data['invoice_name'])[0]
-        is_expired = datetime.fromisoformat(payment_invoice['paymentDueTerms']['dueUTC']) < datetime.utcnow()
-
-        if payment_invoice['totalAmount'] == payment_invoice['amountPaid']:
-            await self.update_by_task(
-                id_=payment.id,
-                state=PaymentStates.PAID,
-            )
-            if payment.account_service.state == AccountServiceStates.active:
-                await AccountServiceService().update_by_task(
-                    id_=payment.account_service.id,
-                    datetime_to=datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31),
-                )
-            else:
-                await AccountServiceService().update_by_task(
-                    id_=payment.account_service.id,
-                    datetime_from=datetime.utcnow(),
-                    datetime_to=datetime.utcnow() + timedelta(31),
-                    state=AccountServiceStates.active,
+                api_client = HutkiGroshApiClient(
+                    url=settings.payment_hg_url,
                 )
 
-        if payment.state != PaymentStates.PAID and is_expired:
-            await self.update_by_task(
-                id_=payment.id,
-                state=PaymentStates.EXPIRED,
-            )
+                token = await api_client.token.get(
+                    client_id=settings.payment_hg_client_id,
+                    client_secret=settings.payment_hg_client_secret,
+                    service_provider_id=settings.payment_hg_service_provider_id,
+                    service_id=settings.payment_hg_service_id,
+                )
+
+                payment_invoice = await api_client.invoices.get(token=token, search_string=payment_data['invoice_name'])[0]
+                is_expired = datetime.fromisoformat(payment_invoice['paymentDueTerms']['dueUTC']) < datetime.utcnow()
+
+                if payment_invoice['totalAmount'] == payment_invoice['amountPaid']:
+                    await self.update_by_task(
+                        id_=payment.id,
+                        state=PaymentStates.PAID,
+                    )
+                    if payment.account_service.state == AccountServiceStates.active:
+                        await AccountServiceService().update_by_task(
+                            id_=payment.account_service.id,
+                            datetime_to=datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31),
+                        )
+                    else:
+                        await AccountServiceService().update_by_task(
+                            id_=payment.account_service.id,
+                            datetime_from=datetime.utcnow(),
+                            datetime_to=datetime.utcnow() + timedelta(31),
+                            state=AccountServiceStates.active,
+                        )
+
+                if payment.state != PaymentStates.PAID and is_expired:
+                    await self.update_by_task(
+                        id_=payment.id,
+                        state=PaymentStates.EXPIRED,
+                    )

@@ -26,7 +26,7 @@ async def sync_base(
         api_method_get_list,
         api_method_delete,
         api_method_create,
-        key_name = 'id_str',
+        key_name='id_str',
 ):
     sheet = await google_sheets_api_client.get_sheet_by_table_and_name(table=table, name=sheet_name)
     table = await google_sheets_api_client.get_rows(sheet=sheet)
