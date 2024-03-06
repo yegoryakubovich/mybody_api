@@ -315,11 +315,15 @@ class PaymentService(BaseService):
             'id': payment.id,
             'account_service_id': payment.account_service.id,
             'service_cost': {
-                'service': payment.service_cost.service,
-                'currency': payment.service_cost.currency_default,
+                'service': payment.service_cost.service.id_str,
+                'currency': payment.service_cost.currency.id_str,
                 'cost': payment.service_cost.cost,
             },
             'cost': payment.cost,
+            'payment_method': payment.payment_method.id_str,
+            'payment_method_currency_id': payment.payment_method_currency.id,
+            'state': payment.state,
+            'data': payment.data,
         }
 
     async def create_hg(
@@ -338,9 +342,10 @@ class PaymentService(BaseService):
             service_provider_id=settings.payment_hg_service_provider_id,
             service_id=settings.payment_hg_service_id,
         )
+        invoice_name = f'mybody-test-{payment.id}'
         invoice_id = await api_client.invoices.create(
             token=token,
-            invoice_name=f'mybody-test-{payment.id}',
+            invoice_name=invoice_name,
             service_provider_id=settings.payment_hg_service_provider_id,
             service_provider_name=settings.payment_hg_service_provider_name,
             service_id=settings.payment_hg_service_id,
@@ -367,14 +372,18 @@ class PaymentService(BaseService):
             ],
         )
         await api_client.invoices.set_active(token=token, uuid=invoice_id)
+        payment_pay_data = await api_client.invoices.get_qrcode(token=token, uuid=invoice_id)
+        payment_link = payment_pay_data['tinyLink']
 
         await self.update_by_task(
             id_=payment.id,
             state=PaymentStates.WAITING,
             data=dumps(
                 {
-                    'invoice_name': f'mybody-test-{payment.id}',
+                    'invoice_name': invoice_name,
                     'uuid': invoice_id,
+                    'payment_link': payment_link,
+                    'erip_id': f'18391-1-{invoice_name}',
                 },
             ),
         )
@@ -404,15 +413,29 @@ class PaymentService(BaseService):
                         state=PaymentStates.PAID,
                     )
                     if payment.account_service.state == AccountServiceStates.active:
+                        datetime_to = datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31)
+                        datetime_to = datetime_to - timedelta(
+                            hours=datetime_to.hour,
+                            minutes=datetime_to.minute,
+                            seconds=datetime_to.second,
+                            microseconds=datetime_to.microsecond
+                        )
                         await AccountServiceService().update_by_task(
                             id_=payment.account_service.id,
-                            datetime_to=datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31),
+                            datetime_to=datetime_to,
                         )
                     else:
+                        datetime_to = datetime.utcnow() + timedelta(31)
+                        datetime_to = datetime_to - timedelta(
+                            hours=datetime_to.hour,
+                            minutes=datetime_to.minute,
+                            seconds=datetime_to.second,
+                            microseconds=datetime_to.microsecond
+                        )
                         await AccountServiceService().update_by_task(
                             id_=payment.account_service.id,
                             datetime_from=datetime.utcnow(),
-                            datetime_to=datetime.utcnow() + timedelta(31),
+                            datetime_to=datetime_to,
                             state=AccountServiceStates.active,
                         )
 
