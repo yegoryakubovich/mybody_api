@@ -342,7 +342,7 @@ class PaymentService(BaseService):
             service_provider_id=settings.payment_hg_service_provider_id,
             service_id=settings.payment_hg_service_id,
         )
-        invoice_name = f'mybody-test-{payment.id}'
+        invoice_name = f'{settings.payment_hg_prefix}-{payment.id}'
         invoice_id = await api_client.invoices.create(
             token=token,
             invoice_name=invoice_name,
@@ -383,7 +383,7 @@ class PaymentService(BaseService):
                     'invoice_name': invoice_name,
                     'uuid': invoice_id,
                     'payment_link': payment_link,
-                    'erip_id': f'18391-1-{invoice_name}',
+                    'erip_id': f'{settings.payment_hg_service_provider_id}-{settings.payment_hg_service_id}-{invoice_name}',
                 },
             ),
         )
@@ -391,6 +391,7 @@ class PaymentService(BaseService):
     async def check_hg(self):
         with db:
             for payment in await PaymentRepository().get_unpaid_payments_list():
+                print('start')
                 payment_data = loads(payment.data)
 
                 api_client = HutkiGroshApiClient(
@@ -404,7 +405,8 @@ class PaymentService(BaseService):
                     service_id=settings.payment_hg_service_id,
                 )
 
-                payment_invoice = await api_client.invoices.get(token=token, search_string=payment_data['invoice_name'])[0]
+                payment_invoices = await api_client.invoices.get(token=token, search_string=payment_data['invoice_name'])
+                payment_invoice = payment_invoices[0]
                 is_expired = datetime.fromisoformat(payment_invoice['paymentDueTerms']['dueUTC']) < datetime.utcnow()
 
                 if payment_invoice['totalAmount'] == payment_invoice['amountPaid']:
@@ -444,3 +446,4 @@ class PaymentService(BaseService):
                         id_=payment.id,
                         state=PaymentStates.EXPIRED,
                     )
+                print('end')

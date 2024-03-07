@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     payment_hg_store_locality_name: str
     payment_hg_store_city: str
     payment_hg_store_locality_city: str
+    payment_hg_prefix: str
 
     secret_promo_code: str
 
