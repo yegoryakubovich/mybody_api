@@ -415,7 +415,7 @@ class PaymentService(BaseService):
                         state=PaymentStates.PAID,
                     )
                     if payment.account_service.state == AccountServiceStates.active:
-                        datetime_to = datetime.fromisoformat(payment.account_service.datetime_to) + timedelta(31)
+                        datetime_to = payment.account_service.datetime_to + timedelta(31)
                         datetime_to = datetime_to - timedelta(
                             hours=datetime_to.hour,
                             minutes=datetime_to.minute,
