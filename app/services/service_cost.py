@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class ServiceCostService(BaseService):
 
-    @session_required(permissions=['services'])
+    @session_required(permissions=['services'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,
