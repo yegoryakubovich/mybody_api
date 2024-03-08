@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,18 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from app.utils import Router
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/urls',
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+    ],
+    tags=['Urls'],
+)

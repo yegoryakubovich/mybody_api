@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,28 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from pydantic import BaseModel, Field
+
+from app.services import UrlService
+from app.utils import Response, Router
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/create',
+)
+
+
+class UrlCreateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    name: str = Field(min_length=2, max_length=64)
+    redirect: str = Field(min_length=1, max_length=1024)
+
+
+@router.post()
+async def route(schema: UrlCreateByAdminSchema):
+    result = await UrlService().create_by_admin(
+        token=schema.token,
+        name=schema.name,
+        redirect=schema.redirect,
+    )
+    return Response(**result)

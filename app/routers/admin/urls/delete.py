@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,26 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from pydantic import BaseModel, Field
+
+from app.services import UrlService
+from app.utils import Response, Router
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/delete',
+)
+
+
+class UrlDeleteByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: UrlDeleteByAdminSchema):
+    result = await UrlService().delete_by_admin(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

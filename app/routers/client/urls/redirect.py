@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,24 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from fastapi import Depends
+from pydantic import BaseModel, Field
+from fastapi.responses import RedirectResponse
+
+from app.services import UrlService
+from app.utils import Router
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/{redirect}'
+)
+
+
+@router.get()
+async def route(redirect: str):
+    url = await UrlService().get_by_name(
+        name=redirect,
+    )
+    print(redirect)
+    print(url)
+    return RedirectResponse(url=url['url']['redirect'])

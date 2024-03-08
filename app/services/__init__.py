@@ -51,3 +51,4 @@ from .training_report import TrainingReportService
 from .payment import PaymentService
 from .payment_method import PaymentMethodService
 from .payment_method_currency import PaymentMethodCurrencyService
+from .url import UrlService

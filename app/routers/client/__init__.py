@@ -30,6 +30,7 @@ from .sessions import router as router_sessions
 from .texts import router as router_texts
 from .timezones import router as router_timezones
 from .trainings import router as router_trainings
+from .urls import router as router_urls
 from app.utils import Router
 
 
@@ -51,5 +52,6 @@ router = Router(
         router_texts,
         router_timezones,
         router_trainings,
+        router_urls,
     ],
 )

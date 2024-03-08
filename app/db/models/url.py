@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,16 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from peewee import PrimaryKeyField, BooleanField, CharField
+
+from .base import BaseModel
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+class Url(BaseModel):
+    id = PrimaryKeyField()
+    name = CharField()
+    redirect = CharField()
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'urls'

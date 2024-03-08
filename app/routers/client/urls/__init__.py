@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,20 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from app.utils import Router
+from .get import router as router_get
+from .get_by_name import router as router_get_by_name
+from .get_list import router as router_get_list
+from .redirect import router as router_redirect
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/urls',
+    routes_included=[
+        router_get,
+        router_get_by_name,
+        router_get_list,
+        router_redirect,
+    ],
+    tags=['Urls'],
+)

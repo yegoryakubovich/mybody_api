@@ -49,7 +49,7 @@ from .session import Session
 from .training import Training
 from .training_exercise import TrainingExercise
 from .training_report import TrainingReport
-
+from .url import Url
 
 models = (
     Action,
@@ -96,4 +96,6 @@ models = (
     MealReport,
     MealReportProduct,
     MealReportImage,
+
+    Url,
 )

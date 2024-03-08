@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,16 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from app.services import UrlService
+from app.utils import Response, Router
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/list/get'
+)
+
+
+@router.get()
+async def route():
+    result = await UrlService().get_list()
+    return Response(**result)

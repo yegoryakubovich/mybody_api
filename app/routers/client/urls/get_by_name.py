@@ -1,4 +1,4 @@
- #
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,26 @@
 #
 
 
-from app.db.models import Permission
-from app.repositories.base import BaseRepository
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import UrlService
+from app.utils import Response, Router
 
 
-class PermissionRepository(BaseRepository):
-    model = Permission
+router = Router(
+    prefix='/by-name/get'
+)
+
+
+class UrlGetByNameSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    name: str = Field()
+
+
+@router.get()
+async def route(schema: UrlGetByNameSchema = Depends()):
+    result = await UrlService().get_by_name(
+        name=schema.name,
+    )
+    return Response(**result)
