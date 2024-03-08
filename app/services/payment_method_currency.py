@@ -22,7 +22,7 @@ from app.utils.decorators import session_required
 
 
 class PaymentMethodCurrencyService(BaseService):
-    @session_required(permissions=['payments'])
+    @session_required(permissions=['payments'], can_root=True)
     async def create_by_admin(
             self,
             session: Session,

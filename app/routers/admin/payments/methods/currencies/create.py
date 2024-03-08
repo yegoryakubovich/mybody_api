@@ -36,7 +36,7 @@ class PaymentMethodCurrencyCreateByAdminSchema(BaseModel):
 async def route(schema: PaymentMethodCurrencyCreateByAdminSchema):
     result = await PaymentMethodCurrencyService().create_by_admin(
         token=schema.token,
-        payment_method_id_str=schema.payment_method_id_str,
-        currency_id_str=schema.currency_id_str,
+        payment_method_id_str=schema.payment_method,
+        currency_id_str=schema.currency,
     )
     return Response(**result)
