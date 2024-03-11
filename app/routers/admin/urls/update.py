@@ -29,7 +29,7 @@ router = Router(
 class UrlUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    name: str | None = Field(default=None, min_length=2, max_length=64)
+    name: str | None = Field(default=None, min_length=1, max_length=64)
     redirect: str | None = Field(default=None, min_length=1, max_length=1024)
 
 

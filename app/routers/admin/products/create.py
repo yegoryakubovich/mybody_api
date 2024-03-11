@@ -27,9 +27,9 @@ router = Router(
 
 class ProductCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=2, max_length=1024)
-    type: str = Field(min_length=2, max_length=16)
-    unit: str = Field(min_length=2, max_length=4)
+    name: str = Field(min_length=1, max_length=1024)
+    type: str = Field(min_length=1, max_length=16)
+    unit: str = Field(min_length=1, max_length=4)
     fats: int = Field()
     proteins: int = Field()
     carbohydrates: int = Field()

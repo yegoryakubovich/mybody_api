@@ -28,7 +28,7 @@ router = Router(
 
 
 class ServiceCostGetListSchema(BaseModel):
-    service: str = Field(min_length=2, max_length=64)
+    service: str = Field(min_length=1, max_length=64)
 
 
 @router.get()

@@ -29,11 +29,11 @@ router = Router(
 
 class CountryCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=2, max_length=32)
-    name: str = Field(min_length=2, max_length=32)
-    language_default: str = Field(min_length=2, max_length=16)
-    timezone_default: str = Field(min_length=2, max_length=16)
-    currency_default: str = Field(min_length=2, max_length=16)
+    id_str: str = Field(min_length=1, max_length=32)
+    name: str = Field(min_length=1, max_length=32)
+    language_default: str = Field(min_length=1, max_length=16)
+    timezone_default: str = Field(min_length=1, max_length=16)
+    currency_default: str = Field(min_length=1, max_length=16)
 
 
 @router.post()

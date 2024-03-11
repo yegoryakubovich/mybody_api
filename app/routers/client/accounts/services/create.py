@@ -28,8 +28,8 @@ router = Router(
 
 class AccountServiceCreateSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    service: str = Field(min_length=2, max_length=64)
-    answers: str = Field(min_length=2, max_length=8192, default=None)
+    service: str = Field(min_length=1, max_length=64)
+    answers: str = Field(min_length=1, max_length=8192, default=None)
 
 
 @router.post()

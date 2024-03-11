@@ -29,7 +29,7 @@ router = Router(
 
 class RoleCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=2, max_length=1024)
+    name: str = Field(min_length=1, max_length=1024)
 
 
 @router.post()

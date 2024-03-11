@@ -28,7 +28,7 @@ router = Router(
 
 class TextDeleteByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    key: str = Field(min_length=2, max_length=128)
+    key: str = Field(min_length=1, max_length=128)
     create_text_pack: bool = Field(default=True)
 
 

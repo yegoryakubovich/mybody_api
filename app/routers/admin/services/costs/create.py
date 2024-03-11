@@ -28,8 +28,8 @@ router = Router(
 
 class ServiceCostCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    service: str = Field(min_length=2, max_length=64)
-    currency: str = Field(min_length=2, max_length=16)
+    service: str = Field(min_length=1, max_length=64)
+    currency: str = Field(min_length=1, max_length=16)
     cost: float = Field()
 
 

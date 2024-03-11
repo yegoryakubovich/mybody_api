@@ -29,8 +29,8 @@ router = Router(
 
 class PermissionCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=2, max_length=32)
-    name: str = Field(min_length=2, max_length=1024)
+    id_str: str = Field(min_length=1, max_length=32)
+    name: str = Field(min_length=1, max_length=1024)
 
 
 @router.post()

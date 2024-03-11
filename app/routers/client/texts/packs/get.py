@@ -28,7 +28,7 @@ router = Router(
 
 
 class TextPackGetSchema(BaseModel):
-    language: str = Field(min_length=2, max_length=128)
+    language: str = Field(min_length=1, max_length=128)
 
 
 @router.get()

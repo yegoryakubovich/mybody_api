@@ -28,7 +28,7 @@ router = Router(
 
 class UrlCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=2, max_length=64)
+    name: str = Field(min_length=1, max_length=64)
     redirect: str = Field(min_length=1, max_length=1024)
 
 

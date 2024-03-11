@@ -30,8 +30,8 @@ router = Router(
 class AccountServiceUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    answers: str = Field(default=None, min_length=2, max_length=8192)
-    state: str = Field(default=None, min_length=2, max_length=128)
+    answers: str = Field(default=None, min_length=1, max_length=8192)
+    state: str = Field(default=None, min_length=1, max_length=128)
     datetime_from: datetime = Field(default=None)
     datetime_to: datetime = Field(default=None)
 

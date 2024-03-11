@@ -28,8 +28,8 @@ router = Router(
 class ProductUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    type: str = Field(default=None, min_length=2, max_length=16)
-    unit: str = Field(default=None, min_length=2, max_length=4)
+    type: str = Field(default=None, min_length=1, max_length=16)
+    unit: str = Field(default=None, min_length=1, max_length=4)
     fats: int = Field(default=None)
     proteins: int = Field(default=None)
     carbohydrates: int = Field(default=None)

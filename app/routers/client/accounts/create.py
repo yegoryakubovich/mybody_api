@@ -31,9 +31,9 @@ router = Router(
 class CreateAccountSchema(BaseModel):
     username: str = Field(min_length=6, max_length=32)
     password: str = Field(min_length=6, max_length=128)
-    firstname: str = Field(min_length=2, max_length=32)
-    lastname: str = Field(min_length=2, max_length=32)
-    surname: Optional[str] = Field(min_length=2, max_length=32, default=None)
+    firstname: str = Field(min_length=1, max_length=32)
+    lastname: str = Field(min_length=1, max_length=32)
+    surname: Optional[str] = Field(min_length=1, max_length=32, default=None)
     country: str = Field(max_length=16)
     language: str = Field(max_length=32)
     timezone: str = Field(max_length=16)

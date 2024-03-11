@@ -28,9 +28,9 @@ router = Router(
 
 class ServiceUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id_str: str = Field(min_length=2, max_length=64)
+    id_str: str = Field(min_length=1, max_length=64)
     name: str = Field(default=None, min_length=1, max_length=1024)
-    questions: str = Field(default=None, min_length=2, max_length=8192)
+    questions: str = Field(default=None, min_length=1, max_length=8192)
 
 
 @router.post()
