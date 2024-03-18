@@ -57,7 +57,7 @@ class UrlService(BaseService):
 
         return {'id': url.id}
 
-    @session_required(permissions=['url'], can_root=True)
+    @session_required(permissions=['urls'], can_root=True)
     async def update_by_admin(
             self,
             session: Session,
