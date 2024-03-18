@@ -28,7 +28,6 @@ router = Router(
 
 
 class UrlGetByNameSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
     name: str = Field()
 
 

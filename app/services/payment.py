@@ -64,9 +64,8 @@ class PaymentService(BaseService):
 
         if by_admin:
             action_parameters['by_admin'] = True
-        else:
-            if await PaymentRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
-                raise UnpaidBill()
+        if await PaymentRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
+            raise UnpaidBill()
 
         payment = await PaymentRepository().create(
             account_service=account_service,
@@ -391,7 +390,6 @@ class PaymentService(BaseService):
     async def check_hg(self):
         with db:
             for payment in await PaymentRepository().get_unpaid_payments_list():
-                print('start')
                 payment_data = loads(payment.data)
 
                 api_client = HutkiGroshApiClient(
@@ -446,4 +444,3 @@ class PaymentService(BaseService):
                         id_=payment.id,
                         state=PaymentStates.EXPIRED,
                     )
-                print('end')
