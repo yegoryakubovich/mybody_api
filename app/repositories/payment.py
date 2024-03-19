@@ -26,9 +26,10 @@ class PaymentStates:
     WAITING = 'waiting'
     PAID = 'paid'
     EXPIRED = 'expired'
+    CANCELLED = 'cancelled'
 
     def all(self):
-        return [self.CREATING, self.WAITING, self.PAID, self.EXPIRED]
+        return [self.CREATING, self.WAITING, self.PAID, self.EXPIRED, self.CANCELLED]
 
 
 class PaymentRepository(BaseRepository):
@@ -57,7 +58,7 @@ class PaymentRepository(BaseRepository):
         try:
             Payment.get(
                 (Payment.account_service == account_service) &
-                (Payment.state == 'unpaid') &
+                (Payment.state == PaymentStates.WAITING) &
                 (Payment.is_deleted == False)
             )
             return True

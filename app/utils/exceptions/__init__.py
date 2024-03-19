@@ -25,5 +25,5 @@ from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, No
 from .meal import InvalidMealType
 from .product import InvalidProductList, InvalidProductType, InvalidUnit
 from .service import InvalidServiceQuestionList
-from .payment import InvalidPaymentState, UnpaidBill
+from .payment import InvalidPaymentState, UnpaidBill, PaymentCantBeCancelled
 

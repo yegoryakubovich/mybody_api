@@ -26,3 +26,8 @@ class UnpaidBill(ApiException):
 class InvalidPaymentState(ApiException):
     code = 9001
     message = "Invalid payment state. Available: {all}"
+
+
+class PaymentCantBeCancelled(ApiException):
+    code = 9002
+    message = "Payment with id {id} can't be cancelled: payment already paid, cancelled or expired"

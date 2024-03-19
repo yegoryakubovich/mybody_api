@@ -29,7 +29,8 @@ from app.services import AccountServiceService
 from app.services.account_service import AccountServiceStates
 from app.services.base import BaseService
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters
+from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters, \
+    PaymentCantBeCancelled
 from config import settings
 
 
@@ -82,7 +83,7 @@ class PaymentService(BaseService):
             parameters=action_parameters,
         )
 
-        await self.create_hg(payment_id=payment.id)
+        await self.create_hg(payment_id=payment.id)  # FIXME
 
         return {'id': payment.id}
 
@@ -182,6 +183,21 @@ class PaymentService(BaseService):
 
         return {}
 
+    @session_required()
+    async def update(
+            self,
+            session: Session,
+            id_: int,
+            state: str = None,
+            data: str = None,
+    ):
+        return await self._update(
+            session=session,
+            id_=id_,
+            state=state,
+            data=data,
+        )
+
     @session_required(permissions=['payments'])
     async def update_by_admin(
             self,
@@ -232,6 +248,58 @@ class PaymentService(BaseService):
         )
 
         return {}
+
+    async def _cancel(
+            self,
+            session: Session,
+            id_: int,
+            by_admin: bool = False,
+    ):
+        payment: Payment = await PaymentRepository().get_by_id(id_=id_)
+        if payment.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+        if payment.state != PaymentStates.WAITING:
+            raise PaymentCantBeCancelled(
+                kwargs={
+                    'id': id_,
+                }
+            )
+        if by_admin:
+            await self.update_by_admin(
+                session=session,
+                id_=id_,
+                state=PaymentStates.CANCELLED,
+            )
+        else:
+            await self.update(
+                session=session,
+                id_=id_,
+                state=PaymentStates.CANCELLED,
+            )
+        return {}
+
+    @session_required()
+    async def cancel(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._cancel(
+            session=session,
+            id_=id_,
+        )
+
+    @session_required(permissions=['payments'])
+    async def cancel_by_admin(
+            self,
+            session: Session,
+            id_: int,
+    ):
+        return await self._cancel(
+            session=session,
+            id_=id_,
+            by_admin=True,
+        )
 
     async def _get(
             self,
@@ -444,3 +512,22 @@ class PaymentService(BaseService):
                         id_=payment.id,
                         state=PaymentStates.EXPIRED,
                     )
+
+    @staticmethod
+    async def cancel_hg(
+            payment: Payment,
+    ):
+        api_client = HutkiGroshApiClient(
+            url=settings.payment_hg_url,
+        )
+        payment_data = loads(payment.data)
+        token = await api_client.token.get(
+            client_id=settings.payment_hg_client_id,
+            client_secret=settings.payment_hg_client_secret,
+            service_provider_id=settings.payment_hg_service_provider_id,
+            service_id=settings.payment_hg_service_id,
+        )
+        await api_client.invoices.set_inactive(
+            token=token,
+            uuid=payment_data['uuid']
+        )
