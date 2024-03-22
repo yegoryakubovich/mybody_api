@@ -15,12 +15,35 @@
 #
 
 
+from peewee import DoesNotExist
+
 from app.db.models import Role, RolePermission
 from app.repositories.base import BaseRepository
+from app.utils.exceptions import ModelAlreadyExist
 
 
 class RolePermissionRepository(BaseRepository):
     model = RolePermission
+
+    async def create(self, **kwargs):
+        try:
+            permission = kwargs.get('permission')
+            role = kwargs.get('role')
+            RolePermission.get(
+                (RolePermission.role == role) &
+                (RolePermission.permission == permission) &
+                (RolePermission.is_deleted == False)
+            )
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'RolePermission',
+                    'id_type': 'role, permission',
+                    'id_value': [role.id, permission.id],
+                },
+            )
+        except DoesNotExist:
+            return await super().create(**kwargs)
+
 
     @staticmethod
     async def get_permissions_by_role(role: Role, only_id_str=False) -> list[str or RolePermission]:

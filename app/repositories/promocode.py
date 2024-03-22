@@ -15,22 +15,9 @@
 #
 
 
-from fastapi import Depends
-from pydantic import Field, BaseModel
-from app.services import CurrencyService
-from app.utils import Router, Response
+from app.db.models import Promocode
+from .base import BaseRepository
 
 
-router = Router(
-    prefix='/get',
-)
-
-
-class CurrencyGetSchema(BaseModel):
-    id_str: str = Field(min_length=1, max_length=16)
-
-
-@router.get()
-async def route(schema: CurrencyGetSchema = Depends()):
-    result = await CurrencyService().get(id_str=schema.id_str)
-    return Response(**result)
+class PromocodeRepository(BaseRepository):
+    model = Promocode

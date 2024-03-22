@@ -17,6 +17,7 @@
 
 from peewee import BooleanField, CharField, ForeignKeyField, PrimaryKeyField, FloatField
 
+from .promocode import Promocode
 from .account_service import AccountService
 from .service_cost import ServiceCost
 from .payment_method import PaymentMethod
@@ -32,6 +33,7 @@ class Payment(BaseModel):
     payment_method = ForeignKeyField(model=PaymentMethod)
     payment_method_currency = ForeignKeyField(model=PaymentMethodCurrency)
     state = CharField(max_length=64)
+    promocode = ForeignKeyField(model=Promocode, null=True, default=None)
     data = CharField(max_length=1024, default='{}', null=True)
     is_deleted = BooleanField(default=False)
 

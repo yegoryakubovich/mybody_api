@@ -15,22 +15,26 @@
 #
 
 
-from fastapi import Depends
 from pydantic import Field, BaseModel
-from app.services import CurrencyService
+
+from app.services import PromocodeCurrencyService
 from app.utils import Router, Response
 
 
 router = Router(
-    prefix='/get',
+    prefix='/delete',
 )
 
 
-class CurrencyGetSchema(BaseModel):
-    id_str: str = Field(min_length=1, max_length=16)
+class PromocodeCurrencyDeleteByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
 
 
-@router.get()
-async def route(schema: CurrencyGetSchema = Depends()):
-    result = await CurrencyService().get(id_str=schema.id_str)
+@router.post()
+async def route(schema: PromocodeCurrencyDeleteByAdminSchema):
+    result = await PromocodeCurrencyService().delete_by_admin(
+        token=schema.token,
+        id_=schema.id,
+    )
     return Response(**result)

@@ -31,15 +31,18 @@ from .texts import router as router_texts
 from .timezones import router as router_timezones
 from .trainings import router as router_trainings
 from .urls import router as router_urls
+from .promocodes import router as router_promocodes
 from app.utils import Router
 
 
 router = Router(
     prefix='',
     routes_included=[
+        router_sessions,
         router_accounts,
         router_articles,
         router_payments,
+        router_promocodes,
         router_countries,
         router_currencies,
         router_exercises,
@@ -48,7 +51,6 @@ router = Router(
         router_meals,
         router_products,
         router_services,
-        router_sessions,
         router_texts,
         router_timezones,
         router_trainings,

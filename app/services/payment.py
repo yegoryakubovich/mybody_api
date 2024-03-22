@@ -21,13 +21,13 @@ from json import dumps, loads
 from hg_api_client.routes import HutkiGroshApiClient
 
 from app.db import db
-from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod
+from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, Promocode
 from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
-    PaymentMethodRepository, PaymentMethodCurrencyRepository
+    PaymentMethodRepository, PaymentMethodCurrencyRepository, PromocodeRepository
 from app.repositories.payment import PaymentStates
-from app.services import AccountServiceService
-from app.services.account_service import AccountServiceStates
+from app.services.account_service import AccountServiceStates, AccountServiceService
 from app.services.base import BaseService
+from app.services.promocode import PromocodeService, PromocodeTypes
 from app.utils.decorators import session_required
 from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters, \
     PaymentCantBeCancelled
@@ -43,16 +43,41 @@ class PaymentService(BaseService):
             payment_method_id_str: str,
             payment_method_currency_id: int,
             by_admin: bool = False,
-            promo_code: str = None,
+            promocode_id_str: str = None,
     ):
         account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
         service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
         payment_method: PaymentMethod = await PaymentMethodRepository().get_by_id_str(id_str=payment_method_id_str)
         payment_method_currency = await PaymentMethodCurrencyRepository().get_by_id(id_=payment_method_currency_id)
-        cost = 0.01 if promo_code == settings.secret_promo_code else service_cost.cost
+        cost = service_cost.cost
 
         if account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
+
+        if await PaymentRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
+            raise UnpaidBill()
+
+        if promocode_id_str:
+            if promocode_id_str == settings.secret_promo_code:
+                cost = 0.01
+            else:
+                promocode: Promocode = await PromocodeRepository().get_by_id_str(id_str=promocode_id_str)
+
+                user_promocode_currency = await PromocodeService().check(
+                    session=session,
+                    id_str=promocode_id_str,
+                    return_currency=True,
+                )
+
+                if promocode.type == PromocodeTypes.PERCENT:
+                    cost = cost - (cost / 100 * user_promocode_currency.amount)
+                elif promocode.type == PromocodeTypes.AMOUNT:
+                    cost = cost - user_promocode_currency.amount
+
+                await PromocodeService().use(
+                    session=session,
+                    id_str=promocode_id_str,
+                )
 
         action_parameters = {
             'creator': f'session_{session.id}',
@@ -60,13 +85,12 @@ class PaymentService(BaseService):
             'service_cost_id': service_cost_id,
             'payment_method_id_str': payment_method_id_str,
             'payment_method_currency_id': payment_method_currency_id,
+            'promocode': promocode_id_str,
             'cost': cost,
         }
 
         if by_admin:
             action_parameters['by_admin'] = True
-        if await PaymentRepository().is_account_service_have_an_unpaid_bill(account_service=account_service):
-            raise UnpaidBill()
 
         payment = await PaymentRepository().create(
             account_service=account_service,
@@ -95,7 +119,7 @@ class PaymentService(BaseService):
             service_cost_id: int,
             payment_method_id_str: str,
             payment_method_currency_id: int,
-            promo_code: str = None,
+            promocode_id_str: str = None,
     ):
         return await self._create(
             session=session,
@@ -103,7 +127,7 @@ class PaymentService(BaseService):
             service_cost_id=service_cost_id,
             payment_method_id_str=payment_method_id_str,
             payment_method_currency_id=payment_method_currency_id,
-            promo_code=promo_code,
+            promocode_id_str=promocode_id_str,
         )
 
     @session_required(permissions=['payments'])
@@ -114,7 +138,7 @@ class PaymentService(BaseService):
             service_cost_id: int,
             payment_method_id_str: str,
             payment_method_currency_id: int,
-            promo_code: str = None,
+            promocode_id_str: str = None,
     ):
         return await self._create(
             session=session,
@@ -123,7 +147,7 @@ class PaymentService(BaseService):
             by_admin=True,
             payment_method_id_str=payment_method_id_str,
             payment_method_currency_id=payment_method_currency_id,
-            promo_code=promo_code,
+            promocode_id_str=promocode_id_str,
         )
 
     async def _update(
@@ -232,14 +256,12 @@ class PaymentService(BaseService):
             session: Session,
             id_: int,
     ):
-        payments: Payment = await PaymentRepository().get_by_id(id_=id_)
+        payment: Payment = await PaymentRepository().get_by_id(id_=id_)
 
-        await PaymentRepository().delete(
-            model=payments
-        )
+        await PaymentRepository().delete(model=payment)
 
         await self.create_action(
-            model=payments,
+            model=payment,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',

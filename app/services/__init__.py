@@ -52,3 +52,5 @@ from .payment import PaymentService
 from .payment_method import PaymentMethodService
 from .payment_method_currency import PaymentMethodCurrencyService
 from .url import UrlService
+from .promocode import PromocodeService
+from .promocode_currency import PromocodeCurrencyService

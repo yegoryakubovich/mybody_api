@@ -13,15 +13,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from peewee import DoesNotExist
 
 from app.db.models import AccountRole, Account, Permission
 from .role_permission import RolePermissionRepository
 from app.repositories.base import BaseRepository
+from ..utils.exceptions import ModelAlreadyExist
 
 
 class AccountRoleRepository(BaseRepository):
     model = AccountRole
+
+    async def create(self, **kwargs):
+        try:
+            account = kwargs.get('account')
+            role = kwargs.get('role')
+            AccountRole.get(
+                (AccountRole.promocode == account) &
+                (AccountRole.currency == role) &
+                (AccountRole.is_deleted == False)
+            )
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'AccountRole',
+                    'id_type': 'account, role',
+                    'id_value': [account.id, role.id],
+                },
+            )
+        except DoesNotExist:
+            return await super().create(**kwargs)
 
     @staticmethod
     async def get_account_permissions(account: Account, only_id_str=False) -> list[str | Permission]:

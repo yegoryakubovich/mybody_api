@@ -35,6 +35,8 @@ from .payment_method import PaymentMethod
 from .payment_method_currency import PaymentMethodCurrency
 from .permission import Permission
 from .product import Product
+from .promocode import Promocode
+from .promocode_currency import PromocodeCurrency
 from .role_permission import RolePermission
 from .text import Text
 from .text_translation import TextTranslation
@@ -50,6 +52,7 @@ from .training import Training
 from .training_exercise import TrainingExercise
 from .training_report import TrainingReport
 from .url import Url
+
 
 models = (
     Action,
@@ -98,4 +101,7 @@ models = (
     MealReportImage,
 
     Url,
+
+    Promocode,
+    PromocodeCurrency,
 )

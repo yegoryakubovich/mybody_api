@@ -48,4 +48,6 @@ from .training_report import TrainingReportRepository
 from .payment import PaymentRepository
 from .payment_method import PaymentMethodRepository
 from .payment_method_currency import PaymentMethodCurrencyRepository
+from .promocode import PromocodeRepository
+from .promocode_currency import PromocodeCurrencyRepository
 from .url import UrlRepository

@@ -15,22 +15,19 @@
 #
 
 
-from fastapi import Depends
-from pydantic import Field, BaseModel
-from app.services import CurrencyService
-from app.utils import Router, Response
+from peewee import BooleanField, PrimaryKeyField, FloatField, ForeignKeyField
+
+from .promocode import Promocode
+from .currency import Currency
+from .base import BaseModel
 
 
-router = Router(
-    prefix='/get',
-)
+class PromocodeCurrency(BaseModel):
+    id = PrimaryKeyField()
+    promocode = ForeignKeyField(model=Promocode)
+    currency = ForeignKeyField(model=Currency)
+    amount = FloatField()
+    is_deleted = BooleanField(default=False)
 
-
-class CurrencyGetSchema(BaseModel):
-    id_str: str = Field(min_length=1, max_length=16)
-
-
-@router.get()
-async def route(schema: CurrencyGetSchema = Depends()):
-    result = await CurrencyService().get(id_str=schema.id_str)
-    return Response(**result)
+    class Meta:
+        db_table = 'promocodes_currencies'
