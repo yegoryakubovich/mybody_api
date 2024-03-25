@@ -103,7 +103,6 @@ async def sync_texts(table: Spreadsheet):
             new_value_default = text_table.get(DEFAULT_LANGUAGE)
 
             if current_value_default != new_value_default:
-                print(f'UPDATE text {key}')
                 await mybody_api_client.admin.texts.update(
                     key=key,
                     value_default=new_value_default,

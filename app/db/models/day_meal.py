@@ -1,4 +1,4 @@
-
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,23 +15,18 @@
 #
 
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .days import router as router_days
+from peewee import BooleanField, PrimaryKeyField, ForeignKeyField
+
+from .base import BaseModel
+from .account_service_day import AccountServiceDay
+from .meal import Meal
 
 
-router = Router(
-    prefix='/services',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-        router_days,
-    ],
-)
+class DayMeal(BaseModel):
+    id = PrimaryKeyField()
+    account_service_day = ForeignKeyField(model=AccountServiceDay)
+    meal = ForeignKeyField(model=Meal)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'accounts_services_days_meals'

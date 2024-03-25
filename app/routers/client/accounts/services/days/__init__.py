@@ -1,4 +1,4 @@
-
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,12 @@
 
 
 from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
 from .get import router as router_get
-from .get_list import router as router_get_list
-from .days import router as router_days
 
 
 router = Router(
-    prefix='/services',
+    prefix='/days',
     routes_included=[
-        router_create,
-        router_update,
-        router_delete,
         router_get,
-        router_get_list,
-        router_days,
     ],
 )

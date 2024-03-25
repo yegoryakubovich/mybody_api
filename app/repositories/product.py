@@ -28,3 +28,11 @@ class ProductRepository(BaseRepository):
             (Product.type == type_) &
             (Product.is_deleted == False)
         ).execute()
+
+    @staticmethod
+    async def get_main_by_type(type_: str) -> list[Product]:
+        return Product.select().where(
+            (Product.type == type_) &
+            (Product.is_main == True) &
+            (Product.is_deleted == False)
+        ).execute()

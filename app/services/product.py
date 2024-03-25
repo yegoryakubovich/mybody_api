@@ -43,11 +43,12 @@ class ProductService(BaseService):
             name: str,
             type_: str,
             unit: str,
-            fats: int,
-            proteins: int,
-            carbohydrates: int,
+            fats: float,
+            proteins: float,
+            carbohydrates: float,
             calories: int = None,
             article_id: int = None,
+            is_main: bool = False,
     ):
         await self.check_product_type(type_=type_)
         await self.check_unit(unit=unit)
@@ -67,6 +68,7 @@ class ProductService(BaseService):
             'fats': fats,
             'proteins': proteins,
             'carbohydrates': carbohydrates,
+            'is_main': is_main,
             'by_admin': True,
         }
 
@@ -89,6 +91,7 @@ class ProductService(BaseService):
 
         product = await ProductRepository().create(
             name_text=name_text,
+            is_main=is_main,
             type=type_,
             unit=unit,
             fats=fats,
@@ -113,11 +116,12 @@ class ProductService(BaseService):
             id_: int,
             type_: str = None,
             unit: str = None,
-            fats: int = None,
-            proteins: int = None,
-            carbohydrates: int = None,
+            fats: float = None,
+            proteins: float = None,
+            carbohydrates: float = None,
             calories: int = None,
             article_id: int = None,
+            is_main: bool = None,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
 
@@ -131,51 +135,38 @@ class ProductService(BaseService):
                 and not calories \
                 and not fats \
                 and not proteins \
-                and not carbohydrates:
+                and not carbohydrates \
+                and not is_main:
             raise NoRequiredParameters(
                 kwargs={
-                    'parameters': ['type', 'unit', 'fats', 'proteins', 'carbohydrates', 'calories', 'article_id']
+                    'parameters': [
+                        'type',
+                        'unit',
+                        'fats',
+                        'proteins',
+                        'carbohydrates',
+                        'calories',
+                        'article_id',
+                        'is_main',
+                    ]
                 }
             )
         if type_:
             await self.check_product_type(type_=type_)
-            action_parameters.update(
-                {
-                    'type': type_,
-                }
-            )
+            action_parameters['type'] = type_
         if unit:
             await self.check_unit(unit=unit)
-            action_parameters.update(
-                {
-                    'unit': unit,
-                }
-            )
+            action_parameters['unit'] = unit
         if fats:
-            action_parameters.update(
-                {
-                    'fats': fats,
-                }
-            )
+            action_parameters['fats'] = fats
         if proteins:
-            action_parameters.update(
-                {
-                    'proteins': proteins,
-                }
-            )
+            action_parameters['proteins'] = proteins
         if carbohydrates:
-            action_parameters.update(
-                {
-                    'carbohydrates': carbohydrates,
-                }
-            )
+            action_parameters['carbohydrates'] = carbohydrates
         if calories:
-            action_parameters.update(
-                {
-                    'calories': calories,
-                }
-            )
-        # noinspection DuplicatedCode
+            action_parameters['calories'] = calories
+        if is_main:
+            action_parameters['is_main'] = is_main
         if article_id:
             if article_id == -1:
                 article = -1
@@ -186,11 +177,7 @@ class ProductService(BaseService):
                 )
             else:
                 article = await ArticleRepository().get_by_id(id_=article_id)
-                action_parameters.update(
-                    {
-                        'article_id': article_id,
-                    }
-                )
+                action_parameters['article_id'] = article_id
         else:
             article = None
 
@@ -203,6 +190,7 @@ class ProductService(BaseService):
             carbohydrates=carbohydrates,
             calories=calories,
             article=article,
+            is_main=is_main,
         )
 
         await self.create_action(
@@ -286,6 +274,7 @@ class ProductService(BaseService):
             'id': product.id,
             'name_text': product.name_text.key,
             'type': product.type,
+            'is_main': product.is_main,
             'unit': product.unit,
             'fats': product.fats,
             'proteins': product.proteins,

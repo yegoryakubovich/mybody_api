@@ -21,10 +21,48 @@ from peewee import DoesNotExist
 
 from app.db.models import AccountService, Meal
 from app.repositories.base import BaseRepository
+from app.utils.exceptions import ModelAlreadyExist
 
 
 class MealRepository(BaseRepository):
     model = Meal
+
+    async def create(self, **kwargs):
+        try:
+            account_service = kwargs.get('account_service')
+            date_ = kwargs.get('date')
+            type_ = kwargs.get('type')
+            Meal.get(
+                (Meal.account_service == account_service) &
+                (Meal.date == date_) &
+                (Meal.type == type_) &
+                (Meal.is_deleted == False)
+            )
+            raise ModelAlreadyExist(
+                kwargs={
+                    'model': 'Meal',
+                    'id_type': 'account_service, date, type',
+                    'id_value': [account_service.id, str(date_), type_],
+                },
+            )
+        except DoesNotExist:
+            return await super().create(**kwargs)
+
+    @staticmethod
+    async def get_by_parameters(
+            account_service: AccountService,
+            date_: date,
+            type_: str,
+    ):
+        try:
+            return Meal.get(
+                (Meal.account_service == account_service) &
+                (Meal.date == date_) &
+                (Meal.type == type_) &
+                (Meal.is_deleted == False)
+            )
+        except DoesNotExist:
+            return False
 
     @staticmethod
     async def get_list_by_account_service_and_date(

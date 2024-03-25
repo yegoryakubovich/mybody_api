@@ -28,7 +28,6 @@ class TrainingReportRepository(BaseRepository):
     async def is_exist_by_training(training: Training):
         try:
             tr = TrainingReport.get((TrainingReport.training == training) & (TrainingReport.is_deleted == False))
-            print(tr.id)
             return True
         except DoesNotExist:
             return False

@@ -15,41 +15,32 @@
 #
 
 
+from datetime import date as datetime_date
+
 from pydantic import BaseModel, Field
 
-from app.services import ProductService
+from app.services import MealService
 from app.utils import Response, Router
 
+
 router = Router(
-    prefix='/create'
+    prefix='/duplicate'
 )
 
 
-class ProductCreateByAdminSchema(BaseModel):
+class MealDuplicateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    name: str = Field(min_length=1, max_length=1024)
-    type: str = Field(min_length=1, max_length=16)
-    is_main: bool = Field(default=False)
-    unit: str = Field(min_length=1, max_length=4)
-    fats: float = Field()
-    proteins: float = Field()
-    carbohydrates: float = Field()
-    calories: int = Field(default=None)
-    article_id: int = Field(default=None)
+    id: int = Field()
+    date: datetime_date = Field(default=None)
+    type: str = Field(default=None, max_length=16)
 
 
 @router.post()
-async def route(schema: ProductCreateByAdminSchema):
-    result = await ProductService().create_by_admin(
+async def route(schema: MealDuplicateByAdminSchema):
+    result = await MealService().duplicate_by_admin(
         token=schema.token,
-        name=schema.name,
+        id_=schema.id,
+        date_=schema.date,
         type_=schema.type,
-        is_main=schema.is_main,
-        unit=schema.unit,
-        fats=schema.fats,
-        proteins=schema.proteins,
-        carbohydrates=schema.carbohydrates,
-        calories=schema.calories,
-        article_id=schema.article_id,
     )
     return Response(**result)

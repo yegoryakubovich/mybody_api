@@ -29,10 +29,11 @@ class ProductUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
     type: str = Field(default=None, min_length=1, max_length=16)
+    is_main: bool = Field(default=None)
     unit: str = Field(default=None, min_length=1, max_length=4)
-    fats: int = Field(default=None)
-    proteins: int = Field(default=None)
-    carbohydrates: int = Field(default=None)
+    fats: float = Field(default=None)
+    proteins: float = Field(default=None)
+    carbohydrates: float = Field(default=None)
     calories: int = Field(default=None)
     article_id: int = Field(default=None)
 
@@ -43,6 +44,7 @@ async def route(schema: ProductUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         type_=schema.type,
+        is_main=schema.is_main,
         unit=schema.unit,
         fats=schema.fats,
         proteins=schema.proteins,

@@ -19,19 +19,21 @@ from app.utils import Router
 from .create import router as router_create
 from .update import router as router_update
 from .delete import router as router_delete
+from .duplicate import router as router_duplicate
 from .get import router as router_get
 from .get_list import router as router_get_list
-from .days import router as router_days
+from .meals import router as router_meals
 
 
 router = Router(
-    prefix='/services',
+    prefix='/days',
     routes_included=[
         router_create,
         router_update,
         router_delete,
+        router_duplicate,
         router_get,
         router_get_list,
-        router_days,
+        router_meals,
     ],
 )

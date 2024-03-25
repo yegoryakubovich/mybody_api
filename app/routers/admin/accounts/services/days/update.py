@@ -1,4 +1,4 @@
-
+#
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,24 +14,28 @@
 # limitations under the License.
 #
 
+from pydantic import BaseModel, Field
 
-from app.utils import Router
-from .create import router as router_create
-from .update import router as router_update
-from .delete import router as router_delete
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .days import router as router_days
+from app.services import AccountServiceDayService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/services',
-    routes_included=[
-        router_create,
-        router_update,
-        router_delete,
-        router_get,
-        router_get_list,
-        router_days,
-    ],
+    prefix='/update',
 )
+
+
+class AccountServiceDayUpdateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+    water_amount: int = Field()
+
+
+@router.post()
+async def route(schema: AccountServiceDayUpdateByAdminSchema):
+    result = await AccountServiceDayService().update_by_admin(
+        token=schema.token,
+        id_=schema.id,
+        water_amount=schema.water_amount,
+    )
+    return Response(**result)

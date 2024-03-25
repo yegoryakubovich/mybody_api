@@ -15,22 +15,32 @@
 #
 
 
-from fastapi import Depends
-from pydantic import BaseModel, Field
-from fastapi.responses import RedirectResponse
+from datetime import date as datetime_date
 
-from app.services import UrlService
-from app.utils import Router
+from pydantic import BaseModel, Field
+
+from app.services import AccountServiceDayService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/{redirect}'
+    prefix='/create',
 )
 
 
-@router.get()
-async def route(redirect: str):
-    url = await UrlService().get_by_name(
-        name=redirect,
+class AccountServiceDayCreateByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_service_id: int = Field()
+    date: datetime_date = Field()
+    water_amount: int = Field()
+
+
+@router.post()
+async def route(schema: AccountServiceDayCreateByAdminSchema):
+    result = await AccountServiceDayService().create_by_admin(
+        token=schema.token,
+        account_service_id=schema.account_service_id,
+        date_=schema.date,
+        water_amount=schema.water_amount,
     )
-    return RedirectResponse(url=url['url']['redirect'])
+    return Response(**result)
