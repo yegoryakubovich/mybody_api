@@ -16,35 +16,38 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import DayMeal, Day
+from app.db.models import DayTraining, Day
 from .base import BaseRepository
 from ..utils.exceptions import ModelAlreadyExist
 
 
-class DayMealRepository(BaseRepository):
-    model = DayMeal
+class DayTrainingRepository(BaseRepository):
+    model = DayTraining
 
     @staticmethod
-    async def get_list_by_day(day: Day) -> list[DayMeal]:
-        return DayMeal.select().where(
-            (DayMeal.day == day) &
-            (DayMeal.is_deleted == False)
-        ).execute()
+    async def get_by_day(day: Day) -> DayTraining | bool:
+        try:
+            return DayTraining.get(
+                (DayTraining.day == day) &
+                (DayTraining.is_deleted == False)
+            )
+        except DoesNotExist:
+            return False
 
     async def create(self, **kwargs):
         try:
             day = kwargs.get('day')
-            meal = kwargs.get('meal')
-            DayMeal.get(
-                (DayMeal.day == day) &
-                (DayMeal.meal == meal) &
-                (DayMeal.is_deleted == False)
+            training = kwargs.get('training')
+            DayTraining.get(
+                (DayTraining.day == day) &
+                (DayTraining.training == training) &
+                (DayTraining.is_deleted == False)
             )
             raise ModelAlreadyExist(
                 kwargs={
                     'model': 'DayMeal',
-                    'id_type': 'day, meal',
-                    'id_value': [day.id, meal.id],
+                    'id_type': 'day, training',
+                    'id_value': [day.id, training.id],
                 },
             )
         except DoesNotExist:

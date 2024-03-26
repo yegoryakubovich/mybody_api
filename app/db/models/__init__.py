@@ -18,12 +18,13 @@
 from .account import Account
 from .account_role import AccountRole
 from .account_service import AccountService
-from .account_service_day import AccountServiceDay
+from .day import Day
 from .action import Action
 from .action_parameter import ActionParameter
 from .article import Article
 from .article_translation import ArticleTranslation
 from .day_meal import DayMeal
+from .day_training import DayTraining
 from .payment import Payment
 from .exercise import Exercise
 from .image import Image
@@ -107,6 +108,7 @@ models = (
     Promocode,
     PromocodeCurrency,
 
-    AccountServiceDay,
+    Day,
     DayMeal,
+    DayTraining,
 )

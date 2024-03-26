@@ -19,7 +19,6 @@ from app.utils import Router
 from .get import router as router_get
 from .get_list import router as router_get_list
 from .create import router as router_create
-from .days import router as router_days
 
 
 router = Router(
@@ -28,6 +27,5 @@ router = Router(
         router_get,
         router_get_list,
         router_create,
-        router_days,
     ],
 )

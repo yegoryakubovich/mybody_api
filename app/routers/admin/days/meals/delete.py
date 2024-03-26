@@ -15,18 +15,26 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField
+from pydantic import BaseModel, Field
 
-from .base import BaseModel
-from .day import Day
-from .meal import Meal
+from app.services import DayMealService
+from app.utils import Response, Router
 
 
-class DayMeal(BaseModel):
-    id = PrimaryKeyField()
-    day = ForeignKeyField(model=Day)
-    meal = ForeignKeyField(model=Meal)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/delete',
+)
 
-    class Meta:
-        db_table = 'days_meals'
+
+class DayMealDeleteByAdminSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.post()
+async def route(schema: DayMealDeleteByAdminSchema):
+    result = await DayMealService().delete_by_admin(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

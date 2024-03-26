@@ -15,30 +15,28 @@
 #
 
 
-from datetime import date as datetime_date
-
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceDayService
+from app.services import DayTrainingService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/duplicate',
+    prefix='/update',
 )
 
 
-class AccountServiceDayDuplicateByAdminSchema(BaseModel):
+class DayTrainingUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    date: datetime_date = Field()
+    day_id: int = Field()
 
 
 @router.post()
-async def route(schema: AccountServiceDayDuplicateByAdminSchema):
-    result = await AccountServiceDayService().duplicate_by_admin(
+async def route(schema: DayTrainingUpdateByAdminSchema):
+    result = await DayTrainingService().update_by_admin(
         token=schema.token,
         id_=schema.id,
-        date_=schema.date,
+        day_id=schema.day_id,
     )
     return Response(**result)

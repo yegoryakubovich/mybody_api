@@ -18,7 +18,7 @@
 from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceDayService
+from app.services import DayService
 from app.utils import Router
 from app.utils.response import Response
 
@@ -28,14 +28,14 @@ router = Router(
 )
 
 
-class AccountServiceDayGetListSchema(BaseModel):
+class DayGetListSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     account_service_id: int = Field()
 
 
 @router.get()
-async def route(schema: AccountServiceDayGetListSchema = Depends()):
-    result = await AccountServiceDayService().get_list(
+async def route(schema: DayGetListSchema = Depends()):
+    result = await DayService().get_list(
         token=schema.token,
         account_service_id=schema.account_service_id,
     )

@@ -17,10 +17,10 @@
 
 from datetime import date
 
-from app.db.models import MealReport, Session, AccountServiceDay
+from app.db.models import MealReport, Session, Day, DayMeal
 from app.db.models.meal import Meal
 from app.repositories import AccountServiceRepository, MealProductRepository, MealReportRepository, \
-    MealRepository, ProductRepository, AccountServiceDayRepository
+    MealRepository, ProductRepository, DayRepository, DayMealRepository
 from app.services.day_meal import DayMealService
 from app.services.meal_product import MealProductService
 from app.services.base import BaseService
@@ -83,14 +83,14 @@ class MealService(BaseService):
                 nutrient_amount=carbohydrates,
             )
 
-        day: AccountServiceDay = await AccountServiceDayRepository().get_by_date(
+        day: Day = await DayRepository().get_by_date(
             date_=meal.date,
             account_service=account_service,
         )
 
         await DayMealService().create_by_admin(
             session=session,
-            account_service_day_id=day.id,
+            day_id=day.id,
             meal_id=meal.id,
         )
 
@@ -214,6 +214,12 @@ class MealService(BaseService):
     ):
         meal = await MealRepository().get_by_id(id_=id_)
         await MealRepository().delete(model=meal)
+        day: Day = await DayRepository().get_by_date(date_=meal.date, account_service=meal.account_service)
+        day_meals: list[DayMeal] = await DayMealRepository().get_list_by_day(day=day)
+        for day_meal in day_meals:
+            if day_meal.meal == meal:
+                await DayMealService().delete_by_admin(session=session, id_=day_meal.id)
+
 
         await self.create_action(
             model=meal,
@@ -235,7 +241,7 @@ class MealService(BaseService):
             type_: str = None,
     ):
         initial_meal: Meal = await MealRepository().get_by_id(id_=id_)
-        initial_day: AccountServiceDay = await AccountServiceDayRepository().get_by_date(
+        initial_day: Day = await DayRepository().get_by_date(
             account_service=initial_meal.account_service,
             date_=initial_meal.date,
         )
@@ -252,8 +258,8 @@ class MealService(BaseService):
 
         if date_:
             try:
-                from app.services.account_service_day import AccountServiceDayService
-                new_day: AccountServiceDay = await AccountServiceDayService().create_by_admin(
+                from app.services.day import DayService
+                new_day: Day = await DayService().create_by_admin(
                     session=session,
                     account_service_id=initial_meal.account_service.id,
                     date_=date_,
@@ -261,7 +267,7 @@ class MealService(BaseService):
                     return_model=True,
                 )
             except ModelAlreadyExist:
-                new_day: AccountServiceDay = await AccountServiceDayRepository().get_by_date(
+                new_day: Day = await DayRepository().get_by_date(
                     date_=date_,
                     account_service=initial_meal.account_service,
                 )
@@ -281,7 +287,7 @@ class MealService(BaseService):
             )
             await DayMealService().create_by_admin(
                 session=session,
-                account_service_day_id=new_day.id,
+                day_id=new_day.id,
                 meal_id=duplicated_meal.id,
             )
         except ModelAlreadyExist:

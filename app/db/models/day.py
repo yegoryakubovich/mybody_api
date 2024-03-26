@@ -15,28 +15,18 @@
 #
 
 
-from pydantic import BaseModel, Field
+from peewee import BooleanField, PrimaryKeyField, ForeignKeyField, DateField, IntegerField
 
-from app.services import DayMealService
-from app.utils import Response, Router
-
-
-router = Router(
-    prefix='/create',
-)
+from .account_service import AccountService
+from .base import BaseModel
 
 
-class AccountServiceDayMealCreateByAdminSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    account_service_day_id: int = Field()
-    meal_id: int = Field()
+class Day(BaseModel):
+    id = PrimaryKeyField()
+    account_service = ForeignKeyField(model=AccountService)
+    date = DateField()
+    water_amount = IntegerField()
+    is_deleted = BooleanField(default=False)
 
-
-@router.post()
-async def route(schema: AccountServiceDayMealCreateByAdminSchema):
-    result = await DayMealService().create_by_admin(
-        token=schema.token,
-        account_service_day_id=schema.account_service_day_id,
-        meal_id=schema.meal_id,
-    )
-    return Response(**result)
+    class Meta:
+        db_table = 'days'

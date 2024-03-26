@@ -17,27 +17,27 @@ from datetime import date
 
 from peewee import DoesNotExist
 
-from app.db.models import AccountServiceDay
+from app.db.models import Day
 from .base import BaseRepository
 from app.db.models import AccountService
 from ..utils.exceptions import ModelAlreadyExist
 
 
-class AccountServiceDayRepository(BaseRepository):
-    model = AccountServiceDay
+class DayRepository(BaseRepository):
+    model = Day
 
     async def create(self, **kwargs):
         try:
             account_service = kwargs.get('account_service')
             date_ = kwargs.get('date')
-            AccountServiceDay.get(
-                (AccountServiceDay.account_service == account_service) &
-                (AccountServiceDay.date == date_) &
-                (AccountServiceDay.is_deleted == False)
+            Day.get(
+                (Day.account_service == account_service) &
+                (Day.date == date_) &
+                (Day.is_deleted == False)
             )
             raise ModelAlreadyExist(
                 kwargs={
-                    'model': 'AccountServiceDay',
+                    'model': 'Day',
                     'id_type': 'account_service, date',
                     'id_value': [account_service.id, str(date_)],
                 },
@@ -48,17 +48,17 @@ class AccountServiceDayRepository(BaseRepository):
     @staticmethod
     async def get_by_date(date_: date, account_service: AccountService):
         try:
-            return AccountServiceDay.get(
-                (AccountServiceDay.account_service == account_service) &
-                (AccountServiceDay.date == date_) &
-                (AccountServiceDay.is_deleted == False)
+            return Day.get(
+                (Day.account_service == account_service) &
+                (Day.date == date_) &
+                (Day.is_deleted == False)
             )
         except DoesNotExist:
             return False
 
     @staticmethod
     async def get_list_by_account_service(account_service: AccountService):
-        return AccountServiceDay.select().where(
-            (AccountServiceDay.account_service == account_service) &
-            (AccountServiceDay.is_deleted == False)
+        return Day.select().where(
+            (Day.account_service == account_service) &
+            (Day.is_deleted == False)
         )

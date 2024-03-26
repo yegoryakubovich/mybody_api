@@ -22,19 +22,21 @@ from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/delete',
+    prefix='/create',
 )
 
 
-class AccountServiceDayMealDeleteByAdminSchema(BaseModel):
+class DayMealCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
+    day_id: int = Field()
+    meal_id: int = Field()
 
 
 @router.post()
-async def route(schema: AccountServiceDayMealDeleteByAdminSchema):
-    result = await DayMealService().delete_by_admin(
+async def route(schema: DayMealCreateByAdminSchema):
+    result = await DayMealService().create_by_admin(
         token=schema.token,
-        id_=schema.id,
+        day_id=schema.day_id,
+        meal_id=schema.meal_id,
     )
     return Response(**result)

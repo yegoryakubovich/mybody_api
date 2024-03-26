@@ -14,28 +14,33 @@
 # limitations under the License.
 #
 
+
+from datetime import date as datetime_date
+
 from pydantic import BaseModel, Field
 
-from app.services import DayMealService
+from app.services import DayService
 from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/update',
+    prefix='/create',
 )
 
 
-class AccountServiceDayMealUpdateByAdminSchema(BaseModel):
+class DayCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
-    day_id: int = Field()
+    account_service_id: int = Field()
+    date: datetime_date = Field()
+    water_amount: int = Field()
 
 
 @router.post()
-async def route(schema: AccountServiceDayMealUpdateByAdminSchema):
-    result = await DayMealService().update_by_admin(
+async def route(schema: DayCreateByAdminSchema):
+    result = await DayService().create_by_admin(
         token=schema.token,
-        id_=schema.id,
-        day_id=schema.day_id,
+        account_service_id=schema.account_service_id,
+        date_=schema.date,
+        water_amount=schema.water_amount,
     )
     return Response(**result)

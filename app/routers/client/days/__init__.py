@@ -15,18 +15,15 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField, DateField, IntegerField
+from app.utils import Router
+from .get import router as router_get
+from .get_list import router as router_get_list
 
-from .account_service import AccountService
-from .base import BaseModel
 
-
-class AccountServiceDay(BaseModel):
-    id = PrimaryKeyField()
-    account_service = ForeignKeyField(model=AccountService)
-    date = DateField()
-    water_amount = IntegerField()
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'accounts_services_days'
+router = Router(
+    prefix='/days',
+    routes_included=[
+        router_get,
+        router_get_list,
+    ],
+)

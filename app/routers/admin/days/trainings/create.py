@@ -15,11 +15,9 @@
 #
 
 
-from datetime import date as datetime_date
-
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceDayService
+from app.services import DayTrainingService
 from app.utils import Response, Router
 
 
@@ -28,19 +26,17 @@ router = Router(
 )
 
 
-class AccountServiceDayCreateByAdminSchema(BaseModel):
+class DayTrainingCreateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
-    account_service_id: int = Field()
-    date: datetime_date = Field()
-    water_amount: int = Field()
+    day_id: int = Field()
+    training_id: int = Field()
 
 
 @router.post()
-async def route(schema: AccountServiceDayCreateByAdminSchema):
-    result = await AccountServiceDayService().create_by_admin(
+async def route(schema: DayTrainingCreateByAdminSchema):
+    result = await DayTrainingService().create_by_admin(
         token=schema.token,
-        account_service_id=schema.account_service_id,
-        date_=schema.date,
-        water_amount=schema.water_amount,
+        day_id=schema.day_id,
+        training_id=schema.training_id,
     )
     return Response(**result)

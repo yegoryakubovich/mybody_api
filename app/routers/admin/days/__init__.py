@@ -1,4 +1,4 @@
-#
+
 # (c) 2024, Yegor Yakubovich, yegoryakubovich.com, personal@yegoryakybovich.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,28 +15,27 @@
 #
 
 
-from fastapi import Depends
-from pydantic import BaseModel, Field
-
-from app.services import AccountServiceDayService
 from app.utils import Router
-from app.utils.response import Response
+from .create import router as router_create
+from .update import router as router_update
+from .delete import router as router_delete
+from .duplicate import router as router_duplicate
+from .get import router as router_get
+from .get_list import router as router_get_list
+from .meals import router as router_meals
+from .trainings import router as router_trainings
 
 
 router = Router(
-    prefix='/get',
+    prefix='/days',
+    routes_included=[
+        router_create,
+        router_update,
+        router_delete,
+        router_duplicate,
+        router_get,
+        router_get_list,
+        router_meals,
+        router_trainings,
+    ],
 )
-
-
-class AccountServiceDayGetByAdminSchema(BaseModel):
-    token: str = Field(min_length=32, max_length=64)
-    id: int = Field()
-
-
-@router.get()
-async def route(schema: AccountServiceDayGetByAdminSchema = Depends()):
-    result = await AccountServiceDayService().get_by_admin(
-        token=schema.token,
-        id_=schema.id,
-    )
-    return Response(**result)

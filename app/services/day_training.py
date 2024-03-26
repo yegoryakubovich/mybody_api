@@ -16,51 +16,51 @@
 
 
 from app.db.models import Session
-from app.repositories import DayRepository, MealRepository, DayMealRepository
+from app.repositories import DayRepository, TrainingRepository, DayTrainingRepository
 from app.services.base import BaseService
 from app.utils.decorators import session_required
 
 
-class DayMealService(BaseService):
+class DayTrainingService(BaseService):
 
-    @session_required(permissions=['meals'])
+    @session_required(permissions=['training'])
     async def create_by_admin(
             self,
             session: Session,
             day_id: int,
-            meal_id: int,
+            training_id: int,
     ):
         day = await DayRepository().get_by_id(id_=day_id)
-        meal = await MealRepository().get_by_id(id_=meal_id)
+        training = await TrainingRepository().get_by_id(id_=training_id)
 
         action_parameters = {
             'creator': f'session_{session.id}',
             'day_id': day_id,
-            'meal_id': meal_id,
+            'training_id': training_id,
             'by_admin': True,
         }
 
-        day_meal = await DayMealRepository().create(
+        day_training = await DayTrainingRepository().create(
             day=day,
-            meal=meal,
+            training=training,
         )
 
         await self.create_action(
-            model=day_meal,
+            model=day_training,
             action='create',
             parameters=action_parameters,
         )
 
-        return {'id': day_meal.id}
+        return {'id': day_training.id}
 
-    @session_required(permissions=['meals'])
+    @session_required(permissions=['training'])
     async def update_by_admin(
             self,
             session: Session,
             id_: int,
             day_id: int,
     ):
-        day_meal = await DayMealRepository().get_by_id(id_=id_)
+        day_training = await DayTrainingRepository().get_by_id(id_=id_)
         day = await DayRepository().get_by_id(id_=day_id)
 
         action_parameters = {
@@ -69,30 +69,30 @@ class DayMealService(BaseService):
             'by_admin': True,
         }
 
-        await DayMealRepository().update(
-            model=day_meal,
+        await DayTrainingRepository().update(
+            model=day_training,
             day=day,
         )
 
         await self.create_action(
-            model=day_meal,
+            model=day_training,
             action='update',
             parameters=action_parameters,
         )
 
         return {}
 
-    @session_required(permissions=['meals'])
+    @session_required(permissions=['training'])
     async def delete_by_admin(
             self,
             session: Session,
             id_: int,
     ):
-        day_meal = await DayMealRepository().get_by_id(id_=id_)
-        await DayMealRepository().delete(model=day_meal)
+        day_training = await DayTrainingRepository().get_by_id(id_=id_)
+        await DayTrainingRepository().delete(model=day_training)
 
         await self.create_action(
-            model=day_meal,
+            model=day_training,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',

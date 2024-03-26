@@ -19,11 +19,12 @@ from .account import AccountService
 from .account_role import AccountRoleService
 from .account_role_check_premission import AccountRoleCheckPermissionService
 from .account_service import AccountServiceService
-from .account_service_day import AccountServiceDayService
 from .action import ActionService
 from .country import CountryService
 from .currency import CurrencyService
+from .day import DayService
 from .day_meal import DayMealService
+from .day_training import DayTrainingService
 from .image import ImageService
 from .language import LanguageService
 from .permission import PermissionService

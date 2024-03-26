@@ -21,7 +21,6 @@ from .update import router as router_update
 from .delete import router as router_delete
 from .get import router as router_get
 from .get_list import router as router_get_list
-from .days import router as router_days
 
 
 router = Router(
@@ -32,6 +31,5 @@ router = Router(
         router_delete,
         router_get,
         router_get_list,
-        router_days,
     ],
 )

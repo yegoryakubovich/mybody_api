@@ -14,29 +14,28 @@
 # limitations under the License.
 #
 
-
-from fastapi import Depends
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceDayService
-from app.utils import Router
-from app.utils.response import Response
+from app.services import DayService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/get',
+    prefix='/update',
 )
 
 
-class AccountServiceDayGetSchema(BaseModel):
+class DayUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
+    water_amount: int = Field()
 
 
-@router.get()
-async def route(schema: AccountServiceDayGetSchema = Depends()):
-    result = await AccountServiceDayService().get(
+@router.post()
+async def route(schema: DayUpdateByAdminSchema):
+    result = await DayService().update_by_admin(
         token=schema.token,
         id_=schema.id,
+        water_amount=schema.water_amount,
     )
     return Response(**result)

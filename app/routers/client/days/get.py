@@ -15,18 +15,28 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField
+from fastapi import Depends
+from pydantic import BaseModel, Field
 
-from .base import BaseModel
-from .day import Day
-from .meal import Meal
+from app.services import DayService
+from app.utils import Router
+from app.utils.response import Response
 
 
-class DayMeal(BaseModel):
-    id = PrimaryKeyField()
-    day = ForeignKeyField(model=Day)
-    meal = ForeignKeyField(model=Meal)
-    is_deleted = BooleanField(default=False)
+router = Router(
+    prefix='/get',
+)
 
-    class Meta:
-        db_table = 'days_meals'
+
+class DayGetSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+
+
+@router.get()
+async def route(schema: DayGetSchema = Depends()):
+    result = await DayService().get(
+        token=schema.token,
+        id_=schema.id,
+    )
+    return Response(**result)

@@ -17,7 +17,7 @@
 
 from pydantic import BaseModel, Field
 
-from app.services import AccountServiceDayService
+from app.services import DayService
 from app.utils import Response, Router
 
 
@@ -26,14 +26,14 @@ router = Router(
 )
 
 
-class AccountServiceDayDeleteByAdminSchema(BaseModel):
+class DayDeleteByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
 
 
 @router.post()
-async def route(schema: AccountServiceDayDeleteByAdminSchema):
-    result = await AccountServiceDayService().delete_by_admin(
+async def route(schema: DayDeleteByAdminSchema):
+    result = await DayService().delete_by_admin(
         token=schema.token,
         id_=schema.id,
     )

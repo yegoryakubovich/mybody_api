@@ -15,13 +15,18 @@
 #
 
 
-from app.utils import Router
-from .get import router as router_get
+from peewee import BooleanField, PrimaryKeyField, ForeignKeyField
+
+from .base import BaseModel
+from .day import Day
+from .training import Training
 
 
-router = Router(
-    prefix='/days',
-    routes_included=[
-        router_get,
-    ],
-)
+class DayTraining(BaseModel):
+    id = PrimaryKeyField()
+    day = ForeignKeyField(model=Day)
+    training = ForeignKeyField(model=Training)
+    is_deleted = BooleanField(default=False)
+
+    class Meta:
+        db_table = 'days_trainings'

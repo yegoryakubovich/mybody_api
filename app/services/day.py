@@ -17,8 +17,8 @@
 
 from datetime import date
 
-from app.db.models import Session, AccountServiceDay, Meal
-from app.repositories import AccountServiceDayRepository, AccountServiceRepository, MealReportRepository, \
+from app.db.models import Session, Day, Meal
+from app.repositories import DayRepository, AccountServiceRepository, MealReportRepository, \
     MealProductRepository, DayMealRepository, MealRepository
 from app.services.meal import MealService
 from app.services.day_meal import DayMealService
@@ -27,7 +27,7 @@ from app.utils.decorators import session_required
 from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist
 
 
-class AccountServiceDayService(BaseService):
+class DayService(BaseService):
 
     @session_required(permissions=['accounts'])
     async def create_by_admin(
@@ -47,22 +47,22 @@ class AccountServiceDayService(BaseService):
             'by_admin': True,
         }
 
-        account_service_day = await AccountServiceDayRepository().create(
+        day = await DayRepository().create(
             account_service=account_service,
             date=date_,
             water_amount=water_amount,
         )
 
         await self.create_action(
-            model=account_service_day,
+            model=day,
             action='create',
             parameters=action_parameters,
         )
 
         if return_model:
-            return account_service_day
+            return day
 
-        return {'id': account_service_day.id}
+        return {'id': day.id}
 
     @session_required(permissions=['accounts'])
     async def update_by_admin(
@@ -71,7 +71,7 @@ class AccountServiceDayService(BaseService):
             id_: int,
             water_amount: int,
     ):
-        account_service_day = await AccountServiceDayRepository().get_by_id(id_=id_)
+        day = await DayRepository().get_by_id(id_=id_)
 
         action_parameters = {
             'updater': f'session_{session.id}',
@@ -79,13 +79,13 @@ class AccountServiceDayService(BaseService):
             'by_admin': True,
         }
 
-        await AccountServiceDayRepository().update(
-            model=account_service_day,
+        await DayRepository().update(
+            model=day,
             water_amount=water_amount,
         )
 
         await self.create_action(
-            model=account_service_day,
+            model=day,
             action='update',
             parameters=action_parameters,
         )
@@ -98,11 +98,11 @@ class AccountServiceDayService(BaseService):
             session: Session,
             id_: int,
     ):
-        account_service_day = await AccountServiceDayRepository().get_by_id(id_=id_)
-        await AccountServiceDayRepository().delete(model=account_service_day)
+        day = await DayRepository().get_by_id(id_=id_)
+        await DayRepository().delete(model=day)
 
         await self.create_action(
-            model=account_service_day,
+            model=day,
             action='delete',
             parameters={
                 'deleter': f'session_{session.id}',
@@ -119,10 +119,10 @@ class AccountServiceDayService(BaseService):
             id_: int,
             date_: date,
     ):
-        initial_day: AccountServiceDay = await AccountServiceDayRepository().get_by_id(id_=id_)
+        initial_day: Day = await DayRepository().get_by_id(id_=id_)
         initial_day_meals = await DayMealRepository().get_list_by_day(day=initial_day)
         try:
-            duplicated_day: AccountServiceDay = await self.create_by_admin(
+            duplicated_day: Day = await self.create_by_admin(
                 session=session,
                 account_service_id=initial_day.account_service.id,
                 date_=date_,
@@ -130,11 +130,11 @@ class AccountServiceDayService(BaseService):
                 return_model=True,
             )
         except ModelAlreadyExist:
-            duplicated_day: AccountServiceDay = await AccountServiceDayRepository().get_by_date(
+            duplicated_day: Day = await DayRepository().get_by_date(
                 date_=date_,
                 account_service=initial_day.account_service,
             )
-            await AccountServiceDayService().update_by_admin(
+            await DayService().update_by_admin(
                 session=session,
                 id_=duplicated_day.id,
                 water_amount=initial_day.water_amount,
@@ -154,7 +154,7 @@ class AccountServiceDayService(BaseService):
                 )
                 await DayMealService().create_by_admin(
                     session=session,
-                    account_service_day_id=duplicated_day.id,
+                    day_id=duplicated_day.id,
                     meal_id=meal.id,
                 )
             except ModelAlreadyExist:
@@ -181,12 +181,12 @@ class AccountServiceDayService(BaseService):
             id_: int,
             by_admin: bool = False,
     ):
-        account_service_day = await AccountServiceDayRepository().get_by_id(id_=id_)
-        if account_service_day.account_service.account != session.account and not by_admin:
+        day = await DayRepository().get_by_id(id_=id_)
+        if day.account_service.account != session.account and not by_admin:
             raise NotEnoughPermissions()
 
         return {
-            'day': await self._generate_day_dict(day=account_service_day)
+            'day': await self._generate_day_dict(day=day)
         }
 
     @session_required(permissions=['accounts'])
@@ -224,8 +224,8 @@ class AccountServiceDayService(BaseService):
 
         return {
             'days': [
-                await self._generate_day_dict(day=account_service_day)
-                for account_service_day in await AccountServiceDayRepository().get_list_by_account_service(account_service=account_service)
+                await self._generate_day_dict(day=day)
+                for day in await DayRepository().get_list_by_account_service(account_service=account_service)
             ]
         }
 
@@ -253,7 +253,7 @@ class AccountServiceDayService(BaseService):
         )
 
     @staticmethod
-    async def _generate_day_dict(day: AccountServiceDay):
+    async def _generate_day_dict(day: Day):
         return {
             'id': day.id,
             'account_service_id': day.account_service.id,
