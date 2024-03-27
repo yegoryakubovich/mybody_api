@@ -33,6 +33,7 @@ class TrainingService(BaseService):
             session: Session,
             account_service_id: int,
             date_: date,
+            return_model: bool = False,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
 
@@ -71,6 +72,9 @@ class TrainingService(BaseService):
                 'by_admin': True,
             },
         )
+
+        if return_model:
+            return training
 
         return {'id': training.id}
 
@@ -140,7 +144,7 @@ class TrainingService(BaseService):
                 'by_admin': True,
             }
         )
-        
+
         return {}
 
     async def _get(

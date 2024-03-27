@@ -17,12 +17,14 @@
 
 from datetime import date
 
-from app.db.models import Session, Day, Meal
+from app.db.models import Session, Day, Meal, DayTraining
 from app.repositories import DayRepository, AccountServiceRepository, MealReportRepository, \
-    MealProductRepository, DayMealRepository, MealRepository
-from app.services.meal import MealService
-from app.services.day_meal import DayMealService
+    MealProductRepository, DayMealRepository, MealRepository, DayTrainingRepository, TrainingReportRepository, \
+    TrainingExerciseRepository
+from app.services import TrainingService
 from app.services.base import BaseService
+from app.services.day_meal import DayMealService
+from app.services.meal import MealService
 from app.utils.decorators import session_required
 from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist
 
@@ -53,6 +55,13 @@ class DayService(BaseService):
             water_amount=water_amount,
         )
 
+        training = await TrainingService().create_by_admin(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
+            return_model=True,
+        )
+
         await self.create_action(
             model=day,
             action='create',
@@ -62,7 +71,10 @@ class DayService(BaseService):
         if return_model:
             return day
 
-        return {'id': day.id}
+        return {
+            'id': day.id,
+            'training_id': training.id,
+        }
 
     @session_required(permissions=['accounts'])
     async def update_by_admin(
@@ -254,6 +266,14 @@ class DayService(BaseService):
 
     @staticmethod
     async def _generate_day_dict(day: Day):
+        day_training: DayTraining = await DayTrainingRepository().get_by_day(day=day)
+        if day_training:
+            training = day_training.training
+            training_report = await TrainingReportRepository().get_by_training(training=training)
+        else:
+            training = None
+            training_report = None
+
         return {
             'id': day.id,
             'account_service_id': day.account_service.id,
@@ -279,5 +299,18 @@ class DayService(BaseService):
                     ]
                 }
                 for day_meal in await DayMealRepository().get_list_by_day(day=day)
-            ]
+            ],
+            'training': {
+                'training_report_id': training_report.id if training_report else None,
+                'exercises': [
+                    {
+                        'id': training_exercise.id,
+                        'exercise': training_exercise.exercise.id,
+                        'priority': training_exercise.priority,
+                        'value': training_exercise.value,
+                        'rest': training_exercise.rest,
+                    } for training_exercise in
+                    await TrainingExerciseRepository().get_list_by_training(training=training)
+                ]
+            } if day_training else None
         }

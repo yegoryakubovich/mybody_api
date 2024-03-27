@@ -23,7 +23,7 @@ from app.utils.decorators import session_required
 
 class DayTrainingService(BaseService):
 
-    @session_required(permissions=['training'])
+    @session_required(permissions=['trainings'])
     async def create_by_admin(
             self,
             session: Session,
@@ -53,7 +53,7 @@ class DayTrainingService(BaseService):
 
         return {'id': day_training.id}
 
-    @session_required(permissions=['training'])
+    @session_required(permissions=['trainings'])
     async def update_by_admin(
             self,
             session: Session,
@@ -82,7 +82,7 @@ class DayTrainingService(BaseService):
 
         return {}
 
-    @session_required(permissions=['training'])
+    @session_required(permissions=['trainings'])
     async def delete_by_admin(
             self,
             session: Session,
