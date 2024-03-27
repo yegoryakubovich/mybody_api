@@ -55,7 +55,7 @@ class DayService(BaseService):
             water_amount=water_amount,
         )
 
-        training = await TrainingService().create_by_admin(
+        await TrainingService().create_by_admin(
             session=session,
             account_service_id=account_service_id,
             date_=date_,
@@ -73,7 +73,6 @@ class DayService(BaseService):
 
         return {
             'id': day.id,
-            'training_id': training.id,
         }
 
     @session_required(permissions=['accounts'])
@@ -301,6 +300,7 @@ class DayService(BaseService):
                 for day_meal in await DayMealRepository().get_list_by_day(day=day)
             ],
             'training': {
+                'id': training.id,
                 'training_report_id': training_report.id if training_report else None,
                 'exercises': [
                     {
