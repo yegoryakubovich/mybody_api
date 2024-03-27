@@ -21,7 +21,7 @@ from app.db.models import Session, Day, Meal, DayTraining
 from app.repositories import DayRepository, AccountServiceRepository, MealReportRepository, \
     MealProductRepository, DayMealRepository, MealRepository, DayTrainingRepository, TrainingReportRepository, \
     TrainingExerciseRepository
-from app.services import TrainingService
+from app.services.training import TrainingService
 from app.services.base import BaseService
 from app.services.day_meal import DayMealService
 from app.services.meal import MealService

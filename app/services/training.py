@@ -20,7 +20,7 @@ from datetime import date
 from app.db.models import Session, Training, TrainingReport, Day, DayTraining
 from app.repositories import TrainingExerciseRepository, TrainingReportRepository, TrainingRepository, \
     AccountServiceRepository, DayRepository, DayTrainingRepository
-from app.services import DayTrainingService
+from app.services.day_training import DayTrainingService
 from app.services.base import BaseService
 from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist, ModelDoesNotExist
 from app.utils.decorators import session_required
