@@ -21,9 +21,9 @@ from app.db.models import Session, Day, Meal, DayTraining, Training
 from app.repositories import DayRepository, AccountServiceRepository, MealReportRepository, \
     MealProductRepository, DayMealRepository, MealRepository, DayTrainingRepository, TrainingReportRepository, \
     TrainingExerciseRepository, TrainingRepository
+from app.services.training_exercise import TrainingExerciseService
 from app.services.training import TrainingService
 from app.services.base import BaseService
-from app.services.day_meal import DayMealService
 from app.services.meal import MealService
 from app.utils.decorators import session_required
 from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist
@@ -149,6 +149,7 @@ class DayService(BaseService):
     ):
         initial_day: Day = await DayRepository().get_by_id(id_=id_)
         initial_day_meals = await DayMealRepository().get_list_by_day(day=initial_day)
+        initial_day_training = await DayTrainingRepository().get_by_day(day=initial_day)
         try:
             duplicated_day: Day = await self.create_by_admin(
                 session=session,
@@ -169,37 +170,46 @@ class DayService(BaseService):
             )
         for initial_day_meal in initial_day_meals:
             initial_meal: Meal = initial_day_meal.meal
-            try:
-                meal: Meal = await MealService().create_by_admin(
+            await MealService().duplicate_by_admin(
+                session=session,
+                id_=initial_meal.id,
+                date_=date_,
+            )
+
+        initial_training: Training = initial_day_training.training
+        try:
+            duplicated_training: Training = await TrainingService().create_by_admin(
+                session=session,
+                account_service_id=duplicated_day.account_service.id,
+                date_=date_,
+                return_model=True,
+            )
+        except ModelAlreadyExist:
+            duplicated_training: Training = await TrainingRepository().get_by_date_and_account_service(
+                account_service=initial_training.account_service,
+                date_=date_,
+            )
+            existing_training_exercises = await TrainingExerciseRepository().get_list_by_training(
+                training=duplicated_training,
+            )
+            for training_exercise in existing_training_exercises:
+                await TrainingExerciseService().delete_by_admin(
                     session=session,
-                    account_service_id=duplicated_day.account_service.id,
-                    date_=date_,
-                    type_=initial_meal.type,
-                    fats=initial_meal.fats,
-                    proteins=initial_meal.proteins,
-                    carbohydrates=initial_meal.carbohydrates,
-                    return_model=True,
+                    id_=training_exercise.id,
                 )
-                await DayMealService().create_by_admin(
-                    session=session,
-                    day_id=duplicated_day.id,
-                    meal_id=meal.id,
-                )
-            except ModelAlreadyExist:
-                duplicated_meal: Meal = await MealRepository().get_by_parameters(
-                    account_service=initial_meal.account_service,
-                    date_=date_,
-                    type_=initial_meal.type,
-                )
-                await MealService().update_by_admin(
-                    session=session,
-                    id_=duplicated_meal.id,
-                    date_=date_,
-                    type_=initial_meal.type,
-                    fats=initial_meal.fats,
-                    proteins=initial_meal.proteins,
-                    carbohydrates=initial_meal.carbohydrates,
-                )
+
+        initial_training_exercises = await TrainingExerciseRepository().get_list_by_training(
+            training=initial_training,
+        )
+        for training_exercise in initial_training_exercises:
+            await TrainingExerciseService().create_by_admin(
+                session=session,
+                training_id=duplicated_training.id,
+                exercise_id=training_exercise.exercise.id,
+                priority=training_exercise.priority,
+                value=training_exercise.value,
+                rest=training_exercise.rest,
+            )
 
         return {'id': duplicated_day.id}
 
