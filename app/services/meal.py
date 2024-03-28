@@ -21,6 +21,7 @@ from app.db.models import MealReport, Session, Day, DayMeal
 from app.db.models.meal import Meal
 from app.repositories import AccountServiceRepository, MealProductRepository, MealReportRepository, \
     MealRepository, ProductRepository, DayRepository, DayMealRepository
+from app.services import AccountService
 from app.services.day_meal import DayMealService
 from app.services.meal_product import MealProductService
 from app.services.base import BaseService
@@ -215,11 +216,9 @@ class MealService(BaseService):
         meal = await MealRepository().get_by_id(id_=id_)
         await MealRepository().delete(model=meal)
         day: Day = await DayRepository().get_by_date(date_=meal.date, account_service=meal.account_service)
-        day_meals: list[DayMeal] = await DayMealRepository().get_list_by_day(day=day)
-        for day_meal in day_meals:
-            if day_meal.meal == meal:
-                await DayMealService().delete_by_admin(session=session, id_=day_meal.id)
-
+        day_meal: DayMeal = await DayMealRepository().get_by_day_and_meal(day=day, meal=meal)
+        if day_meal:
+            await DayMealService().delete_by_admin(session=session, id_=day_meal.id)
 
         await self.create_action(
             model=meal,
@@ -229,6 +228,26 @@ class MealService(BaseService):
                 'by_admin': True,
             }
         )
+
+        return {}
+
+    @session_required(permissions=['meals'])
+    async def delete_list_by_date_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+    ):
+        account_service: AccountService = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        meals: list[Meal] = await MealRepository().get_list_by_account_service_and_date(
+            account_service=account_service,
+            date_=date_,
+        )
+        for meal in meals:
+            await self.delete_by_admin(
+                session=session,
+                id_=meal.id,
+            )
 
         return {}
 

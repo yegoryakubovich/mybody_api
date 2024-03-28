@@ -22,6 +22,7 @@ from .delete import router as router_delete
 from .duplicate import router as router_duplicate
 from .get import router as router_get
 from .get_list import router as router_get_list
+from .get_by_date import router as router_get_by_date
 from .meals import router as router_meals
 from .trainings import router as router_trainings
 
@@ -35,7 +36,9 @@ router = Router(
         router_duplicate,
         router_get,
         router_get_list,
+        router_get_by_date,
         router_meals,
         router_trainings,
     ],
+    tags=['Days'],
 )

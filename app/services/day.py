@@ -17,10 +17,10 @@
 
 from datetime import date
 
-from app.db.models import Session, Day, Meal, DayTraining
+from app.db.models import Session, Day, Meal, DayTraining, Training
 from app.repositories import DayRepository, AccountServiceRepository, MealReportRepository, \
     MealProductRepository, DayMealRepository, MealRepository, DayTrainingRepository, TrainingReportRepository, \
-    TrainingExerciseRepository
+    TrainingExerciseRepository, TrainingRepository
 from app.services.training import TrainingService
 from app.services.base import BaseService
 from app.services.day_meal import DayMealService
@@ -109,8 +109,25 @@ class DayService(BaseService):
             session: Session,
             id_: int,
     ):
-        day = await DayRepository().get_by_id(id_=id_)
+        day: Day = await DayRepository().get_by_id(id_=id_)
         await DayRepository().delete(model=day)
+
+        training: Training = await TrainingRepository().get_by_date_and_account_service(
+            account_service=day.account_service,
+            date_=day.date,
+        )
+
+        if training:
+            await TrainingService().delete_by_admin(
+                session=session,
+                id_=training.id,
+            )
+
+        await MealService().delete_list_by_date_by_admin(
+            session=session,
+            account_service_id=day.account_service.id,
+            date_=day.date,
+        )
 
         await self.create_action(
             model=day,
@@ -221,6 +238,53 @@ class DayService(BaseService):
         return await self._get(
             session=session,
             id_=id_,
+        )
+
+    async def _get_by_date(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+            by_admin: bool = False,
+    ):
+        account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
+        day: Day = await DayRepository().get_by_date(
+            account_service=account_service,
+            date_=date_,
+        )
+
+        if day.account_service.account != session.account and not by_admin:
+            raise NotEnoughPermissions()
+
+        return {
+            'day': await self._generate_day_dict(day=day),
+        }
+
+    @session_required(permissions=['accounts'])
+    async def get_by_date_by_admin(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+    ):
+        return await self._get_by_date(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
+            by_admin=True,
+        )
+
+    @session_required()
+    async def get_by_date(
+            self,
+            session: Session,
+            account_service_id: int,
+            date_: date,
+    ):
+        return await self._get_by_date(
+            session=session,
+            account_service_id=account_service_id,
+            date_=date_,
         )
 
     async def _get_list(

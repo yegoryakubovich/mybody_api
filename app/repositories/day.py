@@ -20,7 +20,7 @@ from peewee import DoesNotExist
 from app.db.models import Day
 from .base import BaseRepository
 from app.db.models import AccountService
-from ..utils.exceptions import ModelAlreadyExist
+from ..utils.exceptions import ModelAlreadyExist, ModelDoesNotExist
 
 
 class DayRepository(BaseRepository):
@@ -54,7 +54,13 @@ class DayRepository(BaseRepository):
                 (Day.is_deleted == False)
             )
         except DoesNotExist:
-            return False
+            raise ModelDoesNotExist(
+                kwargs={
+                    'model': 'Day',
+                    'id_type': 'account_service, date',
+                    'id_value': [account_service.id, str(date_)],
+                },
+            )
 
     @staticmethod
     async def get_list_by_account_service(account_service: AccountService):

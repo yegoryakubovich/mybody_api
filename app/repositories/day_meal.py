@@ -16,7 +16,7 @@
 
 from peewee import DoesNotExist
 
-from app.db.models import DayMeal, Day
+from app.db.models import DayMeal, Day, Meal
 from .base import BaseRepository
 from ..utils.exceptions import ModelAlreadyExist
 
@@ -30,6 +30,20 @@ class DayMealRepository(BaseRepository):
             (DayMeal.day == day) &
             (DayMeal.is_deleted == False)
         ).execute()
+
+    @staticmethod
+    async def get_by_day_and_meal(
+            day: Day,
+            meal: Meal,
+    ):
+        try:
+            return DayMeal.get(
+                (DayMeal.day == day) &
+                (DayMeal.meal == meal) &
+                (DayMeal.is_deleted == False)
+            )
+        except DoesNotExist:
+            return False
 
     async def create(self, **kwargs):
         try:

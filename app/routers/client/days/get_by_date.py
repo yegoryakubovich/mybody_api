@@ -15,18 +15,31 @@
 #
 
 
-from app.utils import Router
-from .get import router as router_get
-from .get_list import router as router_get_list
-from .get_by_date import router as router_get_by_date
+from datetime import date as datetime_date
+
+from fastapi import Depends
+from pydantic import BaseModel, Field
+
+from app.services import DayService
+from app.utils import Response, Router
 
 
 router = Router(
-    prefix='/days',
-    routes_included=[
-        router_get,
-        router_get_list,
-        router_get_by_date,
-    ],
-    tags=['Days'],
+    prefix='/by-date/get'
 )
+
+
+class DaysGetByDateSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    account_service_id: int = Field()
+    date: datetime_date = Field()
+
+
+@router.get()
+async def route(schema: DaysGetByDateSchema = Depends()):
+    result = await DayService().get_by_date(
+        token=schema.token,
+        account_service_id=schema.account_service_id,
+        date_=schema.date,
+    )
+    return Response(**result)

@@ -20,10 +20,10 @@ from datetime import date
 from app.db.models import Session, Training, TrainingReport, Day, DayTraining
 from app.repositories import TrainingExerciseRepository, TrainingReportRepository, TrainingRepository, \
     AccountServiceRepository, DayRepository, DayTrainingRepository
-from app.services.day_training import DayTrainingService
 from app.services.base import BaseService
-from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist, ModelDoesNotExist
+from app.services.day_training import DayTrainingService
 from app.utils.decorators import session_required
+from app.utils.exceptions import NotEnoughPermissions, ModelDoesNotExist
 
 
 class TrainingService(BaseService):
@@ -36,15 +36,6 @@ class TrainingService(BaseService):
             return_model: bool = False,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
-
-        if await TrainingRepository().is_exist_by_date_and_account_service(account_service=account_service, date_=date_):
-            raise ModelAlreadyExist(
-                kwargs={
-                    'model': 'Training',
-                    'id_type': ['account_service_id', 'date'],
-                    'id_value': [account_service_id, str(date_)],
-                }
-            )
 
         training: Training = await TrainingRepository().create(
             account_service=account_service,
@@ -97,15 +88,6 @@ class TrainingService(BaseService):
             account_service=training.account_service,
         )
 
-        if not day:
-            raise ModelDoesNotExist(
-                kwargs={
-                    'model': 'Day',
-                    'id_type': 'date, account_service',
-                    'id_value': [date_, training.account_service.id],
-                },
-            )
-
         await DayTrainingService().create_by_admin(
             session=session,
             day_id=day.id,
@@ -134,7 +116,8 @@ class TrainingService(BaseService):
         await TrainingRepository().delete(model=training)
         day: Day = await DayRepository().get_by_date(date_=training.date, account_service=training.account_service)
         day_training: DayTraining = await DayTrainingRepository().get_by_day(day=day)
-        await DayTrainingService().delete_by_admin(session=session, id_=day_training.id)
+        if day_training:
+            await DayTrainingService().delete_by_admin(session=session, id_=day_training.id)
 
         await self.create_action(
             model=training,
