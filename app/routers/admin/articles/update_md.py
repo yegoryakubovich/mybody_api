@@ -32,7 +32,7 @@ class ArticleUpdateMdByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
     language: Optional[str] = Field(max_length=32, default=None)
-    md: str = Field(min_length=0, max_length=8192)
+    md: str = Field(min_length=1)
     name: Optional[str] = Field(default=None)
 
 
