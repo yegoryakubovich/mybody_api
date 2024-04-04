@@ -21,7 +21,7 @@ from app.repositories import ArticleRepository, LanguageRepository, ArticleTrans
 from app.services import AccountRoleCheckPermissionService
 from app.services.text import TextService
 from app.services.base import BaseService
-from app.utils.exceptions import ArticleSessionRequired, ModelDoesNotExist
+from app.utils.exceptions import ArticleSessionRequired, ModelDoesNotExist, NoRequiredParameters
 from app.utils.crypto import create_id_str
 from app.utils.decorators import session_required
 from config import settings
@@ -70,12 +70,23 @@ class ArticleService(BaseService):
             self,
             session: Session,
             id_: int,
-            is_hide: bool,
+            is_hide: bool = None,
+            can_guest: bool = None,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=id_)
 
-        article.is_hide = is_hide
-        article.save()
+        if not is_hide and not can_guest:
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['is_hide', 'can_guest']
+                }
+            )
+
+        await ArticleRepository().update(
+            model=article,
+            is_hide=is_hide,
+            can_guest=can_guest,
+        )
 
         # Create action
         await self.create_action(

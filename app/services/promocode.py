@@ -155,7 +155,10 @@ class PromocodeService(BaseService):
         if return_currency:
             return user_promocode_currency
 
-        return {}
+        return {
+            'discount_amount': user_promocode_currency.amount,
+            'promocode_type': promocode.type,
+        }
 
     @staticmethod
     async def check_promocode_type(type_: str):

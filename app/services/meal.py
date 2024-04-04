@@ -312,13 +312,13 @@ class MealService(BaseService):
         except ModelAlreadyExist:
             duplicated_meal: Meal = await MealRepository().get_by_parameters(
                 account_service=initial_meal.account_service,
-                date_=date_,
+                date_=date_ if date_ else initial_meal.date,
                 type_=initial_meal.type if not type_ else type_,
             )
             await self.update_by_admin(
                 session=session,
                 id_=duplicated_meal.id,
-                date_=date_,
+                date_=date_ if date_ else initial_meal.date,
                 type_=initial_meal.type if not type_ else type_,
                 fats=initial_meal.fats,
                 proteins=initial_meal.proteins,

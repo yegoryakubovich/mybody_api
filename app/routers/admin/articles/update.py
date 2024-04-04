@@ -29,7 +29,8 @@ router = Router(
 class ArticleUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    is_hide: bool = Field()
+    is_hide: bool = Field(default=None)
+    can_guest: bool = Field(default=None)
 
 
 @router.post()
@@ -38,5 +39,6 @@ async def route(schema: ArticleUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         is_hide=schema.is_hide,
+        can_guest=schema.can_guest,
     )
     return Response(**result)

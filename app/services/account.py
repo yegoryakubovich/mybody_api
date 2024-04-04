@@ -248,9 +248,12 @@ class AccountService(BaseService):
                 raise InvalidPassword()
             password_salt = await create_salt()
             password_hash = await create_hash_by_string_and_salt(string=new_password, salt=password_salt)
-        account.password_salt = password_salt
-        account.password_hash = password_hash
-        account.save()
+
+        await AccountRepository().update(
+            model=account,
+            password_salt=password_salt,
+            password_hash=password_hash,
+        )
 
         action_parameters = {
             'account_id': account.id,
