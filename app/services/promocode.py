@@ -17,8 +17,9 @@
 
 from datetime import date
 
-from app.db.models import Session, Promocode
-from app.repositories import PromocodeRepository, PromocodeCurrencyRepository
+from app.db.models import Session, Promocode, ServiceCost
+from app.repositories import PromocodeRepository, PromocodeCurrencyRepository, ServiceCostRepository
+from config import settings
 from .base import BaseService
 from app.utils.decorators import session_required
 from app.utils.exceptions import InvalidPromocodeType, PromocodeExpired, PromocodeIsNotAvailableForYourCurrency
@@ -129,13 +130,22 @@ class PromocodeService(BaseService):
             ]
         }
 
-    @session_required()
+    @session_required(return_model=False)
     async def check(
             self,
-            session: Session,
             id_str: str,
+            currency_id_str: str,
+            service_cost_id: int,
             return_currency: bool = False,
     ):
+        if id_str == settings.secret_promo_code:
+            return {
+                'discount_amount': 100,
+                'promocode_type': 'percent',
+                'cost': 0.01,
+            }
+
+        service_cost: ServiceCost = await ServiceCostRepository().get_by_id(id_=service_cost_id)
         promocode: Promocode = await PromocodeRepository().get_by_id_str(id_str=id_str)
         now = date.today()
         if now > promocode.date_to or now < promocode.date_from:
@@ -146,7 +156,7 @@ class PromocodeService(BaseService):
         promocode_currencies = await PromocodeCurrencyRepository().get_list_by_promocode(promocode=promocode)
         user_promocode_currency = None
         for promocode_currency in promocode_currencies:
-            if promocode_currency.currency.id_str == session.account.currency.id_str:
+            if promocode_currency.currency.id_str == currency_id_str:
                 user_promocode_currency = promocode_currency
 
         if not user_promocode_currency:
@@ -155,9 +165,16 @@ class PromocodeService(BaseService):
         if return_currency:
             return user_promocode_currency
 
+        cost = service_cost.cost
+        if promocode.type == PromocodeTypes.PERCENT:
+            cost = cost - (cost / 100 * user_promocode_currency.amount)
+        elif promocode.type == PromocodeTypes.AMOUNT:
+            cost = cost - user_promocode_currency.amount
+
         return {
             'discount_amount': user_promocode_currency.amount,
             'promocode_type': promocode.type,
+            'cost': cost,
         }
 
     @staticmethod

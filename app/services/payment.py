@@ -66,6 +66,8 @@ class PaymentService(BaseService):
                 user_promocode_currency = await PromocodeService().check(
                     session=session,
                     id_str=promocode_id_str,
+                    currency_id_str=service_cost.currency.id_str,
+                    service_cost_id=service_cost_id,
                     return_currency=True,
                 )
 

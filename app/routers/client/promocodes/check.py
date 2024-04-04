@@ -29,12 +29,16 @@ router = Router(
 class PromocodeCheckSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id_str: str = Field(min_length=1, max_length=16)
+    currency_cost_id: int = Field()
+    service_cost_id: int = Field()
 
 
 @router.get()
 async def route(schema: PromocodeCheckSchema = Depends()):
     result = await PromocodeService().check(
-        token=schema.token,
+        session=schema.session,
         id_str=schema.id_str,
+        currency_id_str=schema.currency_cost_id,
+        service_cost_id=schema.service_cost_id,
     )
     return Response(**result)
