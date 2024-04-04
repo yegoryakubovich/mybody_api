@@ -95,6 +95,7 @@ class ArticleService(BaseService):
             parameters={
                 'updater': f'session_{session.id}',
                 'is_hide': is_hide,
+                'can_guest': can_guest,
                 'by_admin': True,
             },
         )
@@ -129,6 +130,7 @@ class ArticleService(BaseService):
             id_: int,
             language_id_str: str,
             md: str,
+            name: str = None,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=id_)
         language = await LanguageRepository().get_by_id_str(id_str=language_id_str) if language_id_str else None
@@ -136,6 +138,13 @@ class ArticleService(BaseService):
 
         if language:
             await ArticleTranslationRepository.get(article=article, language=language)
+
+        if name:
+            await TextService().update_by_admin(
+                session=session,
+                key=article.name_text.key,
+                value_default=name,
+            )
 
         # Create action
         await self.create_action(
