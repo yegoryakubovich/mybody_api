@@ -29,7 +29,7 @@ class ProductUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
     type: str = Field(default=None, min_length=1, max_length=16)
-    is_main: bool = Field(default=None)
+    is_main: bool = Field(default=False)
     unit: str = Field(default=None, min_length=1, max_length=4)
     fats: float = Field(default=None)
     proteins: float = Field(default=None)

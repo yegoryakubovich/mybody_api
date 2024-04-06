@@ -121,7 +121,7 @@ class ProductService(BaseService):
             carbohydrates: float = None,
             calories: int = None,
             article_id: int = None,
-            is_main: bool = None,
+            is_main: bool = False,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
 

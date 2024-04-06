@@ -70,8 +70,8 @@ class ArticleService(BaseService):
             self,
             session: Session,
             id_: int,
-            is_hide: bool = None,
-            can_guest: bool = None,
+            is_hide: bool = False,
+            can_guest: bool = False,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=id_)
 
