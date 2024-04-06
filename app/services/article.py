@@ -70,17 +70,10 @@ class ArticleService(BaseService):
             self,
             session: Session,
             id_: int,
-            is_hide: bool = False,
-            can_guest: bool = False,
+            is_hide: bool,
+            can_guest: bool,
     ) -> dict:
         article: Article = await ArticleRepository().get_by_id(id_=id_)
-
-        if not is_hide and not can_guest:
-            raise NoRequiredParameters(
-                kwargs={
-                    'parameters': ['is_hide', 'can_guest']
-                }
-            )
 
         await ArticleRepository().update(
             model=article,

@@ -29,8 +29,8 @@ router = Router(
 class ArticleUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    is_hide: bool = Field(default=False)
-    can_guest: bool = Field(default=False)
+    is_hide: bool = Field()
+    can_guest: bool = Field()
 
 
 @router.post()

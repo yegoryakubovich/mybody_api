@@ -114,6 +114,7 @@ class ProductService(BaseService):
             self,
             session: Session,
             id_: int,
+            is_main: bool,
             type_: str = None,
             unit: str = None,
             fats: float = None,
@@ -121,7 +122,6 @@ class ProductService(BaseService):
             carbohydrates: float = None,
             calories: int = None,
             article_id: int = None,
-            is_main: bool = False,
     ):
         product = await ProductRepository().get_by_id(id_=id_)
 
@@ -135,8 +135,7 @@ class ProductService(BaseService):
                 and not calories \
                 and not fats \
                 and not proteins \
-                and not carbohydrates \
-                and not is_main:
+                and not carbohydrates:
             raise NoRequiredParameters(
                 kwargs={
                     'parameters': [
@@ -147,7 +146,6 @@ class ProductService(BaseService):
                         'carbohydrates',
                         'calories',
                         'article_id',
-                        'is_main',
                     ]
                 }
             )
@@ -165,8 +163,7 @@ class ProductService(BaseService):
             action_parameters['carbohydrates'] = carbohydrates
         if calories:
             action_parameters['calories'] = calories
-        if is_main:
-            action_parameters['is_main'] = is_main
+        action_parameters['is_main'] = is_main
         if article_id:
             if article_id == -1:
                 article = -1
