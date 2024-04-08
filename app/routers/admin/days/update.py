@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -29,6 +30,7 @@ class DayUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
     water_amount: int = Field()
+    water_intake: Optional[int] = Field(default=0)
 
 
 @router.post()
@@ -37,5 +39,6 @@ async def route(schema: DayUpdateByAdminSchema):
         token=schema.token,
         id_=schema.id,
         water_amount=schema.water_amount,
+        water_intake=schema.water_intake,
     )
     return Response(**result)

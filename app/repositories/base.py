@@ -103,10 +103,12 @@ class BaseRepository:
             if value:
                 if isinstance(value, int) and value == -1:
                     exec(f'model.{key} = None')
-                elif isinstance(value, bool) and value == False:
-                    exec(f'model.{key} = False')
                 else:
                     exec(f'model.{key} = value')
+            elif isinstance(value, bool) and value == False:
+                exec(f'model.{key} = False')
+            elif isinstance(value, bool) and value == True:
+                exec(f'model.{key} = True')
         model.save()
 
     @staticmethod

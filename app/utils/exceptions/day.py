@@ -15,19 +15,9 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField, DateField, IntegerField
-
-from .account_service import AccountService
-from .base import BaseModel
+from .base import ApiException
 
 
-class Day(BaseModel):
-    id = PrimaryKeyField()
-    account_service = ForeignKeyField(model=AccountService)
-    date = DateField()
-    water_amount = IntegerField()
-    water_intake = IntegerField(default=0)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'days'
+class InvalidWaterIntake(ApiException):
+    code = 10000
+    message = 'Invalid water intake. Amount can only be positive'

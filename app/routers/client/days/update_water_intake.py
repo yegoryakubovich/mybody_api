@@ -13,21 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+from app.services import DayService
+from app.utils import Response, Router
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField, DateField, IntegerField
+router = Router(
+    prefix='/water-intake/update',
+)
 
-from .account_service import AccountService
-from .base import BaseModel
+
+class DayUpdateWaterIntakeSchema(BaseModel):
+    token: str = Field(min_length=32, max_length=64)
+    id: int = Field()
+    water_intake: int = Field()
 
 
-class Day(BaseModel):
-    id = PrimaryKeyField()
-    account_service = ForeignKeyField(model=AccountService)
-    date = DateField()
-    water_amount = IntegerField()
-    water_intake = IntegerField(default=0)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        db_table = 'days'
+@router.post()
+async def route(schema: DayUpdateWaterIntakeSchema):
+    result = await DayService().update_water_intake(
+        token=schema.token,
+        id_=schema.id,
+        water_intake=schema.water_intake,
+    )
+    return Response(**result)

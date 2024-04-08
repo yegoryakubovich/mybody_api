@@ -27,4 +27,5 @@ from .product import InvalidProductList, InvalidProductType, InvalidUnit
 from .service import InvalidServiceQuestionList
 from .payment import InvalidPaymentState, UnpaidBill, PaymentCantBeCancelled, PromocodeExpired, \
     PromocodeIsNotAvailableForYourCurrency, InvalidPromocodeType
+from .day import InvalidWaterIntake
 

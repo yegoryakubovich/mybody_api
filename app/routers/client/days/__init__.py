@@ -19,6 +19,7 @@ from app.utils import Router
 from .get import router as router_get
 from .get_list import router as router_get_list
 from .get_by_date import router as router_get_by_date
+from .update_water_intake import router as router_update_water_intake
 
 
 router = Router(
@@ -27,6 +28,7 @@ router = Router(
         router_get,
         router_get_list,
         router_get_by_date,
+        router_update_water_intake,
     ],
     tags=['Days'],
 )

@@ -26,7 +26,7 @@ from app.services.training import TrainingService
 from app.services.base import BaseService
 from app.services.meal import MealService
 from app.utils.decorators import session_required
-from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist
+from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist, InvalidWaterIntake
 
 
 class DayService(BaseService):
@@ -81,6 +81,7 @@ class DayService(BaseService):
             session: Session,
             id_: int,
             water_amount: int,
+            water_intake: int = None,
     ):
         day = await DayRepository().get_by_id(id_=id_)
 
@@ -90,9 +91,49 @@ class DayService(BaseService):
             'by_admin': True,
         }
 
+        if water_intake:
+            action_parameters['water_intake'] = water_intake
+            if water_intake < 0:
+                raise InvalidWaterIntake()
+
         await DayRepository().update(
             model=day,
             water_amount=water_amount,
+            water_intake=water_intake,
+        )
+
+        await self.create_action(
+            model=day,
+            action='update',
+            parameters=action_parameters,
+        )
+
+        return {}
+
+    @session_required()
+    async def update_water_intake(
+            self,
+            session: Session,
+            id_: int,
+            water_intake: int,
+    ):
+        day = await DayRepository().get_by_id(id_=id_)
+
+        if day.account_service.account != session.account:
+            raise NotEnoughPermissions()
+
+        if water_intake < 0:
+            raise InvalidWaterIntake()
+
+        action_parameters = {
+            'updater': f'session_{session.id}',
+            'water_intake': water_intake,
+            'by_admin': True,
+        }
+
+        await DayRepository().update(
+            model=day,
+            water_intake=water_intake,
         )
 
         await self.create_action(
@@ -352,6 +393,7 @@ class DayService(BaseService):
             'account_service_id': day.account_service.id,
             'date': str(day.date),
             'water_amount': day.water_amount,
+            'water_intake': day.water_intake,
             'meals': [
                 {
                     'id': day_meal.id,
