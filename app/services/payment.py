@@ -463,8 +463,6 @@ class PaymentService(BaseService):
             ],
         )
         await api_client.invoices.set_active(token=token, uuid=invoice_id)
-        payment_pay_data = await api_client.invoices.get_qrcode(token=token, uuid=invoice_id)
-        payment_link = payment_pay_data['tinyLink']
 
         await self.update_by_task(
             id_=payment.id,
@@ -473,7 +471,6 @@ class PaymentService(BaseService):
                 {
                     'invoice_name': invoice_name,
                     'uuid': invoice_id,
-                    'payment_link': payment_link,
                     'erip_id': f'{settings.payment_hg_service_provider_id}-{settings.payment_hg_service_id}-{invoice_name}',
                 },
             ),

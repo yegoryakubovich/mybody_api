@@ -29,8 +29,8 @@ router = Router(
 class DayUpdateByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id: int = Field()
-    water_amount: int = Field()
-    water_intake: Optional[int] = Field(default=0)
+    water_amount: Optional[int] = Field(default=None)
+    water_intake: Optional[int] = Field(default=None)
 
 
 @router.post()

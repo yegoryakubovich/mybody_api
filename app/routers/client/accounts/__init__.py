@@ -21,6 +21,7 @@ from .check_username import router as router_check_username
 from .check_password import router as router_check_password
 from .change_password import router as router_change_password
 from .services import router as router_services
+from .update import router as router_update
 from app.utils import Router
 
 
@@ -33,6 +34,7 @@ router = Router(
         router_change_password,
         router_check_password,
         router_services,
+        router_update,
     ],
     tags=['Accounts'],
 )

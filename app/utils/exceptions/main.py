@@ -41,3 +41,8 @@ class ModelAlreadyExist(ApiException):
 class MethodNotSupportedRoot(ApiException):
     code = 1004
     message = 'Method do not support root user'
+
+
+class NegativeInteger(ApiException):
+    code = 1005
+    message = "Variable {variable} can't be negative"

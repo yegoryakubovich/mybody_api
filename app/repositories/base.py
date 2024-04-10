@@ -109,6 +109,8 @@ class BaseRepository:
                 exec(f'model.{key} = False')
             elif isinstance(value, bool) and value == True:
                 exec(f'model.{key} = True')
+            elif isinstance(value, int) and value == 0:
+                exec(f'model.{key} = 0')
         model.save()
 
     @staticmethod

@@ -26,7 +26,7 @@ from app.services.training import TrainingService
 from app.services.base import BaseService
 from app.services.meal import MealService
 from app.utils.decorators import session_required
-from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist, InvalidWaterIntake
+from app.utils.exceptions import NotEnoughPermissions, ModelAlreadyExist, NegativeInteger
 
 
 class DayService(BaseService):
@@ -80,21 +80,33 @@ class DayService(BaseService):
             self,
             session: Session,
             id_: int,
-            water_amount: int,
+            water_amount: int = None,
             water_intake: int = None,
     ):
         day = await DayRepository().get_by_id(id_=id_)
 
         action_parameters = {
             'updater': f'session_{session.id}',
-            'water_amount': water_amount,
             'by_admin': True,
         }
+
+        if water_amount:
+            action_parameters['water_amount'] = water_amount
+            if water_amount < 0:
+                raise NegativeInteger(
+                    kwargs={
+                        'variable': 'water_amount',
+                    },
+                )
 
         if water_intake:
             action_parameters['water_intake'] = water_intake
             if water_intake < 0:
-                raise InvalidWaterIntake()
+                raise NegativeInteger(
+                    kwargs={
+                        'variable': 'water_intake',
+                    },
+                )
 
         await DayRepository().update(
             model=day,
@@ -123,7 +135,11 @@ class DayService(BaseService):
             raise NotEnoughPermissions()
 
         if water_intake < 0:
-            raise InvalidWaterIntake()
+            raise NegativeInteger(
+                kwargs={
+                    'variable': 'water_intake',
+                },
+            )
 
         action_parameters = {
             'updater': f'session_{session.id}',

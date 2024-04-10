@@ -21,11 +21,9 @@ from .article import ArticleSessionRequired
 from .base import ApiException
 from .exercise import InvalidExerciseType
 from .image import InvalidFileType, TooLargeFile
-from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions
+from .main import ModelAlreadyExist, ModelDoesNotExist, NoRequiredParameters, NotEnoughPermissions, NegativeInteger
 from .meal import InvalidMealType
 from .product import InvalidProductList, InvalidProductType, InvalidUnit
 from .service import InvalidServiceQuestionList
 from .payment import InvalidPaymentState, UnpaidBill, PaymentCantBeCancelled, PromocodeExpired, \
     PromocodeIsNotAvailableForYourCurrency, InvalidPromocodeType
-from .day import InvalidWaterIntake
-

@@ -27,7 +27,8 @@ from app.services.account_role_check_premission import AccountRoleCheckPermissio
 from app.services.base import BaseService
 from app.utils.crypto import create_salt, create_hash_by_string_and_salt
 from app.utils.decorators import session_required
-from app.utils.exceptions import InvalidPassword, InvalidUsername, ModelAlreadyExist, WrongPassword
+from app.utils.exceptions import InvalidPassword, InvalidUsername, ModelAlreadyExist, WrongPassword, \
+    NoRequiredParameters, NotEnoughPermissions
 from config import settings
 
 
@@ -99,6 +100,150 @@ class AccountService(BaseService):
             with_client=True,
         )
         return {'id': account.id}
+
+    async def _update(
+            self,
+            session: Session,
+            id_: int = None,
+            username: str = None,
+            firstname: str = None,
+            lastname: str = None,
+            surname: str = None,
+            country_id_str: str = None,
+            language_id_str: str = None,
+            timezone_id_str: str = None,
+            currency_id_str: str = None,
+            by_admin: bool = False,
+    ):
+        if by_admin:
+            account: Account = await AccountRepository().get_by_id(id_=id_)
+        else:
+            account: Account = session.account
+
+        action_parameters = {
+            'updater': f'session_{session.id}',
+            'by_admin': True,
+        }
+
+        if not username \
+                and not firstname \
+                and not lastname \
+                and not surname \
+                and not country_id_str \
+                and not language_id_str \
+                and not timezone_id_str \
+                and not currency_id_str:
+            raise NoRequiredParameters(
+                kwargs={
+                    'parameters': ['firstname', 'lastname', 'surname', 'country', 'language', 'timezone', 'currency'],
+                }
+            )
+
+        if username:
+            action_parameters['username'] = username
+        if firstname:
+            action_parameters['firstname'] = firstname
+        if lastname:
+            action_parameters['lastname'] = lastname
+        if surname:
+            action_parameters['surname'] = surname
+
+        if country_id_str:
+            country = await CountryRepository().get_by_id_str(id_str=country_id_str)
+            action_parameters['country'] = country_id_str
+        else:
+            country = None
+
+        if language_id_str:
+            language = await LanguageRepository().get_by_id_str(id_str=language_id_str)
+            action_parameters['language'] = language_id_str
+        else:
+            language = None
+
+        if timezone_id_str:
+            timezone = await TimezoneRepository().get_by_id_str(id_str=timezone_id_str)
+            action_parameters['timezone'] = timezone_id_str
+        else:
+            timezone = None
+
+        if currency_id_str:
+            currency = await CurrencyRepository().get_by_id_str(id_str=currency_id_str)
+            action_parameters['currency'] = currency_id_str
+        else:
+            currency = None
+
+        await AccountRepository().update(
+            model=account,
+            username=username,
+            firstname=firstname,
+            lastname=lastname,
+            surname=surname,
+            country=country,
+            language=language,
+            timezone=timezone,
+            currency=currency,
+        )
+
+        await self.create_action(
+            model=account,
+            action='update',
+            parameters=action_parameters,
+        )
+
+        return {}
+
+    @session_required()
+    async def update(
+            self,
+            session: Session,
+            username: str = None,
+            firstname: str = None,
+            lastname: str = None,
+            surname: str = None,
+            country_id_str: str = None,
+            language_id_str: str = None,
+            timezone_id_str: str = None,
+            currency_id_str: str = None,
+    ):
+        return await self._update(
+            session=session,
+            username=username,
+            firstname=firstname,
+            lastname=lastname,
+            surname=surname,
+            country_id_str=country_id_str,
+            language_id_str=language_id_str,
+            timezone_id_str=timezone_id_str,
+            currency_id_str=currency_id_str,
+        )
+
+    @session_required(permissions=['accounts'])
+    async def update_by_admin(
+            self,
+            session: Session,
+            id_: int,
+            username: str = None,
+            firstname: str = None,
+            lastname: str = None,
+            surname: str = None,
+            country_id_str: str = None,
+            language_id_str: str = None,
+            timezone_id_str: str = None,
+            currency_id_str: str = None,
+    ):
+        return await self._update(
+            session=session,
+            id_=id_,
+            username=username,
+            firstname=firstname,
+            lastname=lastname,
+            surname=surname,
+            country_id_str=country_id_str,
+            language_id_str=language_id_str,
+            timezone_id_str=timezone_id_str,
+            currency_id_str=currency_id_str,
+            by_admin=True,
+        )
 
     async def check_password(
             self,

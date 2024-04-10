@@ -20,6 +20,7 @@ from .search import router as router_search
 from .services import router as router_services
 from .change_password import router as router_change_password
 from .roles import router as router_roles
+from .update import router as router_update
 from app.utils import Router
 
 
@@ -31,6 +32,7 @@ router = Router(
         router_services,
         router_change_password,
         router_roles,
+        router_update,
     ],
     tags=['Accounts'],
 )
