@@ -235,13 +235,6 @@ class DayService(BaseService):
 
         initial_training: Training = initial_day_training.training
         try:
-            duplicated_training: Training = await TrainingService().create_by_admin(
-                session=session,
-                account_service_id=duplicated_day.account_service.id,
-                date_=date_,
-                return_model=True,
-            )
-        except ModelAlreadyExist:
             duplicated_training: Training = await TrainingRepository().get_by_date_and_account_service(
                 account_service=initial_training.account_service,
                 date_=date_,
@@ -254,6 +247,13 @@ class DayService(BaseService):
                     session=session,
                     id_=training_exercise.id,
                 )
+        except ModelAlreadyExist:
+            duplicated_training: Training = await TrainingService().create_by_admin(
+                session=session,
+                account_service_id=duplicated_day.account_service.id,
+                date_=date_,
+                return_model=True,
+            )
 
         initial_training_exercises = await TrainingExerciseRepository().get_list_by_training(
             training=initial_training,

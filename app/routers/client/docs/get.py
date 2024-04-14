@@ -13,29 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Optional
+from os.path import isfile
 
 from fastapi import Depends
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from app.services import ArticleService
-from app.utils import Router, Response
-
+from app.utils import Router
+from app.utils.exceptions import ModelDoesNotExist
 
 router = Router(
-    prefix='/get',
+    prefix='/{filename}',
 )
 
 
-class ArticleGetSchema(BaseModel):
-    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
-    id: int = Field()
+class DocsGetSchema(BaseModel):
+    filename: str = Field()
 
 
 @router.get()
-async def route(schema: ArticleGetSchema = Depends()):
-    result = await ArticleService().get(
-        token=schema.token,
-        id_=schema.id,
+async def route(schema: DocsGetSchema = Depends()):
+    if not isfile(f'assets/docs/{schema.filename}'):
+        raise ModelDoesNotExist(
+            kwargs={
+                'model': 'file',
+                'id_type': 'name',
+                'id_value': schema.filename,
+            }
+        )
+    return FileResponse(
+        path=f'assets/docs/{schema.filename}',
     )
-    return Response(**result)

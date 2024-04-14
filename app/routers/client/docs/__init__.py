@@ -13,29 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from typing import Optional
 
-from fastapi import Depends
-from pydantic import BaseModel, Field
 
-from app.services import ArticleService
-from app.utils import Router, Response
+from app.utils import Router
+from .get import router as router_get
 
 
 router = Router(
-    prefix='/get',
+    prefix='/docs',
+    routes_included=[
+        router_get,
+    ],
+    tags=['Docs'],
 )
-
-
-class ArticleGetSchema(BaseModel):
-    token: Optional[str] = Field(min_length=32, max_length=64, default=None)
-    id: int = Field()
-
-
-@router.get()
-async def route(schema: ArticleGetSchema = Depends()):
-    result = await ArticleService().get(
-        token=schema.token,
-        id_=schema.id,
-    )
-    return Response(**result)

@@ -33,6 +33,7 @@ from .trainings import router as router_trainings
 from .urls import router as router_urls
 from .promocodes import router as router_promocodes
 from .days import router as router_days
+from .docs import router as router_docs
 from app.utils import Router
 
 
@@ -40,6 +41,7 @@ router = Router(
     prefix='',
     routes_included=[
         router_sessions,
+        router_docs,
         router_accounts,
         router_articles,
         router_days,

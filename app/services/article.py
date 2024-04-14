@@ -170,7 +170,7 @@ class ArticleService(BaseService):
             'articles': articles_list,
         }
 
-    @session_required(return_model=False)
+    @session_required(return_model=False, can_guest=True)
     async def get(self, id_):
         article = await ArticleRepository().get_by_id(id_=id_)
         return {
