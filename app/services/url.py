@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from geoip2 import database
+from geoip2.errors import AddressNotFoundError
 
 from app.db.models import Session, Url
-from app.repositories import UrlRepository
+from app.repositories import UrlRepository, UrlClickRepository
 from app.services.base import BaseService
 from app.utils.exceptions import ModelAlreadyExist, NoRequiredParameters
 from app.utils.decorators import session_required
@@ -156,3 +157,41 @@ class UrlService(BaseService):
             ],
         }
         return urls
+
+    @staticmethod
+    async def __get_location_info(ip_address):
+        reader = database.Reader('assets/utils/GeoLite2-City.mmdb')  # Путь к вашей базе данных GeoIP
+        try:
+            response = reader.city(ip_address)
+            country_code = response.country.iso_code
+            city = response.city.name
+            return country_code, city
+        except AddressNotFoundError:
+            return 'Undefined', 'Undefined'
+
+    async def record_click(
+            self,
+            url_name: str,
+            client_ip: str,
+    ):
+        url: Url = await UrlRepository().get_by_name(name=url_name)
+        city, country_code = await self.__get_location_info(ip_address=client_ip)
+        url_click = await UrlClickRepository().create(
+            url=url,
+            ip=client_ip,
+            city=city,
+            country_code=country_code,
+        )
+
+        await self.create_action(
+            model=url_click,
+            action='create',
+            parameters={
+                'url': url,
+                'ip': client_ip,
+                'city': city,
+                'country_code': country_code,
+            }
+        )
+
+        return {'id': url.id}

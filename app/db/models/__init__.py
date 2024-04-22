@@ -55,7 +55,7 @@ from .training import Training
 from .training_exercise import TrainingExercise
 from .training_report import TrainingReport
 from .url import Url
-
+from .url_click import UrlClick
 
 models = (
     Action,
@@ -104,6 +104,7 @@ models = (
     MealReportImage,
 
     Url,
+    UrlClick,
 
     Promocode,
     PromocodeCurrency,

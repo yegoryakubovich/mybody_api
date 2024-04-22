@@ -15,13 +15,10 @@
 #
 
 
-from fastapi import Depends
-from pydantic import BaseModel, Field
 from fastapi.responses import RedirectResponse
-
 from app.services import UrlService
 from app.utils import Router
-
+from fastapi import Request
 
 router = Router(
     prefix='/{redirect}'
@@ -29,8 +26,13 @@ router = Router(
 
 
 @router.get()
-async def route(redirect: str):
+async def route(request: Request, redirect: str):
+    client_ip = request.client.host
     url = await UrlService().get_by_name(
         name=redirect,
+    )
+    await UrlService().record_click(
+        url_name=url['url']['name'],
+        client_ip=client_ip,
     )
     return RedirectResponse(url=url['url']['redirect'])

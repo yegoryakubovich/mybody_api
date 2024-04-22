@@ -167,7 +167,6 @@ class DayService(BaseService):
             id_: int,
     ):
         day: Day = await DayRepository().get_by_id(id_=id_)
-        await DayRepository().delete(model=day)
 
         training: Training = await TrainingRepository().get_by_date_and_account_service(
             account_service=day.account_service,
@@ -185,6 +184,8 @@ class DayService(BaseService):
             account_service_id=day.account_service.id,
             date_=day.date,
         )
+
+        await DayRepository().delete(model=day)
 
         await self.create_action(
             model=day,
