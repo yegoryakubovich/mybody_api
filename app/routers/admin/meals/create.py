@@ -36,6 +36,7 @@ class MealCreateByAdminSchema(BaseModel):
     fats: int = Field()
     proteins: int = Field()
     carbohydrates: int = Field()
+    add_main_products: bool = Field(default=False)
 
 
 @router.post()
@@ -48,5 +49,6 @@ async def route(schema: MealCreateByAdminSchema):
         fats=schema.fats,
         proteins=schema.proteins,
         carbohydrates=schema.carbohydrates,
+        add_main_products=schema.add_main_products,
     )
     return Response(**result)

@@ -55,3 +55,4 @@ from .promocode import PromocodeRepository
 from .promocode_currency import PromocodeCurrencyRepository
 from .url import UrlRepository
 from .url_click import UrlClickRepository
+from .request import RequestRepository

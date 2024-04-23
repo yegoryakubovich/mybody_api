@@ -15,24 +15,22 @@
 #
 
 
-fastapi==0.110.2
-uvicorn==0.29.0
-peewee==3.17.3
-pymysql==1.1.0
-pytz==2024.1
-inflection==0.5.1
-pydantic==2.7.0
-pydantic_settings==2.2.1
-python-multipart==0.0.9
-addict==2.4.0
-pillow==10.3.0
-cryptography==42.0.5
-celery[redis]==5.4.0
-flower==2.0.1
-apscheduler==3.10.4
-gspread==6.1.0
-oauth2client==4.1.3
-mybody_api_client==0.5.18
-hg_api_client==0.1.2
-geoip2==4.8.0
-aiogram==3.5.0
+from pydantic import BaseModel, Field
+
+from app.services import RequestService
+from app.utils import Router, Response
+
+
+router = Router(
+    prefix='/create',
+)
+
+
+class RequestCreateSchema(BaseModel):
+    phone: str = Field(min_length=1, max_length=16)
+
+
+@router.post()
+async def route(schema: RequestCreateSchema):
+    result = await RequestService().create(phone=schema.phone)
+    return Response(**result)

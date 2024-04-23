@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     api_port: int
     tasks_flower_port: int
 
+    tg_bot_token: str
+    tg_request_chat_id: str
+    tg_new_request_message: str
+
     mysql_host: str
     mysql_port: int
     mysql_user: str

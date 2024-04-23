@@ -17,7 +17,7 @@
 
 from datetime import date
 
-from app.db.models import MealReport, Session, Day, DayMeal
+from app.db.models import MealReport, Session, Day, DayMeal, MealProduct
 from app.db.models.meal import Meal
 from app.repositories import AccountServiceRepository, MealProductRepository, MealReportRepository, \
     MealRepository, ProductRepository, DayRepository, DayMealRepository
@@ -48,7 +48,8 @@ class MealService(BaseService):
             fats: int,
             proteins: int,
             carbohydrates: int,
-            return_model: bool = False
+            add_main_products: bool = False,
+            return_model: bool = False,
     ):
         account_service = await AccountServiceRepository().get_by_id(id_=account_service_id)
         await self.check_meal_type(type_=type_)
@@ -62,21 +63,21 @@ class MealService(BaseService):
             proteins=proteins,
         )
 
-        if fats > 0:
+        if fats > 0 and add_main_products:
             await self._add_main_products(
                 session=session,
                 meal=meal,
                 nutrient_type=ProductTypes.FATS,
                 nutrient_amount=fats,
             )
-        if proteins > 0:
+        if proteins > 0 and add_main_products:
             await self._add_main_products(
                 session=session,
                 meal=meal,
                 nutrient_type=ProductTypes.PROTEINS,
                 nutrient_amount=proteins,
             )
-        if carbohydrates > 0:
+        if carbohydrates > 0 and add_main_products:
             await self._add_main_products(
                 session=session,
                 meal=meal,
@@ -265,6 +266,8 @@ class MealService(BaseService):
             date_=initial_meal.date,
         )
 
+        initial_meal_products: list[MealProduct] = await MealProductRepository().get_list_by_meal(meal=initial_meal)
+
         if type_:
             await self.check_meal_type(type_=type_)
 
@@ -303,6 +306,7 @@ class MealService(BaseService):
                 proteins=initial_meal.proteins,
                 carbohydrates=initial_meal.carbohydrates,
                 return_model=True,
+                add_main_products=len(initial_meal_products) == 0,
             )
             await DayMealService().create_by_admin(
                 session=session,
@@ -324,6 +328,21 @@ class MealService(BaseService):
                 proteins=initial_meal.proteins,
                 carbohydrates=initial_meal.carbohydrates,
             )
+            duplicated_meal_products = await MealProductRepository().get_list_by_meal(meal=duplicated_meal)
+            for meal_product in duplicated_meal_products:
+                await MealProductService().delete_by_admin(
+                    session=session,
+                    id_=meal_product.id,
+                )
+
+        if len(initial_meal_products) != 0:
+            for meal_product in initial_meal_products:
+                await MealProductService().create_by_admin(
+                    session=session,
+                    meal_id=duplicated_meal.id,
+                    product_id=meal_product.product.id,
+                    value=meal_product.value,
+                )
 
         return {'id': duplicated_meal.id}
 

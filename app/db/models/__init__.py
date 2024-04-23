@@ -56,6 +56,7 @@ from .training_exercise import TrainingExercise
 from .training_report import TrainingReport
 from .url import Url
 from .url_click import UrlClick
+from .request import Request
 
 models = (
     Action,
@@ -112,4 +113,6 @@ models = (
     Day,
     DayMeal,
     DayTraining,
+
+    Request,
 )
