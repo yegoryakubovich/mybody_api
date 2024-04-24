@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     tg_bot_token: str
     tg_request_chat_id: str
     tg_new_request_message: str
+    tg_new_purchase_message: str
 
     mysql_host: str
     mysql_port: int

@@ -20,6 +20,7 @@ from aiogram import Bot
 from config import settings
 from .base import BaseService
 from app.repositories import RequestRepository
+from ..utils import TelegramNotification
 
 
 class RequestService(BaseService):
@@ -37,10 +38,6 @@ class RequestService(BaseService):
             }
         )
 
-        bot = Bot(token=settings.tg_bot_token)
-        await bot.send_message(
-            chat_id=settings.tg_request_chat_id,
-            text=settings.tg_new_request_message.format(phone=phone)
-        )
+        await TelegramNotification().new_request(phone=phone)
 
         return {}

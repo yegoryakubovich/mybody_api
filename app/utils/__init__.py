@@ -24,4 +24,4 @@ from . import client
 from .units import Units
 from .use_schema import use_schema
 from .validation_error import validation_error
-
+from .telegram_notification import TelegramNotification

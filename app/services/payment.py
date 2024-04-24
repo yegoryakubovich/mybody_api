@@ -21,13 +21,14 @@ from json import dumps, loads
 from hg_api_client.routes import HutkiGroshApiClient
 
 from app.db import db
-from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, Promocode
+from app.db.models import Session, Payment, AccountService, ServiceCost, PaymentMethod, Promocode, Account
 from app.repositories import PaymentRepository, AccountServiceRepository, ServiceCostRepository, \
     PaymentMethodRepository, PaymentMethodCurrencyRepository, PromocodeRepository
 from app.repositories.payment import PaymentStates
 from app.services.account_service import AccountServiceStates, AccountServiceService
 from app.services.base import BaseService
 from app.services.promocode import PromocodeService, PromocodeTypes
+from app.utils import TelegramNotification
 from app.utils.decorators import session_required
 from app.utils.exceptions import InvalidPaymentState, UnpaidBill, NotEnoughPermissions, NoRequiredParameters, \
     PaymentCantBeCancelled
@@ -527,6 +528,12 @@ class PaymentService(BaseService):
                             datetime_to=datetime_to,
                             state=AccountServiceStates.active,
                         )
+                    account: Account = payment.account_service.account
+                    fullname = ' '.join([account.lastname, account.firstname, account.surname])
+                    await TelegramNotification().new_purchase(
+                        fullname=fullname,
+                        username=account.username,
+                    )
 
                 if payment.state != PaymentStates.PAID and is_expired:
                     await self.update_by_task(
