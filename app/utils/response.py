@@ -24,9 +24,9 @@ class ResponseState:
 
 
 class Response:
-    def __new__(cls, state: str = ResponseState.successful, **kwargs) -> JSONResponse:
+    def __new__(cls, state: str = ResponseState.successful, headers: dict = None, **kwargs) -> JSONResponse:
         json = {
             'state': state,
             **kwargs,
         }
-        return JSONResponse(content=json)
+        return JSONResponse(content=json, headers=headers)

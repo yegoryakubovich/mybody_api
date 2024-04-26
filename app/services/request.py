@@ -15,9 +15,6 @@
 #
 
 
-from aiogram import Bot
-
-from config import settings
 from .base import BaseService
 from app.repositories import RequestRepository
 from ..utils import TelegramNotification
