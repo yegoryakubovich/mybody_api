@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from datetime import datetime
 
 from .base import BaseService
 from app.repositories import RequestRepository
@@ -24,8 +24,13 @@ class RequestService(BaseService):
     async def create(
             self,
             phone: str,
+            name: str,
     ):
-        request = await RequestRepository().create(phone=phone)
+        request = await RequestRepository().create(
+            phone=phone,
+            name=name,
+            created_at=datetime.utcnow(),
+        )
 
         await self.create_action(
             model=request,
@@ -35,6 +40,6 @@ class RequestService(BaseService):
             }
         )
 
-        await TelegramNotification().new_request(phone=phone)
+        await TelegramNotification().new_request(phone=phone, name=name)
 
         return {}

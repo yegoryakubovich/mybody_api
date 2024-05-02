@@ -15,6 +15,8 @@
 #
 
 
+from datetime import datetime, timedelta
+
 from peewee import DoesNotExist
 
 from app.db.models import Request
@@ -28,15 +30,18 @@ class RequestRepository(BaseRepository):
     async def create(self, **kwargs):
         try:
             phone = kwargs.get('phone')
-            Request.get(
+            request = Request.get(
                 (Request.phone == phone)
             )
-            raise ModelAlreadyExist(
-                kwargs={
-                    'model': 'Request',
-                    'id_type': 'phone',
-                    'id_value': phone,
-                },
-            )
+            if datetime.utcnow()-request.created_at < timedelta(hours=1):
+                raise ModelAlreadyExist(
+                    kwargs={
+                        'model': 'Request',
+                        'id_type': 'phone',
+                        'id_value': phone,
+                    },
+                )
+            else:
+                return await super().create(**kwargs)
         except DoesNotExist:
             return await super().create(**kwargs)

@@ -15,16 +15,16 @@
 #
 
 
-from peewee import BooleanField, PrimaryKeyField, ForeignKeyField, CharField
+from peewee import PrimaryKeyField, CharField, DateTimeField
 
 from .base import BaseModel
-from .day import Day
-from .meal import Meal
 
 
 class Request(BaseModel):
     id = PrimaryKeyField()
     phone = CharField(max_length=16)
+    name = CharField(max_length=64)
+    created_at = DateTimeField()
 
     class Meta:
         db_table = 'requests'

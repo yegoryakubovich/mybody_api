@@ -29,6 +29,7 @@ router = Router(
 
 class RequestCreateSchema(BaseModel):
     phone: str = Field(min_length=1, max_length=16)
+    name: str = Field(min_length=1, max_length=64)
 
 
 @router.post()
@@ -39,7 +40,7 @@ async def route(schema: RequestCreateSchema):
         'Access-Control-Allow-Headers': 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range',
         'Access-Control-Expose-Headers': 'Content-Length,Content-Range',
     }
-    result = await RequestService().create(phone=schema.phone)
+    result = await RequestService().create(phone=schema.phone, name=schema.name)
     return Response(**result, headers=headers)
 
 

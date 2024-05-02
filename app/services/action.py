@@ -15,7 +15,7 @@
 #
 
 
-import logging
+from logging import debug
 
 from app.repositories import ActionRepository
 
@@ -40,7 +40,7 @@ class ActionService:
                 value = 'none'
             params_str += f'{key.upper()} = {str(value).upper()}\n'
 
-        logging.debug(
+        debug(
             msg=f'ACTION: {action.model.upper()}.{action.model_id}.{action.action.upper()}. '
                 f'PARAMS: \n{params_str}',
         )

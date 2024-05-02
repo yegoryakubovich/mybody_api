@@ -6,10 +6,11 @@ from config import settings
 class TelegramNotification:
     __bot = Bot(token=settings.tg_bot_token)
 
-    async def new_request(self, phone: str):
+    async def new_request(self, phone: str, name: str):
         await self.__bot.send_message(
             chat_id=settings.tg_request_chat_id,
-            text=settings.tg_new_request_message.format(phone=phone)
+            text=settings.tg_new_request_message.format(phone=phone, name=name),
+            parse_mode='html',
         )
 
     async def new_purchase(self, fullname: str, username: str):
