@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+from starlette.responses import RedirectResponse
 
 from .accounts import router as router_accounts
 from .articles import router as router_articles
@@ -36,7 +36,6 @@ from .promocodes import router as router_promocodes
 from .days import router as router_days
 from .docs import router as router_docs
 from app.utils import Router
-
 
 router = Router(
     prefix='',
@@ -63,3 +62,8 @@ router = Router(
         router_urls,
     ],
 )
+
+
+@router.get('/', include_in_schema=False)
+async def route():
+    return RedirectResponse('/docs')
