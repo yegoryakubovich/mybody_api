@@ -58,3 +58,5 @@ from .url import UrlService
 from .promocode import PromocodeService
 from .promocode_currency import PromocodeCurrencyService
 from .request import RequestService
+from .telegram_url import TelegramUrlService
+from .telegram_user import TelegramUserService

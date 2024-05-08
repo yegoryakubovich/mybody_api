@@ -41,6 +41,8 @@ from .product import Product
 from .promocode import Promocode
 from .promocode_currency import PromocodeCurrency
 from .role_permission import RolePermission
+from .telegram_url import TelegramUrl
+from .telegram_user import TelegramUser
 from .text import Text
 from .text_translation import TextTranslation
 from .text_pack import TextPack
@@ -115,4 +117,7 @@ models = (
     DayTraining,
 
     Request,
+
+    TelegramUser,
+    TelegramUrl,
 )

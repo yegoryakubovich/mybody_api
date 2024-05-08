@@ -34,6 +34,7 @@ from .trainings import router as router_trainings
 from .urls import router as router_urls
 from .promocodes import router as router_promocodes
 from .days import router as router_days
+from .telegram import router as router_telegram
 from app.utils import Router
 
 
@@ -59,5 +60,6 @@ router = Router(
         router_timezones,
         router_trainings,
         router_urls,
+        router_telegram,
     ],
 )
