@@ -15,7 +15,7 @@
 #
 
 
-from app.db.models import Session
+from app.db.models import Session, TelegramUrl
 from app.repositories import TelegramUrlRepository, TelegramUserRepository
 from app.services.base import BaseService
 from app.utils.exceptions import ModelAlreadyExist
@@ -43,7 +43,7 @@ class TelegramUrlService(BaseService):
             }
         )
 
-        return {'id_str': url.id_str}
+        return {'id': url.id}
 
     @session_required(permissions=['telegram'], can_root=True)
     async def delete_by_admin(
@@ -67,25 +67,38 @@ class TelegramUrlService(BaseService):
         return {}
 
     @session_required(permissions=['telegram'], can_root=True, return_model=False)
-    async def get(
+    async def get_by_admin(
             self,
             id_str: str,
     ):
         url = await TelegramUrlRepository().get_by_id_str(id_str=id_str)
+        return {
+            'telegram_url': await self._generate_url_dict(url),
+        }
+
+    @session_required(permissions=['telegram'], can_root=True, return_model=False)
+    async def get_list_by_admin(self):
+        urls = await TelegramUrlRepository().get_list()
+        return {
+            'telegram_urls': [
+                await self._generate_url_dict(url) for url in urls
+            ]
+        }
+
+    @staticmethod
+    async def _generate_url_dict(url: TelegramUrl):
         users = await TelegramUserRepository().get_list_by_url(url=url)
         return {
-            'telegram_url': {
-                'id': url.id,
-                'id_str': url.id_str,
-                'total_users': len(users),
-                'users': [
-                    {
-                        'id': user.id,
-                        'tg_id': user.tg_id,
-                        'username': user.username,
-                        'firstname': user.firstname,
-                        'lastname': user.lastname,
-                    } for user in users
-                ]
-            }
+            'id': url.id,
+            'id_str': url.id_str,
+            'total_users': len(users),
+            'users': [
+                {
+                    'id': user.id,
+                    'tg_id': user.tg_id,
+                    'username': user.username,
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
+                } for user in users
+            ]
         }

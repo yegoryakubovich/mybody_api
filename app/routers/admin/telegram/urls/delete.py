@@ -35,6 +35,6 @@ class TelegramUrlDeleteByAdminSchema(BaseModel):
 async def route(schema: TelegramUrlDeleteByAdminSchema):
     result = await TelegramUrlService().delete_by_admin(
         token=schema.token,
-        id_str=schema.id,
+        id_str=schema.id_str,
     )
     return Response(**result)

@@ -27,14 +27,14 @@ router = Router(
 )
 
 
-class TelegramUrlGetSchema(BaseModel):
+class TelegramUrlGetByAdminSchema(BaseModel):
     token: str = Field(min_length=32, max_length=64)
     id_str: str = Field(min_length=1, max_length=256)
 
 
 @router.get()
-async def route(schema: TelegramUrlGetSchema = Depends()):
-    result = await TelegramUrlService().get(
+async def route(schema: TelegramUrlGetByAdminSchema = Depends()):
+    result = await TelegramUrlService().get_by_admin(
         token=schema.token,
         id_str=schema.id_str,
     )
